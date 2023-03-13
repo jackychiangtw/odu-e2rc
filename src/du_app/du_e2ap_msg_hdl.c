@@ -15,7 +15,6 @@
 #   limitations under the License.                                             #
 ################################################################################
 *******************************************************************************/
-#include "du_e2sm_rc_handler.h"
 #include "common_def.h"
 #include "lrg.h"
 #include "lkw.x"
@@ -28,7 +27,7 @@
 #include "du_mgr_main.h"
 #include "du_utils.h"
 #include "GlobalE2node-gNB-ID.h"
-#include<ProtocolIE-FieldE2.h>
+#include <ProtocolIE-FieldE2.h>
 #include "E2setupRequest.h"
 #include "InitiatingMessageE2.h"
 #include "SuccessfulOutcomeE2.h"
@@ -37,6 +36,10 @@
 #include "odu_common_codec.h"
 #include "E2nodeComponentInterfaceF1.h"
 #include "E2setupRequest.h"
+#include "du_e2sm_rc_handler.h"
+
+//uint8_t setRrmPolicy(RrmPolicyList rrmPolicy[], uint8_t policyNum);
+
 
 /*******************************************************************
  *
@@ -410,6 +413,9 @@ void FreeE2SetupReq(E2AP_PDU_t *e2apMsg)
    }
 }
 
+
+
+
 /*******************************************************************
  *
  * @brief Builds and Send the E2SetupRequest
@@ -491,6 +497,7 @@ uint8_t BuildAndSendE2SetupReq()
 
       break;
    }while(true);
+
 
    FreeE2SetupReq(e2apMsg);
    return ret;

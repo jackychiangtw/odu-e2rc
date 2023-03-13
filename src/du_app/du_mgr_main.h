@@ -19,6 +19,7 @@
 #ifndef __DU_MGR_MAIN_H__
 #define __DU_MGR_MAIN_H__
 
+
 /* Function declarations */
 uint8_t duAppInit(SSTskId sysTskId);
 uint8_t sctpInit(SSTskId sysTskId);
@@ -27,6 +28,9 @@ uint8_t rlcUlInit(SSTskId sysTskId);
 uint8_t commonInit();
 uint8_t duInit();
 uint8_t tst(void);
+//uint8_t setRrmPolicy(RrmPolicyList rrmPolicy[], uint8_t policyNum);
+uint8_t setRrmPolicyDummy();
+
 
 #endif
 
