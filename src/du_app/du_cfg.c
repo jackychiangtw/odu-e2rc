@@ -321,6 +321,7 @@ uint8_t readMacCfg()
 #ifndef O1_ENABLE
 
    /*Note: Static Configuration, when O1 is not configuring the RRM policy*/
+   /*
    RrmPolicyList rrmPolicy;
    rrmPolicy.id[0] = 1;
    rrmPolicy.resourceType = PRB;
@@ -336,6 +337,41 @@ uint8_t readMacCfg()
    rrmPolicy.rRMPolicyDedicatedRatio = 10;
 
    cpyRrmPolicyInDuCfgParams(&rrmPolicy, 1, &duCfgParam.tempSliceCfg);
+
+   */
+   /*Note: Static Configuration, when O1 is not configuring the RRM policy*/
+   //RrmPolicyList rrmPolicy;
+   RrmPolicyList rrmPolicy[2];
+   rrmPolicy[0].id[0] = 1;
+   rrmPolicy[0].resourceType = PRB;
+   rrmPolicy[0].rRMMemberNum = 1;
+   memcpy(rrmPolicy[0].rRMPolicyMemberList[0].mcc,duCfgParam.macCellCfg.cellCfg.plmnInfoList[0].plmn.mcc, 3*sizeof(uint8_t));
+   memcpy(rrmPolicy[0].rRMPolicyMemberList[0].mnc,duCfgParam.macCellCfg.cellCfg.plmnInfoList[0].plmn.mnc, 3*sizeof(uint8_t));
+   rrmPolicy[0].rRMPolicyMemberList[0].sst = 1;
+   rrmPolicy[0].rRMPolicyMemberList[0].sd[0] = 2;
+   rrmPolicy[0].rRMPolicyMemberList[0].sd[1] = 3;
+   rrmPolicy[0].rRMPolicyMemberList[0].sd[2] = 4;
+   rrmPolicy[0].rRMPolicyMaxRatio = 90;
+   rrmPolicy[0].rRMPolicyMinRatio = 30;
+   rrmPolicy[0].rRMPolicyDedicatedRatio = 10;
+
+   rrmPolicy[1].id[0] = 2;
+   rrmPolicy[1].resourceType = PRB;
+   rrmPolicy[1].rRMMemberNum = 1;
+   memcpy(rrmPolicy[1].rRMPolicyMemberList[0].mcc,duCfgParam.macCellCfg.cellCfg.plmnInfoList[0].plmn.mcc, 3*sizeof(uint8_t));
+   memcpy(rrmPolicy[1].rRMPolicyMemberList[0].mnc,duCfgParam.macCellCfg.cellCfg.plmnInfoList[0].plmn.mnc, 3*sizeof(uint8_t));
+   rrmPolicy[1].rRMPolicyMemberList[0].sst = 2;
+   rrmPolicy[1].rRMPolicyMemberList[0].sd[0] = 3;
+   rrmPolicy[1].rRMPolicyMemberList[0].sd[1] = 4;
+   rrmPolicy[1].rRMPolicyMemberList[0].sd[2] = 5;
+   rrmPolicy[1].rRMPolicyMaxRatio = 80;
+   rrmPolicy[1].rRMPolicyMinRatio = 40;
+   rrmPolicy[1].rRMPolicyDedicatedRatio = 20;
+
+
+
+   cpyRrmPolicyInDuCfgParams(rrmPolicy, 2, &duCfgParam.tempSliceCfg);
+  
 
 #endif
 

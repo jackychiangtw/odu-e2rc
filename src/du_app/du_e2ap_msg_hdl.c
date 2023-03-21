@@ -27,7 +27,7 @@
 #include "du_mgr_main.h"
 #include "du_utils.h"
 #include "GlobalE2node-gNB-ID.h"
-#include<ProtocolIE-FieldE2.h>
+#include <ProtocolIE-FieldE2.h>
 #include "E2setupRequest.h"
 #include "InitiatingMessageE2.h"
 #include "SuccessfulOutcomeE2.h"
@@ -36,6 +36,10 @@
 #include "odu_common_codec.h"
 #include "E2nodeComponentInterfaceF1.h"
 #include "E2setupRequest.h"
+#include "du_e2sm_rc_handler.h"
+
+//uint8_t setRrmPolicy(RrmPolicyList rrmPolicy[], uint8_t policyNum);
+
 
 /*******************************************************************
  *
@@ -409,6 +413,9 @@ void FreeE2SetupReq(E2AP_PDU_t *e2apMsg)
    }
 }
 
+
+
+
 /*******************************************************************
  *
  * @brief Builds and Send the E2SetupRequest
@@ -490,6 +497,7 @@ uint8_t BuildAndSendE2SetupReq()
 
       break;
    }while(true);
+
 
    FreeE2SetupReq(e2apMsg);
    return ret;
@@ -1106,6 +1114,59 @@ uint8_t procRicSubsReq(E2AP_PDU_t *e2apMsg)
    return ret;
 }
 
+uint8_t procRicCtrlReq(E2AP_PDU_t *e2apMsg){
+   uint8_t idx; 
+   uint8_t ied; 
+   uint8_t ret = ROK;
+   uint32_t value;
+   uint32_t recvBufLen;             
+   RICcontrolRequest_t *ricCtrlReq;
+   DU_LOG("\nINFO   -->  E2AP : RIC Control request received");
+
+   ricCtrlReq = &e2apMsg->choice.initiatingMessage->value.choice.RICcontrolRequest;
+
+   for(idx=0; idx<ricCtrlReq->protocolIEs.list.count; idx++)
+   {
+      if(ricCtrlReq->protocolIEs.list.array[idx])
+      {
+         switch(ricCtrlReq->protocolIEs.list.array[idx]->id)
+         {
+            case ProtocolIE_IDE2_id_RICrequestID:
+            {
+               value = ricCtrlReq->protocolIEs.list.array[idx]->value.choice.RICrequestID.ricRequestorID;
+               DU_LOG("\nDEBUG  -->  E2AP : ricRequestorID = %ld", value);
+               value = ricCtrlReq->protocolIEs.list.array[idx]-> value.choice.RICrequestID.ricInstanceID;
+               DU_LOG("\nDEBUG  -->  E2AP : ricInstanceID = %ld", value);
+               break;
+            }
+            case ProtocolIE_IDE2_id_RANfunctionID:
+            {
+               value = ricCtrlReq->protocolIEs.list.array[idx]-> value.choice.RANfunctionID;
+               DU_LOG("\nDEBUG  -->  E2AP : ricInstanceID = %ld", value);
+               break;
+            }
+            case ProtocolIE_IDE2_id_RICcontrolHeader:
+            {
+               DU_LOG("\nDEBUG  -->  E2AP : ricControlHeader");
+               procE2rcCtrlHeader(&(ricCtrlReq->protocolIEs.list.array[idx]->value.choice.RICcontrolHeader));
+               break;
+            }
+            case ProtocolIE_IDE2_id_RICcontrolMessage:
+            {
+               DU_LOG("\nDEBUG  -->  E2AP : ricControlMessage");
+               procE2rcCtrlMessage(&(ricCtrlReq->protocolIEs.list.array[idx]->value.choice.RICcontrolMessage));
+               break;
+            }
+            default:
+               DU_LOG("\nERROR  -->  E2AP : Invalid IE received in RIC CtrlReq:%ld", ricCtrlReq->protocolIEs.list.array[idx]->id);
+            break;
+         }
+      }
+   }
+   return ret;
+
+}
+
 /*******************************************************************
  *
  * @brief Free the RicIndication Message
@@ -1706,6 +1767,14 @@ void E2APMsgHdlr(Buffer *mBuf)
                      }
                      break;
                   }
+               case InitiatingMessageE2__value_PR_RICcontrolRequest :
+               {
+                  if(procRicCtrlReq(e2apMsg) == ROK)
+                  {
+                     DU_LOG("\nDEBUG  -->  E2AP : Processed RIC Control Message");
+                  }
+                  break;
+               }
                default:
                   {
                      DU_LOG("\nERROR  -->  E2AP : Invalid type of E2AP_PDU_PR_initiatingMessage [%d]",\

@@ -1783,12 +1783,16 @@ uint8_t fillSliceCfgRsp(Inst inst, CmLListCp *storedSliceCfg, SchCellCb *cellCb,
    uint8_t cfgIdx = 0, sliceIdx = 0, plmnIdx = 0, ret =ROK;
    SchSliceCfgRsp schSliceCfgRsp;
 
+
    for(cfgIdx = 0; cfgIdx<schSliceCfgReq->numOfConfiguredSlice; cfgIdx++)
    {
       sliceFound = RSP_NOK;
       /* Here comparing the slice cfg request with the slice stored in cellCfg */
       for(plmnIdx = 0; plmnIdx < MAX_PLMN; plmnIdx++)
       {
+         DU_LOG("\nINFO  -->  SCH : (fillSliceCfgRsp) Slice number in Sch DB: %d", storedSliceCfg->count);
+         DU_LOG("\nINFO  -->  SCH : (fillSliceCfgRsp) Slice number in Cell DB: %d", cellCb->cellCfg.plmnInfoList[plmnIdx].numSliceSupport);
+
          for(sliceIdx = 0; sliceIdx<cellCb->cellCfg.plmnInfoList[plmnIdx].numSliceSupport; sliceIdx++)
          {
             /* If we find the SliceCfgReq's SNSSAI in CellCb's SNSSAI DB, we mark this slice as configured and add it to Sch's DB. */ 
@@ -1954,6 +1958,8 @@ uint8_t fillSliceRecfgRsp(Inst inst, CmLListCp *storedSliceCfg, SchSliceRecfgReq
    uint8_t cfgIdx = 0;
    SchRrmPolicyOfSlice *rrmPolicyOfSlices;
    SchSliceRecfgRsp schSliceRecfgRsp;
+   
+   DU_LOG("\nINFO  -->  SCH : (fillSliceRecfgRsp) Slice number in DB: %d", storedSliceCfg->count);
 
    for(cfgIdx = 0; cfgIdx<schSliceRecfgReq->numOfConfiguredSlice; cfgIdx++)
    {
