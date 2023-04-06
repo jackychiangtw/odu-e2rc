@@ -1,0 +1,32 @@
+{
+    "files.associations": {
+        "du_e2sm_rc_handler.h": "c",
+        "ranparameter-valuetype-choice-structure.h": "c",
+        "measurementinfoitem.h": "c",
+        "*.x": "c",
+        "array": "c",
+        "bitset": "c",
+        "string_view": "c",
+        "initializer_list": "c",
+        "regex": "c",
+        "utility": "c",
+        "valarray": "c",
+        "asn_internal.h": "c",
+        "printablestring.h": "c",
+        "*.tcc": "c",
+        "forward_list": "c",
+        "list": "c",
+        "limits": "c",
+        "memory_resource": "c",
+        "protocolie-singlecontainer.h": "c",
+        "constr_sequence.h": "c",
+        "protocolie-fielde2.h": "c",
+        "e2sm-kpm-actiondefinition.h": "c",
+        "e2sm-kpm-indicationheader-format1.h": "c",
+        "measurementrecorditem.h": "c",
+        "du_e2sm_kpm_handler.h": "c",
+        "du_mgr_main.h": "c",
+        "du_app_mac_inf.h": "c",
+        "du_app_rlc_inf.h": "c"
+    }
+}

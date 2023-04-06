@@ -592,6 +592,9 @@ void rlcSnssaiThptTmrExpiry(PTR cb)
    /*Bit map to keep record of reception of DL and UL Snssai Tput expiry*/
    static uint8_t snssaiTputBitmap = DIR_NONE;
 
+   DU_LOG("\n===================== DL Throughput Per SNSSAI============================");
+
+
    /* If cell is not up, throughput details cannot be printed */
    if(gCellStatus != CELL_UP)
    {

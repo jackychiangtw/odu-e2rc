@@ -31,6 +31,7 @@
 #include "du_egtp.h"
 #include "du_cell_mgr.h"
 #include "du_f1ap_msg_hdl.h"
+#include "du_e2ap_msg_hdl.h"
 
 #ifdef O1_ENABLE
 
@@ -170,6 +171,12 @@ uint8_t setRrmPolicy(RrmPolicyList rrmPolicy[], uint8_t policyNum)
            }
        }
     }
+   return ROK;
+}
+
+uint8_t setRrmPolicyDummy()
+{
+   DU_LOG("\nINFO   -->  DU_APP : Dummy");
    return ROK;
 }
 

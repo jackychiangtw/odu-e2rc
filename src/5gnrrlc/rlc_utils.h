@@ -1746,6 +1746,8 @@ typedef struct rlcThpt
    RlcSnssaiTputInfo  snssaiTputInfo;
 }RlcThpt;
 
+
+
 /** 
  * @brief  Structure to hold an information about a RLC instance
  *

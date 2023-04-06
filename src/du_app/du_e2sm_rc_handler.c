@@ -213,7 +213,6 @@ int procE2rcRanList(RANParameter_ValueType_Choice_List_t *ranParaChoiceList, par
 int procE2rcRanElemFalse(RANParameter_ValueType_Choice_ElementFalse_t *ranParaChoiceElementFalse, paraIdList *paraIdLinkList){
     RANParameter_Value_t *ranParaValue = ranParaChoiceElementFalse->ranParameter_value;
     int paraId = printHeadNode(paraIdLinkList);
-
     switch(ranParaValue->present){
         case RANParameter_Value_PR_valueOctS:
             printf("Parameter ID: %d\n", paraId);
