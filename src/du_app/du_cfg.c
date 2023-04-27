@@ -360,10 +360,10 @@ uint8_t readMacCfg()
    rrmPolicy[1].rRMMemberNum = 1;
    memcpy(rrmPolicy[1].rRMPolicyMemberList[0].mcc,duCfgParam.macCellCfg.cellCfg.plmnInfoList[0].plmn.mcc, 3*sizeof(uint8_t));
    memcpy(rrmPolicy[1].rRMPolicyMemberList[0].mnc,duCfgParam.macCellCfg.cellCfg.plmnInfoList[0].plmn.mnc, 3*sizeof(uint8_t));
-   rrmPolicy[1].rRMPolicyMemberList[0].sst = 2;
-   rrmPolicy[1].rRMPolicyMemberList[0].sd[0] = 3;
-   rrmPolicy[1].rRMPolicyMemberList[0].sd[1] = 4;
-   rrmPolicy[1].rRMPolicyMemberList[0].sd[2] = 5;
+   rrmPolicy[1].rRMPolicyMemberList[0].sst = 5;
+   rrmPolicy[1].rRMPolicyMemberList[0].sd[0] = 6;
+   rrmPolicy[1].rRMPolicyMemberList[0].sd[1] = 7;
+   rrmPolicy[1].rRMPolicyMemberList[0].sd[2] = 8;
    rrmPolicy[1].rRMPolicyMaxRatio = 80;
    rrmPolicy[1].rRMPolicyMinRatio = 40;
    rrmPolicy[1].rRMPolicyDedicatedRatio = 20;

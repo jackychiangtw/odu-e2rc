@@ -2019,6 +2019,42 @@ uint8_t DuProcMacSliceRecfgRsp(Pst *pst,  MacSliceRecfgRsp *recfgRsp)
 }
 
 /*******************************************************************
+ *
+ * @brief process the mac PRB measurement received from MAC
+ *
+ * @details
+ *
+ *    Function : DuProcMacPrbPm
+ *
+ *    Functionality: process the mac PRB measurement received from MAC
+ *
+ * @params[in] Post structure, MacPrbPm  *macPrbPm
+ *             
+ * @return ROK     - success
+ *         RFAILED - failure
+ *
+ **********************************************************************/
+uint8_t DuProcMacPrbPm(Pst *pst,  MacPrbPm *macPrbPm)
+{
+   if(macPrbPm != NULLP)
+   {
+      // DU_LOG("\nINFO  -->  DU_APP : MAC PRB Measurement received successfully ");
+      // DU_LOG("\nINFO  -->  DU_APP : total PRB = %d, Used PRB = %d ", macPrbPm->totalPrb, macPrbPm->usedPrb);
+
+      kpmStoreMacMetric(macPrbPm);
+
+
+      // DU_FREE_SHRABL_BUF(pst->region, pst->pool, macPrbPm->listOfSlicePm[0], (sizeof(MacSlicePrbPmList)));
+      // DU_FREE_SHRABL_BUF(pst->region, pst->pool, macPrbPm->listOfSlicePm, macPrbPm->sliceNum * sizeof(MacSlicePrbPmList*));
+      DU_FREE_SHRABL_BUF(pst->region, pst->pool, macPrbPm, sizeof(MacPrbPm));
+   }
+   else{
+      DU_LOG("\nERROR  -->  DU APP : DuProcMacPrbPm, Empty Metrics");
+   }
+   return ROK;
+}
+
+/*******************************************************************
 *
 * @brief Handles received Slice Metrics from RLC and forward it to O1 
 *
@@ -2064,6 +2100,45 @@ uint8_t DuProcRlcSliceMetrics(Pst *pst, SlicePmList *sliceStats)
 
    DU_FREE_SHRABL_BUF(pst->region, pst->pool,sliceStats->sliceRecord, (sliceStats->numSlice) * (sizeof(SlicePm)));
    DU_FREE_SHRABL_BUF(pst->region, pst->pool,sliceStats, sizeof(SlicePmList));
+
+   return ROK;
+}
+
+/*******************************************************************
+*
+* @brief Handles received Cell Metrics from RLC and forward it to O1 
+*
+* @details
+*
+*    Function : DuProcRlcCellMetrics
+*
+*    Functionality:
+*      Handles received Cell Metrics from RLC and forward it to O1
+*
+* @params[in] Post structure pointer
+*              CellPmList *celleStats
+*
+* @return ROK     - success
+*         RFAILED - failure
+*
+* ****************************************************************/
+uint8_t DuProcRlcCellMetrics(Pst *pst, CellPmList *cellStats)
+{
+    uint8_t cellRecord = 0;
+
+    DU_LOG("\nDEBUG  -->  DU APP : Received Cell Metrics");
+    if(cellStats == NULLP)
+    {
+       DU_LOG("\nERROR  -->  DU APP : Empty Metrics");
+       return RFAILED;
+    }
+   else{
+      kpmSendCellMetric(cellStats);
+   }
+
+   
+   DU_FREE_SHRABL_BUF(pst->region, pst->pool, cellStats->ueRecord, (cellStats->numUe) * (sizeof(CellPm)));
+   DU_FREE_SHRABL_BUF(pst->region, pst->pool, cellStats, sizeof(CellPmList));
 
    return ROK;
 }

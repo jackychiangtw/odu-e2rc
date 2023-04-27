@@ -56,7 +56,7 @@ uint8_t MacProcDlAlloc(Pst *pst, DlSchedInfo *dlSchedInfo)
    MacDlSlot      *currDlSlot = NULLP;
    DlMsgSchInfo   *schedInfo;
    DlHarqProcCb   *hqProcCb = NULLP;
-
+   // int usedPrb = dlSchedInfo->dlMsgAlloc[0]->dlMsgPdschCfg->pdschFreqAlloc.numPrb;
 #ifdef CALL_FLOW_DEBUG_LOG
    DU_LOG("\nCall Flow: ENTSCH -> ENTMAC : EVENT_DL_SCH_INFO\n");
 #endif
@@ -177,6 +177,21 @@ uint8_t MacProcDlAlloc(Pst *pst, DlSchedInfo *dlSchedInfo)
          currDlSlot = &macCb.macCell[cellIdx]->dlSlot[dlSchedInfo->schSlotValue.ulDciTime.slot];
          currDlSlot->dlInfo.ulGrant = dlSchedInfo->ulGrant;
       }
+
+      MacPrbPm      *macPrbPm = NULLP;
+      MAC_ALLOC_SHRABL_BUF(macPrbPm, sizeof(MacPrbPm));
+      if(macPrbPm == NULLP)
+      {
+          DU_LOG("\nERROR  -->  MAC : Failed to allocate memory in MacProcSchSliceRecfgRsp");
+          return RFAILED;
+      }
+      macPrbPm->sliceNum = 1;
+      // MAC_ALLOC_SHRABL_BUF(macPrbPm->listOfSlicePm, macPrbPm->sliceNum * sizeof(MacSlicePrbPmList*));
+      // MAC_ALLOC_SHRABL_BUF(macPrbPm->listOfSlicePm[0], sizeof(MacSlicePrbPmList));
+      macPrbPm->totalPrb = MAX_NUM_RB;
+      macPrbPm->usedPrb = 0;
+
+      MacSendPrbPmToDu(macPrbPm);
    }
    return ROK;
 }

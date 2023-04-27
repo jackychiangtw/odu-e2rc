@@ -1809,6 +1809,7 @@ RlcTptPerSnssai* rlcHandleSnssaiTputlist(RlcCb *gCb, Snssai *snssai,\
 uint8_t rlcCalculateTputPerSnssai(CmLListCp *snssaiList, Direction dir);
 uint8_t rlcDelTputSnssaiList(RlcCb *gCb, Direction dir);
 uint8_t BuildSliceReportToDu(uint8_t snssaiCnt);
+uint8_t BuildCellReportToDu(uint8_t ueCnt, int aveTpt);
 bool rlcFindSliceEntry(SliceIdentifier snssaiVal, uint8_t *snssaiIdx,\
                       SlicePmList *sliceStats);
 

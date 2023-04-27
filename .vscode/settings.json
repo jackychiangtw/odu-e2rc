@@ -27,6 +27,13 @@
         "du_e2sm_kpm_handler.h": "c",
         "du_mgr_main.h": "c",
         "du_app_mac_inf.h": "c",
-        "du_app_rlc_inf.h": "c"
+        "du_app_rlc_inf.h": "c",
+        "ranfunctionrevision.h": "c",
+        "ranfunctiondefinition.h": "c",
+        "ricsubscriptionresponse.h": "c",
+        "asn_application.h": "c",
+        "ranparameter-valuetype-choice-elementfalse.h": "c",
+        "constr_sequence_of.h": "c",
+        "initiatingmessagee2.h": "c"
     }
 }

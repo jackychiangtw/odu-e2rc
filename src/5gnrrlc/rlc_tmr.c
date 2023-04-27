@@ -535,7 +535,7 @@ void rlcUeThptTmrExpiry(PTR cb)
    uint16_t  ueIdx;
    long double tpt;
    RlcThpt *rlcThptCb = (RlcThpt*)cb; 
-   
+   int aveTpt = 0;
    /* If cell is not up, throughput details cannot be printed */
    if(gCellStatus != CELL_UP)
    {
@@ -559,12 +559,13 @@ void rlcUeThptTmrExpiry(PTR cb)
              * Since our dataVol is in bytes, multiplying 0.008 to covert into kilobits i.e. 
              * Throughput[kbits/sec] = (dataVol * 0.008 * 1000)/time in ms
              */
-             tpt = (double)(rlcThptCb->ueTputInfo.thptPerUe[ueIdx].dataVol * 8)/(double)ODU_UE_THROUGHPUT_PRINT_TIME_INTERVAL;
-      
+             tpt = (double)(rlcThptCb->ueTputInfo.thptPerUe[ueIdx].dataVol * 8)/(double)(ODU_UE_THROUGHPUT_PRINT_TIME_INTERVAL * 0.001);
+            aveTpt += tpt; 
              DU_LOG("\nUE Id : %d   DL Tpt : %.2Lf", rlcThptCb->ueTputInfo.thptPerUe[ueIdx].ueId, tpt);
              rlcThptCb->ueTputInfo.thptPerUe[ueIdx].dataVol = 0;
          }
       }
+      BuildCellReportToDu(rlcThptCb->ueTputInfo.numActvUe, aveTpt/rlcThptCb->ueTputInfo.numActvUe);
    }
    DU_LOG("\n==================================================================");
 

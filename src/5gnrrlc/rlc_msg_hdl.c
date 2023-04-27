@@ -1006,6 +1006,51 @@ uint8_t sendSlicePmToDu(SlicePmList *sliceStats)
    return ROK;
 }
 
+/*******************************************************************
+*
+* @brief Send the Cell Metrics to  DU APP
+*
+* @details
+*
+*    Function : sendCellPmToDu
+*
+*    Functionality:
+*      Handles the sending of Cell Metrics to  DU APP
+*
+* @params[in] Post structure pointer
+*             CellPmList *cellStats pointer
+*
+* @return ROK     - success
+*         RFAILED - failure
+*
+* ****************************************************************/
+uint8_t sendCellPmToDu(CellPmList *cellStats)
+{
+   Pst pst;  
+   
+   FILL_PST_RLC_TO_DUAPP(pst, RLC_UL_INST, EVENT_RLC_UE_PM_TO_DU);
+
+   if(!cellStats)
+   {
+      DU_LOG("\nERROR  -->  RLC: sendSlicePmToDu(): Memory allocation failed ");
+      return RFAILED;
+   }
+   else
+   {
+      if(rlcSendCellPmToDu(&pst, cellStats) == ROK)
+      {
+         DU_LOG("\nDEBUG  -->  RLC: Cell PM send successfully");
+      }
+      else
+      {
+         DU_LOG("\nERROR  -->  RLC: sendCellPmToDu():Failed to send Slice PM to DU");
+         RLC_FREE_SHRABL_BUF(pst.region, pst.pool, cellStats, sizeof(CellPmList));
+         return RFAILED;
+      }
+   }
+   return ROK;
+}
+
 /**
  * @brief 
  *    Handler for searching the Slice Entry in Slice Metrics structure
@@ -1122,6 +1167,63 @@ uint8_t BuildSliceReportToDu(uint8_t snssaiCnt)
    }
 
    sendSlicePmToDu(sliceStats);
+   return ROK;
+}
+
+
+/*******************************************************************
+*
+* @brief Builds the Cell Performance Metrics structure to be sent to DU
+*
+* @details
+*
+*    Function : BuildCellReportToDu
+*
+*    Functionality:
+*      Builds the Cell Performance Metrics structure to be sent to DU
+*
+* @params[in] uint8_t uelCnt
+*             
+* @return ROK     - success
+*         RFAILED - failure
+*
+* ****************************************************************/
+uint8_t BuildCellReportToDu(uint8_t ueCnt, int aveTpt)
+{
+   CmLList  *node = NULLP;
+   RlcTptPerSnssai *snssaiNode = NULLP;
+   Direction dir = DIR_UL;
+   CellPmList *cellStats = NULLP;   /*Slice metric */
+   SliceIdentifier snssaiVal ;
+   long double tpt;
+   uint8_t recordIdx = 0;
+
+   if(ueCnt == 0)
+   {
+      DU_LOG("\nERROR  -->  RLC: No UE to send the Cell PM");
+      return RFAILED;
+   }
+
+   RLC_ALLOC_SHRABL_BUF(RLC_MEM_REGION_UL, RLC_POOL, cellStats, sizeof(CellPmList));
+   if(cellStats == NULLP)
+   {
+      DU_LOG("\nERROR  -->  RLC: Memory Allocation Failed");
+      return RFAILED;
+   }
+
+   cellStats->numUe = ueCnt;
+   RLC_ALLOC_SHRABL_BUF(RLC_MEM_REGION_UL, RLC_POOL, cellStats->ueRecord, ueCnt * (sizeof(CellPm)));
+
+   if(cellStats->ueRecord == NULLP)
+   {
+      DU_LOG("\nERROR  -->  RLC: Memory Allocation Failed");
+      RLC_FREE_SHRABL_BUF(RLC_MEM_REGION_UL, RLC_POOL, cellStats, sizeof(CellPmList));
+      return RFAILED;
+   }
+
+   cellStats->ueRecord->ThpDl = aveTpt;
+
+   sendCellPmToDu(cellStats);
    return ROK;
 }
 /**********************************************************************

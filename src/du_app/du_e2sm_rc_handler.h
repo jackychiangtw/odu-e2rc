@@ -10,6 +10,7 @@
 #include "du_cfg.h"
 #include "du_mgr_main.h"
 #include "du_mgr.h"
+#include "RANfunction-Item.h"
 #include "RICcontrolRequest.h"
 #include "RICcontrolHeader.h"
 #include "RICcontrolMessage.h"
@@ -18,6 +19,7 @@
 #include "E2SM-RC-ControlMessage.h"
 #include "E2SM-RC-ControlMessage-Format1.h"
 #include "E2SM-RC-ControlMessage-Format1-Item.h"
+#include "E2SM-RC-RANFunctionDefinition.h"
 #include "RANParameter-ValueType.h"
 #include "RANParameter-Value.h"
 #include "RANParameter-STRUCTURE.h"
@@ -25,7 +27,11 @@
 #include "RANParameter-LIST.h"
 #include "RANParameter-ValueType-Choice-Structure.h"
 #include "RANParameter-ValueType-Choice-ElementFalse.h"
-#include "RANParameter-ValueType-Choice-List.h"
+#include "RANParameter-ValueType-Choice-List.h" 
+#include "RANFunctionDefinition-Control.h"
+#include "RANFunctionDefinition-Control-Item.h"
+#include "RANFunctionDefinition-Control-Action-Item.h"
+#include "ControlAction-RANParameter-Item.h"
 
 
 typedef struct paraIdList_linkList {
@@ -71,6 +77,8 @@ typedef struct rrmPolicyList
 
 uint8_t setRrmPolicy(RrmPolicyList rrmPolicy[],uint8_t policyNum);
 
+
+uint8_t rcFillE2SetupReq(RANfunctionDefinition_t  *ranFunDefinition);
 void print_paraID_List(paraIdList* node);
 int procE2rcRanStructItem(RANParameter_STRUCTURE_Item_t *ranStructItem, paraIdList *paraIdLinkList);
 int procE2rcRanList(RANParameter_ValueType_Choice_List_t *ranParaChoiceList, paraIdList *paraIdLinkList);

@@ -1586,6 +1586,7 @@ uint16_t searchLargestFreeBlock(SchCellCb *cell, SlotTimingInfo slotTime,uint16_
    CmLList        *freePrbNode = NULLP;
    SchPrbAlloc    *prbAlloc = NULLP;
    bool           checkOccasion = FALSE;
+   PduTxOccsaion  ssbOccasion=0, sib1Occasion=0;
 
    *startPrb = 0; /*Initialize the StartPRB to zero*/
 
@@ -1595,7 +1596,6 @@ uint16_t searchLargestFreeBlock(SchCellCb *cell, SlotTimingInfo slotTime,uint16_
    if(dir == DIR_DL)
    {
       SchDlSlotInfo  *schDlSlotInfo = cell->schDlSlotInfo[slotTime.slot];
-      PduTxOccsaion  ssbOccasion=0, sib1Occasion=0;
 
       prbAlloc = &schDlSlotInfo->prbAlloc;
 
@@ -1689,7 +1689,9 @@ uint16_t searchLargestFreeBlock(SchCellCb *cell, SlotTimingInfo slotTime,uint16_
 
       }
       freePrbNode = freePrbNode->next;
-   }  
+   }
+   DU_LOG("\nDennis --> Max Free PRB is:%d, SSB Occassion, SIB1 Occcassion, Check Occassion: [%d, %d, %d]", \
+   maxFreePRB, ssbOccasion, sib1Occasion, checkOccasion);
    return(maxFreePRB);
 }
 
@@ -1783,16 +1785,12 @@ uint8_t fillSliceCfgRsp(Inst inst, CmLListCp *storedSliceCfg, SchCellCb *cellCb,
    uint8_t cfgIdx = 0, sliceIdx = 0, plmnIdx = 0, ret =ROK;
    SchSliceCfgRsp schSliceCfgRsp;
 
-
    for(cfgIdx = 0; cfgIdx<schSliceCfgReq->numOfConfiguredSlice; cfgIdx++)
    {
       sliceFound = RSP_NOK;
       /* Here comparing the slice cfg request with the slice stored in cellCfg */
       for(plmnIdx = 0; plmnIdx < MAX_PLMN; plmnIdx++)
       {
-         DU_LOG("\nINFO  -->  SCH : (fillSliceCfgRsp) Slice number in Sch DB: %d", storedSliceCfg->count);
-         DU_LOG("\nINFO  -->  SCH : (fillSliceCfgRsp) Slice number in Cell DB: %d", cellCb->cellCfg.plmnInfoList[plmnIdx].numSliceSupport);
-
          for(sliceIdx = 0; sliceIdx<cellCb->cellCfg.plmnInfoList[plmnIdx].numSliceSupport; sliceIdx++)
          {
             /* If we find the SliceCfgReq's SNSSAI in CellCb's SNSSAI DB, we mark this slice as configured and add it to Sch's DB. */ 
@@ -1883,8 +1881,10 @@ void freeSchSliceCfgReq(SchSliceCfgReq *sliceCfgReq)
 uint8_t SchProcSliceCfgReq(Pst *pst, SchSliceCfgReq *schSliceCfgReq)
 {
    uint8_t ret = ROK;
+   SchCellCb *cellCb;
    Inst   inst = pst->dstInst - SCH_INST_START;
 
+   cellCb = schCb[inst].cells[0];
    DU_LOG("\nINFO  -->  SCH : Received Slice Cfg request from MAC");
    if(schSliceCfgReq)
    {
@@ -1895,6 +1895,10 @@ uint8_t SchProcSliceCfgReq(Pst *pst, SchSliceCfgReq *schSliceCfgReq)
          {
             DU_LOG("\nERROR  -->  SCH : Failed to fill the slice cfg rsp");
             ret = RFAILED;
+         }
+         else
+         {
+            cellCb->api->SchSliceCfgReq(cellCb);
          }
          freeSchSliceCfgReq(schSliceCfgReq);
       }
@@ -1958,8 +1962,6 @@ uint8_t fillSliceRecfgRsp(Inst inst, CmLListCp *storedSliceCfg, SchSliceRecfgReq
    uint8_t cfgIdx = 0;
    SchRrmPolicyOfSlice *rrmPolicyOfSlices;
    SchSliceRecfgRsp schSliceRecfgRsp;
-   
-   DU_LOG("\nINFO  -->  SCH : (fillSliceRecfgRsp) Slice number in DB: %d", storedSliceCfg->count);
 
    for(cfgIdx = 0; cfgIdx<schSliceRecfgReq->numOfConfiguredSlice; cfgIdx++)
    {
@@ -2012,7 +2014,9 @@ uint8_t SchProcSliceRecfgReq(Pst *pst, SchSliceRecfgReq *schSliceRecfgReq)
 {
    uint8_t ret = ROK;
    Inst   inst = pst->dstInst - SCH_INST_START;
+   SchCellCb *cellCb;
 
+   cellCb = schCb[inst].cells[0];
    DU_LOG("\nINFO  -->  SCH : Received Slice ReCfg request from MAC");
    if(schSliceRecfgReq)
    {
@@ -2023,6 +2027,10 @@ uint8_t SchProcSliceRecfgReq(Pst *pst, SchSliceRecfgReq *schSliceRecfgReq)
          {
             DU_LOG("\nERROR  -->  SCH : Failed to fill sch slice cfg response");
             ret = RFAILED;
+         }
+         else
+         {
+            cellCb->api->SchSliceRecfgReq(cellCb);
          }
          freeSchSliceCfgReq(schSliceRecfgReq);
       }
@@ -2315,7 +2323,7 @@ uint8_t SchProcPagingInd(Pst *pst,  SchPageInd *pageInd)
  *     File : rg_sch_lmm.c 
  *
  **********************************************************/
-Void SchFillCfmPst
+void SchFillCfmPst
 (
 Pst           *reqPst,
 Pst           *cfmPst,

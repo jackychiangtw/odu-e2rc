@@ -127,6 +127,7 @@ void fillSchDlLcCtxt(SchDlLcCtxt *ueCbLcCfg, SchLcCfg *lcCfg)
    }
    if(lcCfg->snssai)
    {
+     //DU_LOG("\nDennis --> Dedicated LC ID: %d", lcCfg->lcId);
      if(ueCbLcCfg->snssai == NULLP)/*In CONFIG_MOD case, no need to allocate SNSSAI memory*/
      {
         SCH_ALLOC(ueCbLcCfg->snssai, sizeof(Snssai));
@@ -1203,6 +1204,7 @@ uint8_t SchModUeConfigReq(Pst *pst, SchUeRecfgReq *ueRecfg)
          SchSendUeRecfgRspToMac(ueRecfg, inst, RSP_OK, &recfgRsp);
       }
    }
+   cellCb->api->SchModUeConfigReq(ueCb);
    return ret;
 }
 

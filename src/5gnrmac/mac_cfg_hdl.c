@@ -63,6 +63,13 @@ MacDuSliceRecfgRspFunc macDuSliceRecfgRspOpts[] =
    packDuMacSliceRecfgRsp    /* packing for light weight loosly coupled */
 };
 
+MacDuPrbPmFunc MacDuPrbPmOpts[] =
+{
+   packDuMacPrbPm,   /* packing for loosely coupled */
+   DuProcMacPrbPm,   /* packing for tightly coupled */
+   packDuMacPrbPm   /* packing for light weight loosly coupled */
+};
+
 /**
  * @brief Layer Manager  Configuration request handler for Scheduler
  *
@@ -194,6 +201,7 @@ uint8_t MacProcCellCfgReq(Pst *pst, MacCellCfg *macCellCfg)
          }
       }
    }
+
    /* Send cell cfg to scheduler */
    ret = MacSchCellCfgReq(pst, macCellCfg);
    if(ret != ROK)
@@ -961,6 +969,33 @@ uint8_t MacProcDlPcchInd(Pst *pst, DlPcchInd *pcchInd)
    }
    return ret;
 }
+
+/**
+ * @brief send PRB measurement to duapp.
+ *
+ * @details
+ *
+ *     Function : MacSendSliceConfigRsp
+ *
+ *   sends PRB measurement to duapp
+ *
+ *  @param[in] MacSliceCfgRsp macSliceCfgRsp 
+ *  @return  int
+ *      -# ROK
+ **/
+uint8_t MacSendPrbPmToDu(MacPrbPm *macPrbPm)
+{
+    Pst  rspPst;
+    
+    memset(&rspPst, 0, sizeof(Pst));
+    FILL_PST_MAC_TO_DUAPP(rspPst, EVENT_MAC_PRB_METRIC_TO_DU);
+
+   //  DU_LOG("\n INFO : Sent PRB Measurement to DU APP");
+    return (*MacDuPrbPmOpts[rspPst.selector])(&rspPst, macPrbPm);
+
+}
+
+
 /**********************************************************************
   End of file
  **********************************************************************/

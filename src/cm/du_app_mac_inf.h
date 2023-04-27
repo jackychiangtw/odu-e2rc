@@ -87,6 +87,8 @@
 #define EVENT_MAC_UE_RESET_REQ       225
 #define EVENT_MAC_UE_RESET_RSP       226
 #define EVENT_MAC_UE_SYNC_STATUS_IND 227
+#define EVENT_MAC_PRB_METRIC_TO_DU   228
+
 
 #define BSR_PERIODIC_TIMER_SF_10 10
 #define BSR_RETX_TIMER_SF_320 320
@@ -1641,6 +1643,19 @@ typedef struct macSliceCfgReq
    MacSliceRrmPolicy **listOfRrmPolicy;
 }MacSliceCfgReq;
 
+typedef struct macSlicePrbPmList
+{
+   uint8_t           usedPrb;
+}MacSlicePrbPmList;
+
+typedef struct macPrbPm
+{
+   uint8_t           usedPrb;
+   uint8_t           totalPrb;
+   uint8_t             sliceNum;
+   MacSlicePrbPmList   **listOfSlicePm;
+}MacPrbPm;
+
 /*As per ORAN-WG8, Slice Cfg and ReCfg are same structures*/
 typedef struct macSliceCfgReq MacSliceRecfgReq;
 typedef struct macSliceCfgRsp MacSliceRecfgRsp;
@@ -1830,6 +1845,11 @@ typedef uint8_t (*MacDuUeSyncStatusIndFunc) ARGS((
         Pst            *pst,
         MacUeSyncStatusInd *syncStatusInd));
 
+/* PRB measurement from MAC to DU APP */
+typedef uint8_t (*MacDuPrbPmFunc) ARGS((
+	 Pst           *pst, 
+	 MacPrbPm      *macPrbPm));
+
 uint64_t ueBitMapPerCell[MAX_NUM_CELL]; /* Bit Map to store used/free UE-IDX per Cell */
 
 uint8_t packMacCellUpInd(Pst *pst, OduCellId *cellId);
@@ -1901,6 +1921,9 @@ uint8_t MacProcSliceRecfgReq(Pst *pst, MacSliceRecfgReq *sliceRecfgReq);
 uint8_t unpackMacSliceRecfgReq(DuMacSliceRecfgReq func, Pst *pst, Buffer *mBuf);
 uint8_t DuProcMacSliceRecfgRsp(Pst *pst,  MacSliceRecfgRsp *sliceRecfgRsp);
 uint8_t packDuMacSliceRecfgRsp(Pst *pst, MacSliceRecfgRsp *sliceRecfgRsp);
+uint8_t DuProcMacPrbPm(Pst *pst, MacPrbPm *macPrbPm);
+uint8_t packDuMacPrbPm(Pst *pst, MacPrbPm *macPrbPm);
+uint8_t unpackDuMacPrbPm(MacDuPrbPmFunc func, Pst *pst, Buffer *mBuf);
 uint8_t unpackDuMacSliceRecfgRsp(MacDuSliceRecfgRspFunc func, Pst *pst, Buffer *mBuf);
 uint8_t duHandleSlotInd(Pst *pst, SlotTimingInfo *slotIndInfo);
 uint8_t packMacSlotInd(Pst *pst, SlotTimingInfo *slotIndInfo);

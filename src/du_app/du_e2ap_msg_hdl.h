@@ -18,6 +18,10 @@
 
 /* This file contains all E2AP message handler related functionality */
 
+#ifndef _AP_H_
+#define _AP_H_
+#include "RICindicationMessage.h"
+
 #define ENCODE_FAIL -1
 
 uint8_t sctpSend(Buffer *mBuf, uint8_t itfType);
@@ -33,13 +37,23 @@ typedef struct e2apDb
    uint8_t     *ricEventTrigger;
    uint32_t     ricActionId;
    uint32_t     ricActionType;
+
+   // For E2SM-RC
+   uint32_t     ricCtrlReqId;
+   uint32_t     ricCtrlInstanceId;
+   uint32_t     ranCtrlFuncId;
+
 }E2apMsgDb;
 
 E2apMsgDb e2apMsgDb;
+RICindicationMessage_t *ricIndicationMessage;
+
 uint8_t BuildAndSendE2SetupReq();
 uint8_t SendE2APMsg(Region , Pool );
 void E2APMsgHdlr(Buffer *mBuf);
 uint8_t BuildAndSendE2NodeConfigUpdate();
+
+#endif
 /**********************************************************************
   End of file
  **********************************************************************/
