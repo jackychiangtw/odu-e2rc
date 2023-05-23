@@ -1736,6 +1736,7 @@ uint8_t schSliceBasedDlFinalScheduling(SchCellCb *cellCb, SlotTimingInfo pdschTi
    uint16_t mcsIdx = 0;
    uint16_t crnti = 0;
    uint16_t availablePrb = 0;
+   uint16_t defaultPrb = 0;
    uint32_t accumalatedSize = 0;
    SchUeCb *ueCb = NULLP;
    DlMsgSchInfo *dciSlotAlloc, *dlMsgAlloc;
@@ -1786,6 +1787,7 @@ uint8_t schSliceBasedDlFinalScheduling(SchCellCb *cellCb, SlotTimingInfo pdschTi
       availablePrb = remainingPrb;
       schSliceBasedPrbAllocUsingRRMPolicy(&defLcList, mcsIdx, pdschNumSymbols, &availablePrb, &ueSliceBasedCb->isTxPayloadLenAdded, NULLP);
       DU_LOG("\nDennis  -->  SCH Final Default Slice : [Allocated PRB: %d, Remaining PRB: %d]", remainingPrb - availablePrb, availablePrb);
+      defaultPrb = remainingPrb - availablePrb;
       remainingPrb = availablePrb;
    }
 
@@ -1793,6 +1795,9 @@ uint8_t schSliceBasedDlFinalScheduling(SchCellCb *cellCb, SlotTimingInfo pdschTi
     * I assume that slice priority is implicit in the RAN Control indication from RIC */
    schSpcCell = (SchSliceBasedCellCb *)cellCb->schSpcCell;
    sliceCbNode = schSpcCell->sliceCbList.first;
+
+   
+
 
    while(sliceCbNode)
    {
@@ -1859,14 +1864,17 @@ uint8_t schSliceBasedDlFinalScheduling(SchCellCb *cellCb, SlotTimingInfo pdschTi
          if(sliceCb->lcInfoList[ueId-1].count != 0)
             schSliceBasedUpdateGrantSizeForBoRpt(&sliceCb->lcInfoList[ueId-1], dciSlotAlloc, NULLP, &accumalatedSize, TRUE);
 
-         sliceCb->allocatedPrb = 0;
+         // sliceCb->allocatedPrb = 0; // remove by jacky
          sliceCbNode = sliceCbNode->next;
+
       }
    }
    else
    {
       accumalatedSize = (*hqP)->tbInfo[0].tbSzReq;
    }
+
+
 
    /*Below case will hit if NO LC(s) are allocated due to resource crunch*/
    if(!accumalatedSize)

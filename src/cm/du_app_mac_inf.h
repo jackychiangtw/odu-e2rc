@@ -1653,7 +1653,7 @@ typedef struct macPrbPm
    uint8_t           usedPrb;
    uint8_t           totalPrb;
    uint8_t             sliceNum;
-   MacSlicePrbPmList   **listOfSlicePm;
+   MacSlicePrbPmList   *listOfSlicePm;
 }MacPrbPm;
 
 /*As per ORAN-WG8, Slice Cfg and ReCfg are same structures*/

@@ -1062,7 +1062,11 @@ uint8_t rlcCalculateTputPerSnssai(CmLListCp *snssaiList, Direction dir)
 {
    CmLList  *node = NULLP;
    RlcTptPerSnssai *snssaiNode = NULLP;
+   SlicePmList slicePm;
+   SlicePm record[5];
    uint8_t snssaiCnt = 0;
+
+   
 
    node = snssaiList->first;
    if(node == NULLP)
@@ -1080,17 +1084,34 @@ uint8_t rlcCalculateTputPerSnssai(CmLListCp *snssaiList, Direction dir)
       {
          DU_LOG("\nDEBUG  -->  RLC_DL: SNSSAI(sst:%d,sd [%d,%d, %d]), DL Tpt : %.5lf", snssaiNode->snssai->sst,\
                snssaiNode->snssai->sd[0], snssaiNode->snssai->sd[1],snssaiNode->snssai->sd[2] , snssaiNode->tpt);
+         record[snssaiCnt].networkSliceIdentifier.sst = snssaiNode->snssai->sst;
+         record[snssaiCnt].networkSliceIdentifier.sd = snssaiNode->snssai->sd[2]+snssaiNode->snssai->sd[1]*10+snssaiNode->snssai->sd[0]*100;
+         record[snssaiCnt].ThpDl = snssaiNode->tpt;
       }
       if(dir == DIR_UL)
       {
          DU_LOG("\nDEBUG  -->  RLC_UL: SNSSAI(sst:%d,sd [%d,%d, %d]), UL Tpt : %.5lf", snssaiNode->snssai->sst,\
                snssaiNode->snssai->sd[0], snssaiNode->snssai->sd[1],snssaiNode->snssai->sd[2] , snssaiNode->tpt);
+         
       }
 
-      snssaiNode->dataVol = 0;
+      snssaiNode->dataVol = 0; 
       node = node->next;
       snssaiCnt++;
    }
+
+   if(dir == DIR_DL){
+      slicePm.sliceRecord =  (SlicePm*)calloc(snssaiCnt, sizeof(SlicePm));
+      slicePm.numSlice = snssaiCnt;
+      for(int i=0;i<snssaiCnt;i++){
+         memcpy(&slicePm.sliceRecord[i], &record[i], sizeof(SlicePm));
+      }
+      BuildSliceReportToDu(&slicePm, snssaiCnt);
+      free(slicePm.sliceRecord);
+   }
+
+   
+
    return(snssaiCnt);
 }
 

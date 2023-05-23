@@ -1,5 +1,6 @@
 ASN_MODULE_SRCS=	\
 	TimeStamp.c	\
+	TimeStamp-v300.c	\
 	BinIndex.c	\
 	BinRangeValue.c	\
 	GranularityPeriod.c	\
@@ -8,6 +9,7 @@ ASN_MODULE_SRCS=	\
 	MeasurementTypeName.c	\
 	MeasurementTypeID.c	\
 	MeasurementLabel.c	\
+	MeasurementLabel-v300.c	\
 	TestCondInfo.c	\
 	TestCond-Type.c	\
 	TestCond-Expression.c	\
@@ -21,6 +23,10 @@ ASN_MODULE_SRCS=	\
 	MeasurementInfoItem.c	\
 	LabelInfoList.c	\
 	LabelInfoItem.c	\
+	MeasurementInfoList-v300.c	\
+	MeasurementInfoItem-v300.c	\
+	LabelInfoList-v300.c	\
+	LabelInfoItem-v300.c	\
 	MeasurementData.c	\
 	MeasurementDataItem.c	\
 	MeasurementRecord.c	\
@@ -33,6 +39,14 @@ ASN_MODULE_SRCS=	\
 	MeasurementCondUEidItem.c	\
 	MatchingCondList.c	\
 	MatchingCondItem.c	\
+	MeasurementInfo-Action-List-v300.c	\
+	MeasurementInfo-Action-Item-v300.c	\
+	MeasurementCondList-v300.c	\
+	MeasurementCondItem-v300.c	\
+	MeasurementCondUEidList-v300.c	\
+	MeasurementCondUEidItem-v300.c	\
+	MatchingCondList-v300.c	\
+	MatchingCondItem-v300.c	\
 	MatchingCondItem-Choice.c	\
 	MatchingUEidList.c	\
 	MatchingUEidItem.c	\
@@ -42,10 +56,14 @@ ASN_MODULE_SRCS=	\
 	MatchingUEidItem-PerGP.c	\
 	MatchingUeCondPerSubList.c	\
 	MatchingUeCondPerSubItem.c	\
+	MatchingUeCondPerSubList-v300.c	\
+	MatchingUeCondPerSubItem-v300.c	\
 	MatchingUEidPerSubList.c	\
 	MatchingUEidPerSubItem.c	\
 	UEMeasurementReportList.c	\
 	UEMeasurementReportItem.c	\
+	UEMeasurementReportList-v300.c	\
+	UEMeasurementReportItem-v300.c	\
 	E2SM-KPM-EventTriggerDefinition.c	\
 	E2SM-KPM-EventTriggerDefinition-Format1.c	\
 	E2SM-KPM-ActionDefinition.c	\
@@ -54,15 +72,29 @@ ASN_MODULE_SRCS=	\
 	E2SM-KPM-ActionDefinition-Format3.c	\
 	E2SM-KPM-ActionDefinition-Format4.c	\
 	E2SM-KPM-ActionDefinition-Format5.c	\
+	E2SM-KPM-ActionDefinition-v300.c	\
+	E2SM-KPM-ActionDefinition-Format1-v300.c	\
+	E2SM-KPM-ActionDefinition-Format2-v300.c	\
+	E2SM-KPM-ActionDefinition-Format3-v300.c	\
+	E2SM-KPM-ActionDefinition-Format4-v300.c	\
+	E2SM-KPM-ActionDefinition-Format5-v300.c	\
 	E2SM-KPM-IndicationHeader.c	\
 	E2SM-KPM-IndicationHeader-Format1.c	\
+	E2SM-KPM-IndicationHeader-v300.c	\
+	E2SM-KPM-IndicationHeader-Format1-v300.c	\
 	E2SM-KPM-IndicationMessage.c	\
 	E2SM-KPM-IndicationMessage-Format1.c	\
 	E2SM-KPM-IndicationMessage-Format2.c	\
 	E2SM-KPM-IndicationMessage-Format3.c	\
+	E2SM-KPM-IndicationMessage-v300.c	\
+	E2SM-KPM-IndicationMessage-Format1-v300.c	\
+	E2SM-KPM-IndicationMessage-Format2-v300.c	\
+	E2SM-KPM-IndicationMessage-Format3-v300.c	\
 	E2SM-KPM-RANfunction-Description.c	\
+	E2SM-KPM-RANfunction-Description-v300.c	\
 	RIC-EventTriggerStyle-Item.c	\
 	RIC-ReportStyle-Item.c	\
+	RIC-ReportStyle-Item-v300.c	\
 	CGI.c	\
 	CoreCPID.c	\
 	InterfaceIdentifier.c	\
@@ -155,6 +187,7 @@ ASN_MODULE_SRCS=	\
 
 ASN_MODULE_HDRS=	\
 	TimeStamp.h	\
+	TimeStamp-v300.h	\
 	BinIndex.h	\
 	BinRangeValue.h	\
 	GranularityPeriod.h	\
@@ -163,6 +196,7 @@ ASN_MODULE_HDRS=	\
 	MeasurementTypeName.h	\
 	MeasurementTypeID.h	\
 	MeasurementLabel.h	\
+	MeasurementLabel-v300.h	\
 	TestCondInfo.h	\
 	TestCond-Type.h	\
 	TestCond-Expression.h	\
@@ -176,6 +210,10 @@ ASN_MODULE_HDRS=	\
 	MeasurementInfoItem.h	\
 	LabelInfoList.h	\
 	LabelInfoItem.h	\
+	MeasurementInfoList-v300.h	\
+	MeasurementInfoItem-v300.h	\
+	LabelInfoList-v300.h	\
+	LabelInfoItem-v300.h	\
 	MeasurementData.h	\
 	MeasurementDataItem.h	\
 	MeasurementRecord.h	\
@@ -188,6 +226,14 @@ ASN_MODULE_HDRS=	\
 	MeasurementCondUEidItem.h	\
 	MatchingCondList.h	\
 	MatchingCondItem.h	\
+	MeasurementInfo-Action-List-v300.h	\
+	MeasurementInfo-Action-Item-v300.h	\
+	MeasurementCondList-v300.h	\
+	MeasurementCondItem-v300.h	\
+	MeasurementCondUEidList-v300.h	\
+	MeasurementCondUEidItem-v300.h	\
+	MatchingCondList-v300.h	\
+	MatchingCondItem-v300.h	\
 	MatchingCondItem-Choice.h	\
 	MatchingUEidList.h	\
 	MatchingUEidItem.h	\
@@ -197,10 +243,14 @@ ASN_MODULE_HDRS=	\
 	MatchingUEidItem-PerGP.h	\
 	MatchingUeCondPerSubList.h	\
 	MatchingUeCondPerSubItem.h	\
+	MatchingUeCondPerSubList-v300.h	\
+	MatchingUeCondPerSubItem-v300.h	\
 	MatchingUEidPerSubList.h	\
 	MatchingUEidPerSubItem.h	\
 	UEMeasurementReportList.h	\
 	UEMeasurementReportItem.h	\
+	UEMeasurementReportList-v300.h	\
+	UEMeasurementReportItem-v300.h	\
 	E2SM-KPM-EventTriggerDefinition.h	\
 	E2SM-KPM-EventTriggerDefinition-Format1.h	\
 	E2SM-KPM-ActionDefinition.h	\
@@ -209,15 +259,29 @@ ASN_MODULE_HDRS=	\
 	E2SM-KPM-ActionDefinition-Format3.h	\
 	E2SM-KPM-ActionDefinition-Format4.h	\
 	E2SM-KPM-ActionDefinition-Format5.h	\
+	E2SM-KPM-ActionDefinition-v300.h	\
+	E2SM-KPM-ActionDefinition-Format1-v300.h	\
+	E2SM-KPM-ActionDefinition-Format2-v300.h	\
+	E2SM-KPM-ActionDefinition-Format3-v300.h	\
+	E2SM-KPM-ActionDefinition-Format4-v300.h	\
+	E2SM-KPM-ActionDefinition-Format5-v300.h	\
 	E2SM-KPM-IndicationHeader.h	\
 	E2SM-KPM-IndicationHeader-Format1.h	\
+	E2SM-KPM-IndicationHeader-v300.h	\
+	E2SM-KPM-IndicationHeader-Format1-v300.h	\
 	E2SM-KPM-IndicationMessage.h	\
 	E2SM-KPM-IndicationMessage-Format1.h	\
 	E2SM-KPM-IndicationMessage-Format2.h	\
 	E2SM-KPM-IndicationMessage-Format3.h	\
+	E2SM-KPM-IndicationMessage-v300.h	\
+	E2SM-KPM-IndicationMessage-Format1-v300.h	\
+	E2SM-KPM-IndicationMessage-Format2-v300.h	\
+	E2SM-KPM-IndicationMessage-Format3-v300.h	\
 	E2SM-KPM-RANfunction-Description.h	\
+	E2SM-KPM-RANfunction-Description-v300.h	\
 	RIC-EventTriggerStyle-Item.h	\
 	RIC-ReportStyle-Item.h	\
+	RIC-ReportStyle-Item-v300.h	\
 	CGI.h	\
 	CoreCPID.h	\
 	InterfaceIdentifier.h	\

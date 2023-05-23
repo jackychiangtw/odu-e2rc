@@ -2042,10 +2042,15 @@ uint8_t DuProcMacPrbPm(Pst *pst,  MacPrbPm *macPrbPm)
       // DU_LOG("\nINFO  -->  DU_APP : total PRB = %d, Used PRB = %d ", macPrbPm->totalPrb, macPrbPm->usedPrb);
 
       kpmStoreMacMetric(macPrbPm);
-
-
-      // DU_FREE_SHRABL_BUF(pst->region, pst->pool, macPrbPm->listOfSlicePm[0], (sizeof(MacSlicePrbPmList)));
-      // DU_FREE_SHRABL_BUF(pst->region, pst->pool, macPrbPm->listOfSlicePm, macPrbPm->sliceNum * sizeof(MacSlicePrbPmList*));
+      if(macPrbPm->listOfSlicePm){
+         // DU_LOG("\nINFO  -->  DU_APP : macPrbPm->sliceNum = %d ", macPrbPm->sliceNum);
+         DU_FREE_SHRABL_BUF(pst->region, pst->pool, macPrbPm->listOfSlicePm, (macPrbPm->sliceNum) * sizeof(MacSlicePrbPmList));
+      }
+      
+      // if(macPrbPm->sliceNum>0){
+      //    
+      //       
+      // }
       DU_FREE_SHRABL_BUF(pst->region, pst->pool, macPrbPm, sizeof(MacPrbPm));
    }
    else{
@@ -2095,8 +2100,8 @@ uint8_t DuProcRlcSliceMetrics(Pst *pst, SlicePmList *sliceStats)
        sendSliceMetric((SliceMetricList*) sliceStats);
     }
 #endif
-
-   kpmSendSliceMetric(sliceStats);
+   kpmStoreSliceRlcMetric(sliceStats);
+   // kpmSendSliceMetric();
 
    DU_FREE_SHRABL_BUF(pst->region, pst->pool,sliceStats->sliceRecord, (sliceStats->numSlice) * (sizeof(SlicePm)));
    DU_FREE_SHRABL_BUF(pst->region, pst->pool,sliceStats, sizeof(SlicePmList));
@@ -2133,7 +2138,8 @@ uint8_t DuProcRlcCellMetrics(Pst *pst, CellPmList *cellStats)
        return RFAILED;
     }
    else{
-      kpmSendCellMetric(cellStats);
+      kpmStoreCellRlcMetric(cellStats);
+      // kpmSendCellMetric();
    }
 
    

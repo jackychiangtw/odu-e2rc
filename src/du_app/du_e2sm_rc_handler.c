@@ -304,7 +304,7 @@ void printRrmPolicy(int policyNum){
 }
 
 
-int procE2rcCtrlMessage(OCTET_STRING_t *ricControlMessage){
+int procE2rcCtrlMessage(RICcontrolMessage_t *ricControlMessage){
     asn_dec_rval_t  rval;
     E2SM_RC_ControlMessage_t *ctrlMessage = (E2SM_RC_ControlMessage_t*)calloc(1, sizeof(E2SM_RC_ControlMessage_t));
 
@@ -351,7 +351,7 @@ void procE2rcCtrlHeader(RICcontrolHeader_t *ricControlHeader){
 
 uint8_t rcFillRanFunctionName(RANfunction_Name_t *ranFuncName){
     uint8_t shortName[] = "ORAN-E2SM-RC";
-    uint8_t ranfunc_oid[] = "1.4.2.1123.4.6.7"; // RAN function service model OID
+    uint8_t ranfunc_oid[] = "1.3.6.1.4.1.53148.1.1.2.3"; // RAN function service model OID
     uint8_t description[] = "RAN Control";
 
     ranFuncName->ranFunction_ShortName.size = sizeof(shortName)-1;
@@ -410,6 +410,8 @@ uint8_t rcFillRanFuncDefiControl(RANFunctionDefinition_Control_t **ranFuncDefi){
 
     RANFunctionDefinition_Control_Item_t *ranFuncCtrlItem = (RANFunctionDefinition_Control_Item_t*)calloc(1, sizeof(RANFunctionDefinition_Control_Item_t));
     ranFuncCtrlItem->ric_ControlStyle_Type = 2;
+    ranFuncCtrlItem->ric_ControlMessageFormat_Type = 1;
+    ranFuncCtrlItem->ric_ControlHeaderFormat_Type = 1;
     ranFuncCtrlItem->ric_ControlOutcomeFormat_Type = 1;
 
     ranFuncCtrlItem->ric_ControlStyle_Name.size  = sizeof(styleName)-1;
@@ -430,7 +432,7 @@ uint8_t rcFillE2SetupReq(RANfunctionDefinition_t  *ranFunDefinition){
     uint8_t arrIdx = 0;
     int8_t ret = 0;
     asn_codec_ctx_t *opt_cod;
-    uint8_t ranfunc_oid[] = "1.3.6.1.4.1.53148.1.2.2.2"; // RAN function service model OID
+    uint8_t ranfunc_oid[] = "1.3.6.1.4.1.53148.1.1.2.3"; // RAN function service model OID
 
     E2SM_RC_RANFunctionDefinition_t *ranfunc_desc = (E2SM_RC_RANFunctionDefinition_t*)calloc(1, sizeof(E2SM_RC_RANFunctionDefinition_t));
     long *inst;
