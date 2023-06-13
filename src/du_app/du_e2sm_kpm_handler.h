@@ -76,10 +76,16 @@
 #include "MeasurementCondUEidList-v300.h"
 #include "MeasurementCondUEidItem-v300.h"
 #include "MatchingCondItem-v300.h"
+<<<<<<< Updated upstream
+=======
+#include "E2SM-KPM-IndicationHeader-v300.h"
+#include "E2SM-KPM-IndicationHeader-Format1-v300.h"
+
+>>>>>>> Stashed changes
 
 #define INDICATION_MSG_FMRT1 1
 #define INDICATION_MSG_FMRT2 1
-#define MAX_SIZE_OF_SLICE 2
+#define MAX_SIZE_OF_SLICE 3
 #define NUM_OF_CELL_METRIC 4
 #define NUM_OF_SLICE_METRIC 2
 #define SIZE_OF_MACDB 1024
@@ -91,7 +97,11 @@
 typedef void (*SubscriptionCallback)(E2AP_PDU_t*);
 uint8_t kpmInit();
 uint8_t kpmEnableIndication(bool *flag);
+<<<<<<< Updated upstream
 uint8_t fillRanFunctionName(RANfunction_Name_t *ranfunc_name);
+=======
+uint8_t fillRanFunctionName(RANfunction_Name_t *ranfunc_name, uint8_t kpmVersion);
+>>>>>>> Stashed changes
 uint8_t fillTriggerStyleItem(RIC_EventTriggerStyle_Item_t *trigger_style);
 uint8_t fillTriggerStyleList(struct E2SM_KPM_RANfunction_Description__ric_EventTriggerStyle_List *triggerStyleList);
 uint8_t fillTriggerStyleListV3(struct E2SM_KPM_RANfunction_Description_v300__ric_EventTriggerStyle_List *triggerStyleList);
@@ -120,6 +130,12 @@ uint8_t kpmFreeIndicationHeader(E2SM_KPM_IndicationHeader_Format1_t *indicaHeade
 uint8_t fillIndicationHeaderFormat1Optional(E2SM_KPM_IndicationHeader_Format1_t *indicaHeaderFormat1);
 uint8_t fillIndicationHeaderFormat1(E2SM_KPM_IndicationHeader_Format1_t *indicaHeaderFormat1);
 uint8_t fillRicIndicationHeader(RICindicationHeader_t *ricIndicationHeader);
+<<<<<<< Updated upstream
+=======
+uint8_t fillIndicationHeaderFormat1OptionalV3(E2SM_KPM_IndicationHeader_Format1_v300_t *indicaHeaderFormat1);
+uint8_t fillIndicationHeaderFormat1V3(E2SM_KPM_IndicationHeader_Format1_v300_t *indicaHeaderFormat1);
+uint8_t fillRicIndicationHeaderV3(RICindicationHeader_t *ricIndicationHeader);
+>>>>>>> Stashed changes
 uint8_t fillSliceMeasDataItem(MeasurementDataItem_t *measDataItem, unsigned long intValue);
 uint8_t fillMeasDataItem(MeasurementDataItem_t *item, MeasurementRecordItem_PR present, int integer, double real);
 uint8_t fillIndicationMessageFormat1(E2SM_KPM_IndicationMessage_Format1_t *indicaMessageFormat1);
@@ -147,6 +163,7 @@ void kpmStoreSliceRlcMetric(SlicePmList* sliceMetricList);
 void kpmStoreMacMetric(MacPrbPm* macPrbPm);
 bool kpmCellIndicationEnable;
 bool kpmSliceIndicationEnable;
+bool kpmIndicationV3Enable;
 
 /*Pm Metric for NW Slicing from RLC to DUAPP*/
 typedef struct kpmCellMacPm
@@ -213,7 +230,11 @@ extern RICindicationMessage_t *ricIndicationMessage;
 
 uint32_t reportingPeriodFmt1, reportingPeriodFmt3, reportingPeriod;
 uint32_t indicationCountFmt1, indicationCountFmt3;
+<<<<<<< Updated upstream
 uint8_t indicationMeasNameFmt1 [SIZE_OF_MAX_INDICATION_INFO][25], indicationMeasNameFmt3 [SIZE_OF_MAX_INDICATION_INFO][25];
+=======
+uint8_t indicationMeasNameFmt1[SIZE_OF_MAX_INDICATION_INFO][25], indicationMeasNameFmt3[SIZE_OF_MAX_INDICATION_INFO][25];
+>>>>>>> Stashed changes
 int sizeOfMeasNameFmt1, sizeOfMeasNameFmt3;
 
 

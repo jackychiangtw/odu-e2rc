@@ -21,6 +21,7 @@
 #ifndef _AP_H_
 #define _AP_H_
 #include "RICindicationMessage.h"
+#include "RICindicationHeader.h"
 
 #define ENCODE_FAIL -1
 
@@ -47,6 +48,8 @@ typedef struct e2apDb
 
 E2apMsgDb e2apMsgDb;
 RICindicationMessage_t *ricIndicationMessage;
+RICindicationHeader_t *ricIndicationHeader;
+
 
 uint8_t BuildAndSendE2SetupReq();
 uint8_t SendE2APMsg(Region , Pool );

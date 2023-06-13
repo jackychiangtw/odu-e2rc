@@ -742,7 +742,11 @@ uint8_t SchProcSlotInd(Pst *pst, SlotTimingInfo *slotInd)
       cell->schDlSlotInfo[slot]->ulGrant = NULLP;
    }
 
+<<<<<<< Updated upstream
    /* Send msg to MAC */
+=======
+     /* Send msg to MAC */
+>>>>>>> Stashed changes
 
    SchSliceBasedSliceCb *sliceCb = NULLP;
    SchSliceBasedCellCb  *schSpcCell = (SchSliceBasedCellCb *)cell->schSpcCell;
@@ -767,6 +771,11 @@ uint8_t SchProcSlotInd(Pst *pst, SlotTimingInfo *slotInd)
                }
                
                dlSchedInfo.prbMetric.usedPrb += sliceCb->allocatedPrb;
+<<<<<<< Updated upstream
+=======
+               if(sliceCb->allocatedPrb)
+                  printf("\nJacky --> SCH : Slice # %d : Used Prb = %d", slice_cnt, sliceCb->allocatedPrb);
+>>>>>>> Stashed changes
                slice_cnt = slice_cnt + 1;
          }
          else{
@@ -774,6 +783,7 @@ uint8_t SchProcSlotInd(Pst *pst, SlotTimingInfo *slotInd)
          }
          sliceCbNode = sliceCbNode->next;
       }
+<<<<<<< Updated upstream
       ret = sendDlAllocToMac(&dlSchedInfo, schInst);
       if(ret != ROK)
       {
@@ -793,7 +803,23 @@ uint8_t SchProcSlotInd(Pst *pst, SlotTimingInfo *slotInd)
    if(dlSchedInfo.prbMetric.listOfSlicePm){
       SCH_FREE(dlSchedInfo.prbMetric.listOfSlicePm, dlSchedInfo.prbMetric.sliceNum * sizeof(SchSlicePrbPmList));
       dlSchedInfo.prbMetric.listOfSlicePm = NULLP;
+=======
    }
+   // printf("\nJacky --> SCH : Cell Used Prb = %d", dlSchedInfo.prbMetric.usedPrb );
+
+   ret = sendDlAllocToMac(&dlSchedInfo, schInst);
+   if(ret != ROK)
+   {
+      DU_LOG("\nERROR  -->  SCH : Sending DL Broadcast allocation from SCH to MAC failed");
+      return (ret);
+>>>>>>> Stashed changes
+   }
+
+   if(dlSchedInfo.prbMetric.listOfSlicePm){
+      SCH_FREE(dlSchedInfo.prbMetric.listOfSlicePm, dlSchedInfo.prbMetric.sliceNum * sizeof(SchSlicePrbPmList));
+      dlSchedInfo.prbMetric.listOfSlicePm = NULLP;
+   }
+
 
    schInitDlSlot(cell->schDlSlotInfo[slot]);
    schUlResAlloc(cell, schInst);

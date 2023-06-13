@@ -19,6 +19,7 @@
 #include "du_e2sm_rc_handler.h"
 
 #define SIZE_OF_SERVICE_MODEL 3
+<<<<<<< Updated upstream
 
 #define INDEX_OF_KPM_V2 0
 #define INDEX_OF_KPM_V3 1
@@ -40,7 +41,31 @@ typedef struct ran_func_info {
     uint8_t (*procRicCtrlMessage)(RICcontrolMessage_t*);
     uint8_t (*procRicCtrlHeader)(RICcontrolHeader_t*);
 }RanFuncInfo;
+=======
+#define USING_SERVICE_MODEL 3
 
+#define INDEX_OF_KPM_V2 1
+#define INDEX_OF_KPM_V3 0
+#define INDEX_OF_RC 2
 
+uint8_t smFillE2SetupReq(RANfunctions_List_t  *ranfun_list);
+uint8_t smDecapEventTrigDefinition(RICeventTriggerDefinition_t *eventTrigDefini, uint32_t ranFuncId, long reqId, long instanceId);
+uint8_t smDecapActionDefinition(RICactionDefinition_t *ricdifin, uint32_t ranFuncId, long reqId, long instanceId);
+uint8_t smProcRicCtrlHeader(RICcontrolHeader_t *ricCtrlHdr, uint32_t ranFuncId, long reqId, long instanceId);
+uint8_t smProcRicCtrlMessage(RICcontrolMessage_t *ricCtrlMsg, uint32_t ranFuncId, long reqId, long instanceId);
+>>>>>>> Stashed changes
+
+typedef struct ran_func_info {
+    long ranFunctionId;
+    long ranFunctionRev;
+    uint8_t ranFunctionOId[30];
+    uint8_t (*fillRanFuncDescription)(RANfunctionDefinition_t*);
+    uint8_t (*decapEventTrigDefinition)(RICeventTriggerDefinition_t*);
+    uint8_t (*decapActionDefinition)(RICactionDefinition_t*);
+    uint8_t (*procRicCtrlMessage)(RICcontrolMessage_t*);
+    uint8_t (*procRicCtrlHeader)(RICcontrolHeader_t*);
+}RanFuncInfo;
+
+RanFuncInfo ranFuncInfo[SIZE_OF_SERVICE_MODEL];
 
 #endif

@@ -57,6 +57,12 @@
         "measurementconditem-v300.h": "c",
         "matchingconditem.h": "c",
         "matchingconditem-choice.h": "c",
+<<<<<<< Updated upstream
         "e2sm-kpm-ranfunction-description.h": "c"
+=======
+        "e2sm-kpm-ranfunction-description.h": "c",
+        "sch_slice_based.h": "c",
+        "lrg.h": "c"
+>>>>>>> Stashed changes
     }
 }

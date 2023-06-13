@@ -22,6 +22,10 @@ uint8_t kpmInit(){
     indicationCountFmt1 = 0;
     indicationCountFmt3 = 0;
     reportingPeriod = 0;
+<<<<<<< Updated upstream
+=======
+    kpmIndicationV3Enable = 0;
+>>>>>>> Stashed changes
     return 0;
 }
 
@@ -30,11 +34,16 @@ uint8_t kpmEnableIndication(bool *flag){
     return 0;
 }
 
-uint8_t fillRanFunctionName(RANfunction_Name_t *ranfunc_name){
+uint8_t fillRanFunctionName(RANfunction_Name_t *ranfunc_name, uint8_t kpmVersion){
     uint8_t ranfunc_defin[] = "ORAN-E2SM-KPM"; // RAN Function Definition,
     uint8_t ranfunc_descr[] = "KPM monitor"; // RAN function description
-    uint8_t ranfunc_oid[] = "1.3.6.1.4.1.53148.1.2.2.2"; // RAN function service model OID
+    uint8_t ranfunc_oidv2[] = "1.3.6.1.4.1.53148.1.2.2.2"; // RAN function service model OID
+    uint8_t ranfunc_oidv3[] = "1.3.6.1.4.1.53148.1.3.2.2"; 
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
     ranfunc_name->ranFunction_ShortName.size = strlen((const char*)ranfunc_defin);
     // allocate memory for ranfunc_name->ranFunction_ShortName.buf by DU_ALLOC
     DU_ALLOC(ranfunc_name->ranFunction_ShortName.buf, ranfunc_name->ranFunction_ShortName.size);
@@ -61,15 +70,32 @@ uint8_t fillRanFunctionName(RANfunction_Name_t *ranfunc_name){
     }
     *ranfunc_name->ranFunction_Instance = 1;
 
+<<<<<<< Updated upstream
     ranfunc_name->ranFunction_E2SM_OID.size = strlen((const char*)ranfunc_oid);
+=======
+    ranfunc_name->ranFunction_E2SM_OID.size = strlen((const char*)ranfunc_oidv2);
+>>>>>>> Stashed changes
     // allocate memory for ranfunc_name->ranFunction_E2SM_OID.buf by DU_ALLOC
     DU_ALLOC(ranfunc_name->ranFunction_E2SM_OID.buf, ranfunc_name->ranFunction_E2SM_OID.size);
     if(ranfunc_name->ranFunction_E2SM_OID.buf == NULL){
         printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ranfunc_name->ranFunction_E2SM_OID.buf");
         return RFAILED;
+<<<<<<< Updated upstream
         }
     memcpy(ranfunc_name->ranFunction_E2SM_OID.buf, ranfunc_oid, ranfunc_name->ranFunction_E2SM_OID.size);
 
+=======
+    }
+    if(kpmVersion == 2)
+        memcpy(ranfunc_name->ranFunction_E2SM_OID.buf, ranfunc_oidv2, ranfunc_name->ranFunction_E2SM_OID.size);
+    else if(kpmVersion == 3)
+        memcpy(ranfunc_name->ranFunction_E2SM_OID.buf, ranfunc_oidv3, ranfunc_name->ranFunction_E2SM_OID.size);
+    else{
+        printf("\nERROR   -->  E2SM-KPM : Invalid KPM versionf");
+    }
+
+
+>>>>>>> Stashed changes
     return 0;
 }
 
@@ -394,7 +420,11 @@ uint8_t kpmRanFuncDescriptionV3(RANfunctionDefinition_t  *ranFunDefinition){
 
     ASN_STRUCT_RESET(asn_DEF_E2SM_KPM_RANfunction_Description_v300, ranfunc_desc);
     
+<<<<<<< Updated upstream
     if(fillRanFunctionName(&ranfunc_desc->ranFunction_Name) != 0){
+=======
+    if(fillRanFunctionName(&ranfunc_desc->ranFunction_Name, 3) != 0){
+>>>>>>> Stashed changes
         return RFAILED;
     }
 
@@ -459,7 +489,11 @@ uint8_t kpmRanFuncDescription(RANfunctionDefinition_t  *ranFunDefinition)
 
     ASN_STRUCT_RESET(asn_DEF_E2SM_KPM_RANfunction_Description, ranfunc_desc);
 
+<<<<<<< Updated upstream
     if(fillRanFunctionName(&ranfunc_desc->ranFunction_Name) != 0){
+=======
+    if(fillRanFunctionName(&ranfunc_desc->ranFunction_Name, 2) != 0){
+>>>>>>> Stashed changes
         return RFAILED;
     }
     // allocation memory for ranfunc_desc->ric_EventTriggerStyle_List by DU_ALLOC
@@ -629,7 +663,11 @@ uint8_t decapActionDefinitionFmt1(E2SM_KPM_ActionDefinition_Format1_t *actionDef
             index = actionFmt1measNameIsSupport(actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measName.buf);
             if(index != -1){
                 printf("\nINFO  -->  E2SM-KPM : Measurement name in Fmt 1 is vaild \n");
+<<<<<<< Updated upstream
                 memcpy(indicationMeasNameFmt1[index], measInfoStyle1[index], strlen((const char*)measInfoStyle1[index])+1);
+=======
+                memcpy(indicationMeasNameFmt1[sizeOfMeasNameFmt1], measInfoStyle1[index], strlen((const char*)measInfoStyle1[index])+1);
+>>>>>>> Stashed changes
                 sizeOfMeasNameFmt1++;
             }
             else{
@@ -643,7 +681,11 @@ uint8_t decapActionDefinitionFmt1(E2SM_KPM_ActionDefinition_Format1_t *actionDef
     }
 
     for(int i=0;i<sizeOfMeasNameFmt1;i++){
+<<<<<<< Updated upstream
         printf("\nINFO  -->  E2SM-KPM : # %d Measurement name is %s", i, indicationMeasNameFmt1[index]);
+=======
+        printf("\nINFO  -->  E2SM-KPM : # %d Measurement name is %s", i, indicationMeasNameFmt1[i]);
+>>>>>>> Stashed changes
     }
     if(sizeOfMeasNameFmt1>0)
         return ROK;
@@ -654,11 +696,16 @@ uint8_t decapActionDefinitionFmt1(E2SM_KPM_ActionDefinition_Format1_t *actionDef
 
 uint8_t decapActionDefinitionFmt1V3(E2SM_KPM_ActionDefinition_Format1_v300_t *actionDefinFormat1){
     int index;
+<<<<<<< Updated upstream
     printf("\nINFO  -->  E2SM-KPM : Granularity Period is %ld\n", actionDefinFormat1->granulPeriod);
+=======
+    printf("\nINFO  -->  E2SM-KPMv3 : Granularity Period is %ld\n", actionDefinFormat1->granulPeriod);
+>>>>>>> Stashed changes
     sizeOfMeasNameFmt1 = 0;
 
     for(int i=0;i<actionDefinFormat1->measInfoList.list.count;i++){
         if(actionDefinFormat1->measInfoList.list.array[i]->measType.present == MeasurementType_PR_measID)
+<<<<<<< Updated upstream
             printf("\nINFO  -->  E2SM-KPM : Measurement ID is %ld", actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measID);
         else if(actionDefinFormat1->measInfoList.list.array[i]->measType.present == MeasurementType_PR_measName){
             printf("\nINFO  -->  E2SM-KPM : Measurement Name is %s", actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measName.buf);
@@ -670,16 +717,37 @@ uint8_t decapActionDefinitionFmt1V3(E2SM_KPM_ActionDefinition_Format1_v300_t *ac
             }
             else{
                 printf("\nINFO  -->  E2SM-KPM : Measurement name is invaild \n");
+=======
+            printf("\nINFO  -->  E2SM-KPMv3 : Measurement ID is %ld", actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measID);
+        else if(actionDefinFormat1->measInfoList.list.array[i]->measType.present == MeasurementType_PR_measName){
+            printf("\nINFO  -->  E2SM-KPMv3 : Measurement Name is %s", actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measName.buf);
+            index = actionFmt1measNameIsSupport(actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measName.buf);
+            if(index != -1){
+                printf("\nINFO  -->  E2SM-KPMv3 : Measurement name in Fmt 1 is vaild, %d\n", index);
+                memcpy(indicationMeasNameFmt1[sizeOfMeasNameFmt1], measInfoStyle1[index], strlen((const char*)measInfoStyle1[index])+1);
+                sizeOfMeasNameFmt1++;
+            }
+            else{
+                printf("\nINFO  -->  E2SM-KPMv3 : Measurement name is invaild \n");
+>>>>>>> Stashed changes
                 return RFAILED;
             }
         }
         else{
+<<<<<<< Updated upstream
             printf("\nINFO  -->  E2SM-KPM : Measurement type is invaild \n");
+=======
+            printf("\nINFO  -->  E2SM-KPMv3 : Measurement type is invaild \n");
+>>>>>>> Stashed changes
         }
     }
 
     for(int i=0;i<sizeOfMeasNameFmt1;i++){
+<<<<<<< Updated upstream
         printf("\nINFO  -->  E2SM-KPM : # %d Measurement name is %s", i, indicationMeasNameFmt1[index]);
+=======
+        printf("\nINFO  -->  E2SM-KPMv3 : # %d Measurement name is %s", i, indicationMeasNameFmt1[i]);
+>>>>>>> Stashed changes
     }
     if(sizeOfMeasNameFmt1>0)
         return ROK;
@@ -701,7 +769,11 @@ uint8_t decapActionDefinitionFmt3(E2SM_KPM_ActionDefinition_Format3_t *actionDef
             index = actionFmt3measNameIsSupport(actionDefinFormat3->measCondList.list.array[i]->measType.choice.measName.buf);
             if(index != -1){
                 printf("\nINFO  -->  E2SM-KPM : Measurement name in Fmt 3 is vaild \n");
+<<<<<<< Updated upstream
                 memcpy(indicationMeasNameFmt3, measInfoStyle2[index], strlen((const char*)measInfoStyle2[index])+1);
+=======
+                memcpy(indicationMeasNameFmt3[sizeOfMeasNameFmt3], measInfoStyle2[index], strlen((const char*)measInfoStyle2[index])+1);
+>>>>>>> Stashed changes
                 sizeOfMeasNameFmt3++;
             }
         }
@@ -709,7 +781,14 @@ uint8_t decapActionDefinitionFmt3(E2SM_KPM_ActionDefinition_Format3_t *actionDef
             printf("\nINFO  -->  E2SM-KPM : Measurement type is invaild \n");
         }
     }
+<<<<<<< Updated upstream
     if(sizeOfMeasNameFmt1>0)
+=======
+    for(int i=0;i<sizeOfMeasNameFmt3;i++){
+        printf("\nINFO  -->  E2SM-KPM : # %d Measurement name is %s", i, indicationMeasNameFmt3[i]);
+    }
+    if(sizeOfMeasNameFmt3>0)
+>>>>>>> Stashed changes
         return ROK;
     else
         return RFAILED;
@@ -717,11 +796,16 @@ uint8_t decapActionDefinitionFmt3(E2SM_KPM_ActionDefinition_Format3_t *actionDef
 
 uint8_t decapActionDefinitionFmt3V3(E2SM_KPM_ActionDefinition_Format3_v300_t *actionDefinFormat3){
     int index;
+<<<<<<< Updated upstream
     printf("\nINFO  -->  E2SM-KPM : Granularity Period is %ld\n", actionDefinFormat3->granulPeriod);
+=======
+    printf("\nINFO  -->  E2SM-KPMv3 : Granularity Period is %ld\n", actionDefinFormat3->granulPeriod);
+>>>>>>> Stashed changes
     sizeOfMeasNameFmt3 = 0;
 
     for(int i=0;i<actionDefinFormat3->measCondList.list.count;i++){
         if(actionDefinFormat3->measCondList.list.array[i]->measType.present == MeasurementType_PR_measID)
+<<<<<<< Updated upstream
             printf("\nINFO  -->  E2SM-KPM : Measurement ID is %ld", actionDefinFormat3->measCondList.list.array[i]->measType.choice.measID);
         else if(actionDefinFormat3->measCondList.list.array[i]->measType.present == MeasurementType_PR_measName){
             printf("\nINFO  -->  E2SM-KPM : Measurement Name is %s", actionDefinFormat3->measCondList.list.array[i]->measType.choice.measName.buf);
@@ -729,14 +813,33 @@ uint8_t decapActionDefinitionFmt3V3(E2SM_KPM_ActionDefinition_Format3_v300_t *ac
             if(index != -1){
                 printf("\nINFO  -->  E2SM-KPM : Measurement name in Fmt 3 is vaild \n");
                 memcpy(indicationMeasNameFmt3, measInfoStyle2[index], strlen((const char*)measInfoStyle2[index])+1);
+=======
+            printf("\nINFO  -->  E2SM-KPMv3 : Measurement ID is %ld", actionDefinFormat3->measCondList.list.array[i]->measType.choice.measID);
+        else if(actionDefinFormat3->measCondList.list.array[i]->measType.present == MeasurementType_PR_measName){
+            printf("\nINFO  -->  E2SM-KPMv3 : Measurement Name is %s", actionDefinFormat3->measCondList.list.array[i]->measType.choice.measName.buf);
+            index = actionFmt3measNameIsSupport(actionDefinFormat3->measCondList.list.array[i]->measType.choice.measName.buf);
+            if(index != -1){
+                printf("\nINFO  -->  E2SM-KPMv3 : Measurement name in Fmt 3 is vaild \n");
+                memcpy(indicationMeasNameFmt3[sizeOfMeasNameFmt3], measInfoStyle2[index], strlen((const char*)measInfoStyle2[index])+1);
+>>>>>>> Stashed changes
                 sizeOfMeasNameFmt3++;
             }
         }
         else{
+<<<<<<< Updated upstream
             printf("\nINFO  -->  E2SM-KPM : Measurement type is invaild \n");
         }
     }
     if(sizeOfMeasNameFmt1>0)
+=======
+            printf("\nINFO  -->  E2SM-KPMv3 : Measurement type is invaild \n");
+        }
+    }
+     for(int i=0;i<sizeOfMeasNameFmt3;i++){
+        printf("\nINFO  -->  E2SM-KPM : # %d Measurement name is %s", i, indicationMeasNameFmt3[i]);
+    }
+    if(sizeOfMeasNameFmt3>0)
+>>>>>>> Stashed changes
         return ROK;
     else
         return RFAILED;
@@ -790,40 +893,68 @@ uint8_t kpmDecapActionDefinition(RICactionDefinition_t *ricdifin){
         default:
             printf("\nINFO   -->  E2 Agent: Action Definition Format doesn't support");
     }
+<<<<<<< Updated upstream
+=======
+
+    kpmIndicationV3Enable = 0;
+>>>>>>> Stashed changes
     // ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_ActionDefinition, actionDefin);
     return 0;
 }
 
 uint8_t kpmDecapActionDefinitionV3(RICactionDefinition_t *ricdifin){
+<<<<<<< Updated upstream
     printf("\nINFO   -->  E2SM-KPM : Decap Action Definition v3<<<<\n");
+=======
+    printf("\nINFO   -->  E2SM-KPMv3 : Decap Action Definition v3<<<<\n");
+>>>>>>> Stashed changes
 
     asn_dec_rval_t  rval;
     E2SM_KPM_ActionDefinition_v300_t *actionDefin;
     // allocate memory for actionDefin by DU_ALLOC
     DU_ALLOC(actionDefin, sizeof(E2SM_KPM_ActionDefinition_v300_t));
     if(actionDefin == NULL){
+<<<<<<< Updated upstream
         printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for actionDefin");
+=======
+        printf("\nERROR   -->  E2SM-KPMv3 : Memory allocation failed for actionDefin");
+>>>>>>> Stashed changes
         return RFAILED;
     }
 
     rval = aper_decode(0, &asn_DEF_E2SM_KPM_ActionDefinition_v300, (void **)&actionDefin, ricdifin->buf, ricdifin->size, 0, 0);
     if(rval.code == RC_FAIL || rval.code == RC_WMORE)
     {
+<<<<<<< Updated upstream
       printf("\nERROR  -->  E2SM-KPM : Action Definition decode failed %d\n", rval.code);
     }
     
     xer_fprint(stdout, &asn_DEF_E2SM_KPM_ActionDefinition_v300, actionDefin);
     printf("\nINFO   -->  E2SM-KPM: RIC Style Type = %ld", actionDefin->ric_Style_Type);
+=======
+      printf("\nERROR  -->  E2SM-KPMv3 : Action Definition decode failed %d\n", rval.code);
+    }
+    
+    xer_fprint(stdout, &asn_DEF_E2SM_KPM_ActionDefinition_v300, actionDefin);
+    printf("\nINFO   -->  E2SM-KPMv3: RIC Style Type = %ld", actionDefin->ric_Style_Type);
+>>>>>>> Stashed changes
 
     switch(actionDefin->actionDefinition_formats.present){
         case E2SM_KPM_ActionDefinition_v300__actionDefinition_formats_PR_actionDefinition_Format1:
             if(decapActionDefinitionFmt1V3(actionDefin->actionDefinition_formats.choice.actionDefinition_Format1) == ROK){
                 kpmEnableIndication(&kpmCellIndicationEnable);
                 reportingPeriodFmt1 = reportingPeriod; 
+<<<<<<< Updated upstream
                 printf("\nINFO   -->  E2SM-KPM: Reporting Period format 1 = %d", reportingPeriodFmt1);
             }
             else{
                 printf("\nINFO   -->  E2SM-KPM: Subscription Definition isn't supported");
+=======
+                printf("\nINFO   -->  E2SM-KPMv3: Reporting Period format 1 = %d", reportingPeriodFmt1);
+            }
+            else{
+                printf("\nINFO   -->  E2SM-KPMv3: Subscription Definition isn't supported");
+>>>>>>> Stashed changes
             }
             
         break;
@@ -831,6 +962,7 @@ uint8_t kpmDecapActionDefinitionV3(RICactionDefinition_t *ricdifin){
             if(decapActionDefinitionFmt3V3(actionDefin->actionDefinition_formats.choice.actionDefinition_Format3) == ROK){
                 kpmEnableIndication(&kpmSliceIndicationEnable);
                 reportingPeriodFmt3 = reportingPeriod; 
+<<<<<<< Updated upstream
                 printf("\nINFO   -->  E2SM-KPM: Reporting Period format 3 = %d", reportingPeriodFmt3);
             }
             else
@@ -842,6 +974,19 @@ uint8_t kpmDecapActionDefinitionV3(RICactionDefinition_t *ricdifin){
     }
 
 
+=======
+                printf("\nINFO   -->  E2SM-KPMv3: Reporting Period format 3 = %d", reportingPeriodFmt3);
+            }
+            else{
+                printf("\nINFO   -->  E2SM-KPMv3: Subscription Definition isn't supported");
+            }
+        break;
+        default:
+            printf("\nINFO   -->  E2SM-KPMv3: Action Definition Format doesn't support");
+    }
+
+    kpmIndicationV3Enable = 1;
+>>>>>>> Stashed changes
     // ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_ActionDefinition, actionDefin);
     return 0;
 
@@ -868,6 +1013,30 @@ uint8_t kpmFreeIndicationHeader(E2SM_KPM_IndicationHeader_Format1_t *indicaHeade
    return 0;
 }
 
+<<<<<<< Updated upstream
+=======
+uint8_t kpmFreeIndicationHeaderV3(E2SM_KPM_IndicationHeader_Format1_v300_t *indicaHeaderFormat1){
+    if(indicaHeaderFormat1->colletStartTime.size>0){
+        if(indicaHeaderFormat1->colletStartTime.buf){
+            DU_FREE(indicaHeaderFormat1->colletStartTime.buf, indicaHeaderFormat1->colletStartTime.size);
+        }
+    }
+    if(indicaHeaderFormat1->senderName){
+        kpmFreeOctetString(indicaHeaderFormat1->senderName); 
+    }
+    if(indicaHeaderFormat1->senderType){
+        kpmFreeOctetString(indicaHeaderFormat1->senderType); 
+    }
+    if(indicaHeaderFormat1->vendorName){
+        kpmFreeOctetString(indicaHeaderFormat1->vendorName); 
+    }
+    if(indicaHeaderFormat1->fileFormatversion){
+        kpmFreeOctetString(indicaHeaderFormat1->fileFormatversion); 
+    }
+   return 0;
+}
+
+>>>>>>> Stashed changes
 uint8_t fillIndicationHeaderFormat1Optional(E2SM_KPM_IndicationHeader_Format1_t *indicaHeaderFormat1){
     uint8_t sender[] = "NTUST";
     uint8_t type[] = "DU";
@@ -907,6 +1076,48 @@ uint8_t fillIndicationHeaderFormat1Optional(E2SM_KPM_IndicationHeader_Format1_t 
     return 0;
 }
 
+<<<<<<< Updated upstream
+=======
+uint8_t fillIndicationHeaderFormat1OptionalV3(E2SM_KPM_IndicationHeader_Format1_v300_t *indicaHeaderFormat1){
+    uint8_t sender[] = "NTUST";
+    uint8_t type[] = "DU";
+    uint8_t vendor[] = "OSC";
+
+    DU_ALLOC(indicaHeaderFormat1->senderName, sizeof(PrintableString_t));
+    DU_ALLOC(indicaHeaderFormat1->senderType, sizeof(PrintableString_t));
+    DU_ALLOC(indicaHeaderFormat1->vendorName, sizeof(PrintableString_t));
+
+    // allocate memory for senderName.buf by DU_ALLOC
+    DU_ALLOC(indicaHeaderFormat1->senderName->buf, sizeof(sender) * sizeof(uint8_t));
+    if(indicaHeaderFormat1->senderName->buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaHeaderFormat1->senderName.buf");
+        return RFAILED;
+    }
+    indicaHeaderFormat1->senderName->size = sizeof(sender);
+    memcpy(indicaHeaderFormat1->senderName->buf, sender, indicaHeaderFormat1->senderName->size);
+
+    // allocate memory for senderType.buf by DU_ALLOC
+    DU_ALLOC(indicaHeaderFormat1->senderType->buf, sizeof(type) * sizeof(uint8_t));
+    if(indicaHeaderFormat1->senderType->buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaHeaderFormat1->senderType.buf");
+        return RFAILED;
+    }
+    indicaHeaderFormat1->senderType->size = sizeof(type);
+    memcpy(indicaHeaderFormat1->senderType->buf, type, indicaHeaderFormat1->senderType->size);
+
+    // allocate memory for vendorName.buf by DU_ALLOC
+    DU_ALLOC(indicaHeaderFormat1->vendorName->buf, sizeof(vendor) * sizeof(uint8_t));
+    if(indicaHeaderFormat1->vendorName->buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaHeaderFormat1->vendorName.buf");
+        return RFAILED;
+    }
+    indicaHeaderFormat1->vendorName->size = sizeof(vendor);
+    memcpy(indicaHeaderFormat1->vendorName->buf, vendor, indicaHeaderFormat1->vendorName->size);
+
+    return 0;
+}
+
+>>>>>>> Stashed changes
 uint8_t fillIndicationHeaderFormat1(E2SM_KPM_IndicationHeader_Format1_t *indicaHeaderFormat1){
     //printf("Function \"%s\" is start\n", __func__);
     
@@ -933,6 +1144,40 @@ uint8_t fillIndicationHeaderFormat1(E2SM_KPM_IndicationHeader_Format1_t *indicaH
     return 0;
 }
 
+<<<<<<< Updated upstream
+=======
+uint8_t fillIndicationHeaderFormat1V3(E2SM_KPM_IndicationHeader_Format1_v300_t *indicaHeaderFormat1){
+    //printf("Function \"%s\" is start\n", __func__);
+
+    struct timeval current_time;
+    gettimeofday(&current_time, NULL);
+
+    uint64_t timestamp = (uint64_t)current_time.tv_sec * 1000000 + current_time.tv_usec;
+
+    // printf("64-bit timestamp in microseconds: %llu\n", timestamp);
+    // unsigned long timestamp = (unsigned long)now * 1000; // 64-bit timestamp defined in section 6 of IETF RFC 5905
+    // unsigned long timestamp = (unsigned long)now;
+    uint8_t ts[8];
+    for(int i=0;i<8;i++){
+        ts[i] = timestamp % 256;
+        timestamp = timestamp / 256;
+    }
+    // allocate memory for colletStartTime.buf by DU_ALLOC
+    DU_ALLOC(indicaHeaderFormat1->colletStartTime.buf, 8 * sizeof(uint8_t));
+    if(indicaHeaderFormat1->colletStartTime.buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaHeaderFormat1->colletStartTime.buf");
+        return RFAILED;
+    }
+    indicaHeaderFormat1->colletStartTime.size = 8;
+    memcpy(indicaHeaderFormat1->colletStartTime.buf,ts, 8);
+    if(fillIndicationHeaderFormat1OptionalV3(indicaHeaderFormat1) != RFAILED){
+        return RFAILED;
+    }
+
+    return 0;
+}
+
+>>>>>>> Stashed changes
 
 uint8_t fillRicIndicationHeader(RICindicationHeader_t *ricIndicationHeader){
     printf("\nINFO   -->  E2SM-KPM : Fill KPM RIC Indication Header");
@@ -990,6 +1235,66 @@ uint8_t fillRicIndicationHeader(RICindicationHeader_t *ricIndicationHeader){
     DU_FREE(indicaHeader, sizeof(E2SM_KPM_IndicationHeader_t));
     return 0;
 
+<<<<<<< Updated upstream
+=======
+}
+
+uint8_t fillRicIndicationHeaderV3(RICindicationHeader_t *ricIndicationHeader){
+    printf("\nINFO   -->  E2SM-KPMv3 : Fill KPM RIC Indication Header");
+
+    E2SM_KPM_IndicationHeader_v300_t *indicaHeader;
+    // allocate memory for indicaHeader by DU_ALLOC
+    DU_ALLOC(indicaHeader, sizeof(E2SM_KPM_IndicationHeader_v300_t));
+    if(indicaHeader == NULL){
+        printf("\nERROR   -->  E2SM-KPMv3 : Memory allocation failed for indicaHeader");
+        return RFAILED;
+    }
+    E2SM_KPM_IndicationHeader_Format1_v300_t *indicaHeaderFormat1;
+    // allocate memory for indicaHeaderFormat1 by DU_ALLOC
+    DU_ALLOC(indicaHeaderFormat1, sizeof(E2SM_KPM_IndicationHeader_Format1_v300_t));
+    if(indicaHeaderFormat1 == NULL){
+        printf("\nERROR   -->  E2SM-KPMv3 : Memory allocation failed for indicaHeaderFormat1");
+        return RFAILED;
+    }
+    
+    if(fillIndicationHeaderFormat1V3(indicaHeaderFormat1) != RFAILED){
+        return RFAILED; 
+    }
+
+    indicaHeader->indicationHeader_formats.present = E2SM_KPM_IndicationHeader_v300__indicationHeader_formats_PR_indicationHeader_Format1;
+    indicaHeader->indicationHeader_formats.choice.indicationHeader_Format1 = indicaHeaderFormat1;
+
+    xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationHeader_v300, indicaHeader);
+
+    uint8_t e2smbuffer[8192] = {0, };
+    size_t e2smbuffer_size = 8192;
+    asn_codec_ctx_t *opt_cod = 0;
+    
+    asn_enc_rval_t er =
+    asn_encode_to_buffer(opt_cod,
+          ATS_ALIGNED_BASIC_PER,
+          &asn_DEF_E2SM_KPM_IndicationHeader_v300,
+          indicaHeader, e2smbuffer, e2smbuffer_size);
+
+    if(er.encoded == -1){
+        printf("\nERROR   -->  E2SM-KPMv3 : Encode E2SM-KPM Indication Header failed");
+    }
+    else{
+        // allocate memory for ricIndicationHeader->buf
+        DU_ALLOC(ricIndicationHeader->buf, er.encoded * sizeof(uint8_t));
+        if(ricIndicationHeader->buf == NULL){
+            printf("\nERROR   -->  E2SM-KPMv3 : Memory allocation failed for ricIndicationHeader->buf");
+            return RFAILED;
+        }
+        ricIndicationHeader->size = er.encoded;
+        memcpy(ricIndicationHeader->buf,e2smbuffer,er.encoded);
+    }
+
+    kpmFreeIndicationHeaderV3(indicaHeaderFormat1);
+    DU_FREE(indicaHeaderFormat1, sizeof(E2SM_KPM_IndicationHeader_Format1_v300_t));
+    DU_FREE(indicaHeader, sizeof(E2SM_KPM_IndicationHeader_v300_t));
+    return 0;
+>>>>>>> Stashed changes
 }
 
 uint8_t fillSliceMeasDataItem(MeasurementDataItem_t *measDataItem, unsigned long intValue){
@@ -1064,6 +1369,7 @@ uint8_t fillIndicationMessageFormat1(E2SM_KPM_IndicationMessage_Format1_t *indic
         index = actionFmt1measNameIsSupport(indicationMeasNameFmt1[i]);
         if(index == 0){
             fillMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_integer, kpmCellPmDb.avgThpDl, 0);
+<<<<<<< Updated upstream
         }
         else if(index == 1){
             fillMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_integer, kpmCellPmDb.avgUsedPrb, 0);
@@ -1074,11 +1380,36 @@ uint8_t fillIndicationMessageFormat1(E2SM_KPM_IndicationMessage_Format1_t *indic
         else if(index == 3){
             fillMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_real, 0, (double)kpmCellPmDb.avgUsagePrb);
         }
+=======
+            printf("\nINFO   -->  E2SM-KPM : Cell Measurement \"%s\" : %d", indicationMeasNameFmt1[index], kpmCellPmDb.avgThpDl);
+        }
+        else if(index == 1){
+            fillMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_integer, kpmCellPmDb.avgUsedPrb, 0);
+            printf("\nINFO   -->  E2SM-KPM : Cell Measurement \"%s\" : %d", indicationMeasNameFmt1[index], kpmCellPmDb.avgUsedPrb);
+
+        }
+        else if(index == 2){
+            fillMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_integer, kpmCellPmDb.avgTotalPrb, 0);
+            printf("\nINFO   -->  E2SM-KPM : Cell Measurement \"%s\" : %d", indicationMeasNameFmt1[index], kpmCellPmDb.avgTotalPrb);
+
+        }
+        else if(index == 3){
+            fillMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_real, 0, (double)kpmCellPmDb.avgUsagePrb);
+            printf("\nINFO   -->  E2SM-KPM : Cell Measurement \"%s\" : %f", indicationMeasNameFmt1[index], kpmCellPmDb.avgUsagePrb);
+
+        }
+         
+
+>>>>>>> Stashed changes
     }
 
     indicaMessageFormat1->measInfoList = measInfoList;
     for(int i=0;i<sizeOfMeasNameFmt1;i++){
+<<<<<<< Updated upstream
         fillMeasInfoItem(measInfoItem+i, (uint8_t*)measInfoStyle1+i, strlen((const char*)measInfoStyle1+i));
+=======
+        fillMeasInfoItem(measInfoItem+i, (uint8_t*)indicationMeasNameFmt1[i], strlen((const char*)indicationMeasNameFmt1[i]));
+>>>>>>> Stashed changes
         ASN_SEQUENCE_ADD(&indicaMessageFormat1->measInfoList->list, measInfoItem+i);
         ASN_SEQUENCE_ADD(&indicaMessageFormat1->measData.list, measDataItem+i);
     }
@@ -1129,7 +1460,11 @@ uint8_t fillIndicationMessageFormat1V3(E2SM_KPM_IndicationMessage_Format1_v300_t
 
     indicaMessageFormat1->measInfoList = measInfoList;
     for(int i=0;i<sizeOfMeasNameFmt1;i++){
+<<<<<<< Updated upstream
         fillMeasInfoItemV3(measInfoItem+i, (uint8_t*)measInfoStyle1+i, strlen((const char*)measInfoStyle1+i));
+=======
+        fillMeasInfoItemV3(measInfoItem+i, (uint8_t*)indicationMeasNameFmt1[i], strlen((const char*)indicationMeasNameFmt1[i]));
+>>>>>>> Stashed changes
         ASN_SEQUENCE_ADD(&indicaMessageFormat1->measInfoList->list, measInfoItem+i);
         ASN_SEQUENCE_ADD(&indicaMessageFormat1->measData.list, measDataItem+i);
     }
@@ -1139,8 +1474,11 @@ uint8_t fillIndicationMessageFormat1V3(E2SM_KPM_IndicationMessage_Format1_v300_t
 
 
 uint8_t fillMeasCondItem(MeasurementCondUEidItem_t *measCondItem, char measureName[], Snssai snssai){
+<<<<<<< Updated upstream
     printf("\nFunction \"%s\" is start\n", __func__);
 
+=======
+>>>>>>> Stashed changes
     MatchingCondItem_t *matchCondItem;
     // allocate memory for matchCondItem by DU_ALLOC
     DU_ALLOC(matchCondItem, sizeof(MatchingCondItem_t));
@@ -1157,6 +1495,7 @@ uint8_t fillMeasCondItem(MeasurementCondUEidItem_t *measCondItem, char measureNa
         printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measCondItem->measType.choice.measName.buf");
         return RFAILED;
     }
+<<<<<<< Updated upstream
     memcpy(measCondItem->measType.choice.measName.buf, measureName, measCondItem->measType.choice.measName.size);
     
     matchCondItem->present = MatchingCondItem_PR_measLabel;
@@ -1260,10 +1599,52 @@ uint8_t fillMeasCondItemV3(MeasurementCondUEidItem_v300_t *measCondItem, char me
         return RFAILED;
     }
     memcpy(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD->buf, snssai.sd, 3);
+=======
+    memcpy(measCondItem->measType.choice.measName.buf, measureName, measCondItem->measType.choice.measName.size);
+    
+    matchCondItem->present = MatchingCondItem_PR_measLabel;
+    //allocate memory for matchCondItem->choice.measLabel by DU_ALLOC
+    DU_ALLOC(matchCondItem->choice.measLabel, sizeof(MeasurementLabel_t));
+    if(matchCondItem->choice.measLabel == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->choice.measLabel");
+        return RFAILED;
+    }
+    // allocte memory for matchCondItem->choice.measLabel->sliceID by DU_ALLOC
+    DU_ALLOC(matchCondItem->choice.measLabel->sliceID, sizeof(S_NSSAI_t));
+    if(matchCondItem->choice.measLabel->sliceID == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->choice.measLabel->sliceID");
+        return RFAILED;
+    }
+
+    // allocate memory for matchCondItem->choice.measLabel->sliceID->sD by DU_ALLOC
+    DU_ALLOC(matchCondItem->choice.measLabel->sliceID->sD, sizeof(SD_t));
+    if(matchCondItem->choice.measLabel->sliceID->sD == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->choice.measLabel->sliceID->sD");
+        return RFAILED;
+    }
+    
+    matchCondItem->choice.measLabel->sliceID->sST.size = 1;
+    // allocate memory for matchCondItem->choice.measLabel->sliceID->sST.buf by DU_ALLOC
+    DU_ALLOC(matchCondItem->choice.measLabel->sliceID->sST.buf, sizeof(uint8_t));
+    if(matchCondItem->choice.measLabel->sliceID->sST.buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->choice.measLabel->sliceID->sST.buf");
+        return RFAILED;
+    }
+    memcpy(matchCondItem->choice.measLabel->sliceID->sST.buf, &snssai.sst, 1);
+    matchCondItem->choice.measLabel->sliceID->sD->size = 3;
+    // allocate memory for matchCondItem->choice.measLabel->sliceID->sD.buf by DU_ALLOC
+    DU_ALLOC(matchCondItem->choice.measLabel->sliceID->sD->buf, sizeof(uint8_t));
+    if(matchCondItem->choice.measLabel->sliceID->sD->buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->choice.measLabel->sliceID->sD.buf");
+        return RFAILED;
+    }
+    memcpy(matchCondItem->choice.measLabel->sliceID->sD->buf, snssai.sd, 3);
+>>>>>>> Stashed changes
     ASN_SEQUENCE_ADD(&measCondItem->matchingCond.list, matchCondItem);
     return 0;
 }
 
+<<<<<<< Updated upstream
 
 uint8_t fillIndicationMessageFormat2(E2SM_KPM_IndicationMessage_Format2_t *indicaMessageFormat2){
     printf("\nFunction \"%s\" is start\n", __func__);
@@ -1296,6 +1677,116 @@ uint8_t fillIndicationMessageFormat2(E2SM_KPM_IndicationMessage_Format2_t *indic
         ASN_SEQUENCE_ADD(&indicaMessageFormat2->measData.list, measDataItem+cnt);
         ASN_SEQUENCE_ADD(&indicaMessageFormat2->measCondUEidList.list, measCondItem+cnt);
         cnt = cnt + 1;
+=======
+uint8_t fillMeasCondItemV3(MeasurementCondUEidItem_v300_t *measCondItem, char measureName[], Snssai snssai){
+    printf("\nINFO   -->  E2SM-KPM : Function \"%s\" is start\n", __func__);
+
+    MatchingCondItem_v300_t *matchCondItem;
+    // allocate memory for matchCondItem by DU_ALLOC
+    DU_ALLOC(matchCondItem, sizeof(MatchingCondItem_v300_t));
+    if(matchCondItem == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem");
+        return RFAILED;
+    }
+
+    measCondItem->measType.present = MeasurementType_PR_measName;
+    measCondItem->measType.choice.measName.size = strlen((const char*)measureName);
+    // allocate memory for measCondItem->measType.choice.measName.buf by DU_ALLOC
+    DU_ALLOC(measCondItem->measType.choice.measName.buf, measCondItem->measType.choice.measName.size);
+    if(measCondItem->measType.choice.measName.buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measCondItem->measType.choice.measName.buf");
+        return RFAILED;
+    }
+    memcpy(measCondItem->measType.choice.measName.buf, measureName, measCondItem->measType.choice.measName.size);
+
+
+    matchCondItem->matchingCondChoice.present = MatchingCondItem_Choice_PR_measLabel;
+
+    //allocate memory for matchCondItem->matchingCondChoice.choice.measLabel by DU_ALLOC
+    DU_ALLOC(matchCondItem->matchingCondChoice.choice.measLabel, sizeof(MeasurementLabel_t));
+    if(matchCondItem->matchingCondChoice.choice.measLabel == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->matchingCondChoice.choice.measLabel");
+        return RFAILED;
+    }
+    // allocte memory for matchCondItem->matchingCondChoice.choice.measLabel->sliceID by DU_ALLOC
+    DU_ALLOC(matchCondItem->matchingCondChoice.choice.measLabel->sliceID, sizeof(S_NSSAI_t));
+    if(matchCondItem->matchingCondChoice.choice.measLabel->sliceID == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->matchingCondChoice.choice.measLabel->sliceID");
+        return RFAILED;
+    }
+
+    // allocate memory for matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD by DU_ALLOC
+    DU_ALLOC(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD, sizeof(SD_t));
+    if(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD");
+        return RFAILED;
+    }
+    
+    matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sST.size = 1;
+    // allocate memory for matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sST.buf by DU_ALLOC
+    DU_ALLOC(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sST.buf, sizeof(uint8_t));
+    if(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sST.buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sST.buf");
+        return RFAILED;
+    }
+    memcpy(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sST.buf, &snssai.sst, 1);
+    matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD->size = 3;
+    // allocate memory for matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD.buf by DU_ALLOC
+    DU_ALLOC(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD->buf, sizeof(uint8_t));
+    if(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD->buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD.buf");
+        return RFAILED;
+    }
+    memcpy(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD->buf, snssai.sd, 3);
+    ASN_SEQUENCE_ADD(&measCondItem->matchingCond.list, matchCondItem);
+    return 0;
+}
+
+
+uint8_t fillIndicationMessageFormat2(E2SM_KPM_IndicationMessage_Format2_t *indicaMessageFormat2){
+    // printf("\nFunction \"%s\" is start\n", __func__);
+    int styleSize = sizeof(measInfoStyle2) / sizeof(*measInfoStyle2);
+    int measSize = MAX_SIZE_OF_SLICE;
+    int cnt = 0;
+    int index;
+    MeasurementDataItem_t *measDataItem;
+    // allocate memory for measDataItem by DU_ALLOC
+    DU_ALLOC(measDataItem, measSize * styleSize * sizeof(MeasurementDataItem_t));
+    if(measDataItem == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measDataItem");
+        return RFAILED;
+    }
+    MeasurementCondUEidItem_t *measCondItem;
+    // allocate memory for measCondItem by DU_ALLOC
+    DU_ALLOC(measCondItem, measSize * styleSize * sizeof(MeasurementCondUEidItem_t));
+    if(measCondItem == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measCondItem");
+        return RFAILED;
+    }
+
+    for(int i=0;i<kpmSlicePmDb.numOfSlice;i++){
+        for(int j=0;j<sizeOfMeasNameFmt3;j++){
+            index = actionFmt3measNameIsSupport(indicationMeasNameFmt3[j]);
+            if(index == 0){
+                printf("\nINFO   -->  E2SM-KPM : Slice Measurement \"%s\" in slice {%d-%d%d%d} : %d", indicationMeasNameFmt3[index],
+                kpmSlicePmDb.snssai[i].sst, kpmSlicePmDb.snssai[i].sd[0], kpmSlicePmDb.snssai[i].sd[1],
+                kpmSlicePmDb.snssai[i].sd[2], kpmSlicePmDb.avgThpDl[i]);
+                fillSliceMeasDataItem(measDataItem + cnt, kpmSlicePmDb.avgThpDl[i]);
+            }
+            else if(index == 1){
+                printf("\nINFO   -->  E2SM-KPM : Slice Measurement \"%s\" in slice {%d-%d%d%d} : %d", indicationMeasNameFmt3[index],
+                kpmSlicePmDb.snssai[i].sst, kpmSlicePmDb.snssai[i].sd[0], kpmSlicePmDb.snssai[i].sd[1],
+                kpmSlicePmDb.snssai[i].sd[2], kpmSlicePmDb.avgUsedPrb[i]);
+                fillSliceMeasDataItem(measDataItem + cnt, kpmSlicePmDb.avgUsedPrb[i]);
+            }
+            else if(index = -1)
+                return RFAILED;
+            fillMeasCondItem(measCondItem+cnt, indicationMeasNameFmt3[index], kpmSlicePmDb.snssai[i]);
+            ASN_SEQUENCE_ADD(&indicaMessageFormat2->measData.list, measDataItem+cnt);
+            ASN_SEQUENCE_ADD(&indicaMessageFormat2->measCondUEidList.list, measCondItem+cnt);
+            cnt = cnt + 1;
+        }
+>>>>>>> Stashed changes
     }
 
     xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage_Format2, indicaMessageFormat2);
@@ -1307,6 +1798,10 @@ uint8_t fillIndicationMessageFormat2V3(E2SM_KPM_IndicationMessage_Format2_v300_t
     int styleSize = sizeof(measInfoStyle2) / sizeof(*measInfoStyle2);
     int measSize = MAX_SIZE_OF_SLICE;
     int cnt = 0;
+<<<<<<< Updated upstream
+=======
+    int index = 0;
+>>>>>>> Stashed changes
     MeasurementDataItem_t *measDataItem;
     // allocate memory for measDataItem by DU_ALLOC
     DU_ALLOC(measDataItem, measSize * styleSize * sizeof(MeasurementDataItem_t));
@@ -1321,6 +1816,7 @@ uint8_t fillIndicationMessageFormat2V3(E2SM_KPM_IndicationMessage_Format2_v300_t
         printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measCondItem");
         return RFAILED;
     }
+<<<<<<< Updated upstream
 
     for(int i=0;i<kpmSlicePmDb.numOfSlice;i++){
         fillSliceMeasDataItem(measDataItem+cnt, kpmSlicePmDb.avgThpDl[i]);
@@ -1335,6 +1831,32 @@ uint8_t fillIndicationMessageFormat2V3(E2SM_KPM_IndicationMessage_Format2_v300_t
         cnt = cnt + 1;
     }
 
+=======
+
+    for(int i=0;i<kpmSlicePmDb.numOfSlice;i++){
+        for(int j=0;j<sizeOfMeasNameFmt3;j++){
+            index = actionFmt3measNameIsSupport(indicationMeasNameFmt3[j]);
+            if(index == 0){
+                printf("\nINFO   -->  E2SM-KPMv3 : Slice Measurement \"%s\" in slice {%d-%d%d%d} : %d", indicationMeasNameFmt3[index],
+                kpmSlicePmDb.snssai[i].sst, kpmSlicePmDb.snssai[i].sd[0], kpmSlicePmDb.snssai[i].sd[1],
+                kpmSlicePmDb.snssai[i].sd[2], kpmSlicePmDb.avgThpDl[i]);
+                fillSliceMeasDataItem(measDataItem + cnt, kpmSlicePmDb.avgThpDl[j]);
+            }
+            else if(index == 1){
+                printf("\nINFO   -->  E2SM-KPMv3 : Slice Measurement \"%s\" in slice {%d-%d%d%d} : %d", indicationMeasNameFmt3[index],
+                kpmSlicePmDb.snssai[i].sst, kpmSlicePmDb.snssai[i].sd[0], kpmSlicePmDb.snssai[i].sd[1],
+                kpmSlicePmDb.snssai[i].sd[2], kpmSlicePmDb.avgUsedPrb[i]);
+                fillSliceMeasDataItem(measDataItem + cnt, kpmSlicePmDb.avgUsedPrb[j]);
+            }
+            else if(index = -1)
+                return RFAILED;
+            fillMeasCondItemV3(measCondItem+cnt, indicationMeasNameFmt3[index], kpmSlicePmDb.snssai[i]);
+            ASN_SEQUENCE_ADD(&indicaMessageFormat2->measData.list, measDataItem+cnt);
+            ASN_SEQUENCE_ADD(&indicaMessageFormat2->measCondUEidList.list, measCondItem+cnt);
+            cnt = cnt + 1;
+        }
+    }
+>>>>>>> Stashed changes
     xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage_Format2, indicaMessageFormat2);
     return 0; 
 }
@@ -1846,6 +2368,7 @@ uint8_t fillRicindicationMessageFmt2V3(RICindicationMessage_t *ricIndicaMsg){
     DU_FREE(indicaMessage, sizeof(E2SM_KPM_IndicationMessage_v300_t));
 
     return 0; 
+<<<<<<< Updated upstream
 }
 
 uint8_t kpmFreeOctetString(OCTET_STRING_t *octetString){
@@ -1991,6 +2514,186 @@ void kpmStoreSliceRlcMetric(SlicePmList* sliceMetricList){
     }
 }
 
+=======
+}
+
+uint8_t kpmFreeOctetString(OCTET_STRING_t *octetString){
+    if(octetString){
+        if(octetString->size > 0){
+            if(octetString->buf){
+                DU_FREE(octetString->buf, octetString->size);
+            }
+        }
+        DU_FREE(octetString, sizeof(OCTET_STRING_t));
+        octetString = NULL;
+        return ROK;
+    }
+    else{
+        return RFAILED;
+    }
+
+}
+
+void kpmSendSliceMetric(){
+    if(kpmSliceIndicationEnable){
+        if(ricIndicationMessage == NULL){
+            // allocate memory for ricIndicationMessage by DU_ALLOC
+            DU_ALLOC(ricIndicationMessage, sizeof(RICindicationMessage_t));
+            if(ricIndicationMessage == NULL){
+                printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ricIndicationMessage");
+                return;
+            }
+        }
+
+        if(ricIndicationHeader == NULL){
+            // allocate memory for ricIndicationHeader by DU_ALLOC
+            DU_ALLOC(ricIndicationHeader, sizeof(RICindicationHeader_t));
+            if(ricIndicationHeader == NULL){
+                printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ricIndicationHeader");
+                return;
+            }
+        }
+
+        kpmCalcSliceMetric();
+        if(kpmIndicationV3Enable){
+            fillRicIndicationHeaderV3(ricIndicationHeader);
+            fillRicindicationMessageFmt2V3(ricIndicationMessage);
+        }else{
+            fillRicIndicationHeader(ricIndicationHeader);
+            fillRicindicationMessageFmt2(ricIndicationMessage);
+        }
+        BuildAndSendRicIndication();
+        DU_FREE(ricIndicationMessage->buf, ricIndicationMessage->size);
+    }
+}
+
+void kpmSendCellMetric(){
+    if(kpmCellIndicationEnable){
+        if(ricIndicationMessage == NULL){
+            // allocate memory for ricIndicationMessage by DU_ALLOC
+            DU_ALLOC(ricIndicationMessage, sizeof(RICindicationMessage_t));
+            if(ricIndicationMessage == NULL){
+                printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ricIndicationMessage");
+                return;
+            }
+        }
+        if(ricIndicationHeader == NULL){
+            // allocate memory for ricIndicationHeader by DU_ALLOC
+            DU_ALLOC(ricIndicationHeader, sizeof(RICindicationHeader_t));
+            if(ricIndicationHeader == NULL){
+                printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ricIndicationHeader");
+                return;
+            }
+        }
+
+        kpmCalcCellMetric();
+        if(kpmIndicationV3Enable){
+            fillRicIndicationHeaderV3(ricIndicationHeader);
+            fillRicindicationMessageFmt1V3(ricIndicationMessage);
+        }else{
+            fillRicIndicationHeader(ricIndicationHeader);
+            fillRicindicationMessageFmt1(ricIndicationMessage);
+        }
+        BuildAndSendRicIndication();
+        DU_FREE(ricIndicationMessage->buf, ricIndicationMessage->size);
+    }
+}
+
+uint8_t kpmCalcCellMetric(){
+    uint64_t usedPrbSum = 0, totalPrbSum = 0, thpSum = 0;
+
+    if(kpmCellPmDb.numOfMacPm>SIZE_OF_MACDB){
+        kpmCellPmDb.numOfMacPm = SIZE_OF_MACDB;
+    }
+
+    for(int i=0;i<kpmCellPmDb.numOfMacPm;i++){
+        usedPrbSum += kpmCellPmDb.eachMacPm[i].usedPrb;
+        totalPrbSum += kpmCellPmDb.eachMacPm[i].totalPrb;
+    }
+
+    for(int i=0;i<kpmCellPmDb.numOfRlcPm;i++){
+        thpSum += kpmCellPmDb.eachRlcPm[i].ThpDl;
+    }
+
+    kpmCellPmDb.avgThpDl = kpmCellPmDb.numOfRlcPm ? thpSum / kpmCellPmDb.numOfRlcPm : kpmCellPmDb.avgThpDl;
+    kpmCellPmDb.avgUsedPrb = kpmCellPmDb.numOfMacPm ? usedPrbSum / kpmCellPmDb.numOfMacPm : 0;
+    kpmCellPmDb.avgTotalPrb = kpmCellPmDb.numOfMacPm ? totalPrbSum / kpmCellPmDb.numOfMacPm : 0;
+    kpmCellPmDb.avgUsagePrb = kpmCellPmDb.numOfMacPm ? (double)100.0 * kpmCellPmDb.avgUsedPrb / kpmCellPmDb.avgTotalPrb  : 0;
+
+    kpmCellPmDb.numOfMacPm = 0;
+    kpmCellPmDb.numOfRlcPm = 0;
+
+    return 0;    
+}
+
+uint8_t kpmCalcSliceMetric(){
+    uint64_t usedPrbSum[MAX_SIZE_OF_SLICE] = {0, };
+    uint64_t thpSum[MAX_SIZE_OF_SLICE] = {0, };
+
+    if(kpmSlicePmDb.numOfMacPm>SIZE_OF_MACDB){
+        kpmSlicePmDb.numOfMacPm = SIZE_OF_MACDB;
+    }
+
+    for(int i=0;i<kpmSlicePmDb.numOfMacPm;i++){
+        for(int j=0;j<MAX_SIZE_OF_SLICE;j++){
+            usedPrbSum[j] += kpmSlicePmDb.eachMacPm[i].sliceRecord[j].usedPrb;
+        }
+    }
+
+    for(int i=0;i<kpmSlicePmDb.numOfRlcPm;i++){
+        for(int j=0;j<MAX_SIZE_OF_SLICE;j++){
+            thpSum[j] += kpmSlicePmDb.eachRlcPm[i].sliceRecord[j].ThpDl;
+        }
+    }
+
+    for(int i=0;i<MAX_SIZE_OF_SLICE;i++){
+        kpmSlicePmDb.avgUsedPrb[i] = kpmSlicePmDb.numOfMacPm ? usedPrbSum[i] / kpmSlicePmDb.numOfMacPm : 0;
+        kpmSlicePmDb.avgThpDl[i] = kpmSlicePmDb.numOfRlcPm ? thpSum[i] / kpmSlicePmDb.numOfRlcPm : kpmSlicePmDb.avgThpDl[i];
+    }
+
+
+    kpmSlicePmDb.numOfMacPm = 0;
+    kpmSlicePmDb.numOfRlcPm = 0;
+
+    return 0;
+
+}
+
+void kpmStoreCellRlcMetric(CellPmList* cellMetricList){
+    if(cellMetricList != NULL){
+        if(cellMetricList->numUe>0){
+            printf("\nINFO   -->  E2SM-KPM : Support sending UE Average Throughput to xApp");
+            if(kpmCellPmDb.numOfRlcPm<SIZE_OF_RLCDB){
+                kpmCellPmDb.eachRlcPm[kpmCellPmDb.numOfRlcPm].ThpDl = cellMetricList->ueRecord->ThpDl;
+                kpmCellPmDb.numOfRlcPm++;
+            }
+            else{
+                printf("\nINFO   -->  E2SM-KPM : kpmCellPmDb is full at kpmStoreCellRlcMetric");
+            }
+        }
+    }
+}
+
+void kpmStoreSliceRlcMetric(SlicePmList* sliceMetricList){
+    if(sliceMetricList){
+        if(kpmSlicePmDb.numOfRlcPm < SIZE_OF_RLCDB){
+            for(int i=0;i<sliceMetricList->numSlice;i++){
+                kpmSlicePmDb.eachRlcPm[kpmSlicePmDb.numOfRlcPm].sliceRecord[i].ThpDl = (int)sliceMetricList->sliceRecord[i].ThpDl;
+                kpmSlicePmDb.snssai[i].sst = (char)sliceMetricList->sliceRecord[i].networkSliceIdentifier.sst;
+                kpmSlicePmDb.snssai[i].sd[0] = (sliceMetricList->sliceRecord[i].networkSliceIdentifier.sd / 100 ) % 10;
+                kpmSlicePmDb.snssai[i].sd[1] = (sliceMetricList->sliceRecord[i].networkSliceIdentifier.sd / 10) % 10;
+                kpmSlicePmDb.snssai[i].sd[2] = (sliceMetricList->sliceRecord[i].networkSliceIdentifier.sd ) % 10; 
+            }
+            kpmSlicePmDb.eachRlcPm[kpmSlicePmDb.numOfRlcPm].numOfSlice = sliceMetricList->numSlice;
+        }
+        kpmSlicePmDb.numOfRlcPm++;
+    }
+
+    kpmSendCellMetric();
+    kpmSendSliceMetric();
+}
+
+>>>>>>> Stashed changes
 void kpmStoreMacMetric(MacPrbPm* macPrbPm){ // Enter this function per millisecond. 
     if(macPrbPm != NULL){
         kpmCellPmDb.eachMacPm[kpmCellPmDb.numOfMacPm % SIZE_OF_MACDB].usedPrb = macPrbPm->usedPrb;
@@ -2001,8 +2704,15 @@ void kpmStoreMacMetric(MacPrbPm* macPrbPm){ // Enter this function per milliseco
         // printf("\nINFO   -->  E2SM-KPM : kpmSlicePmDb.numOfSlice = %d", kpmSlicePmDb.numOfSlice);
         for(int i=0;i<macPrbPm->sliceNum;i++){
             kpmSlicePmDb.eachMacPm[kpmSlicePmDb.numOfMacPm % SIZE_OF_MACDB].numOfSlice = macPrbPm->sliceNum;
+<<<<<<< Updated upstream
             if(macPrbPm->listOfSlicePm)
                 kpmSlicePmDb.eachMacPm[kpmSlicePmDb.numOfMacPm % SIZE_OF_MACDB].sliceRecord[i].usedPrb = macPrbPm->listOfSlicePm[i].usedPrb;
+=======
+            if(macPrbPm->listOfSlicePm){
+                kpmSlicePmDb.eachMacPm[kpmSlicePmDb.numOfMacPm % SIZE_OF_MACDB].sliceRecord[i].usedPrb = macPrbPm->listOfSlicePm[i].usedPrb;
+            }
+
+>>>>>>> Stashed changes
         }
         kpmSlicePmDb.numOfMacPm++;
     }
@@ -2010,20 +2720,35 @@ void kpmStoreMacMetric(MacPrbPm* macPrbPm){ // Enter this function per milliseco
         printf("\nERROR   -->  E2SM-KPM : Empty macPrbPm");
     }
 
+<<<<<<< Updated upstream
     if(indicationCountFmt1<reportingPeriodFmt1){
+=======
+    if(indicationCountFmt1<reportingPeriodFmt1 / 4){ // Phy stub sends slot indication by 4. 
+>>>>>>> Stashed changes
         indicationCountFmt1++;
     }
     else{
         indicationCountFmt1 = 0;
+<<<<<<< Updated upstream
         kpmSendCellMetric();
     }
 
     if(indicationCountFmt3<reportingPeriodFmt3){
+=======
+        // kpmSendCellMetric();
+    }
+
+    if(indicationCountFmt3<reportingPeriodFmt3 / 4){
+>>>>>>> Stashed changes
         indicationCountFmt3++;
     }
     else{
         indicationCountFmt3 = 0;
+<<<<<<< Updated upstream
         kpmSendSliceMetric();
+=======
+        // kpmSendSliceMetric();
+>>>>>>> Stashed changes
     }
 
     return;
