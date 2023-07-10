@@ -1056,14 +1056,11 @@ bool rlcFindSliceEntry(SliceIdentifier snssaiVal, uint8_t *snssaiIdx, SlicePmLis
 *         RFAILED - failure
 *
 * ****************************************************************/
-uint8_t BuildSliceReportToDu(uint8_t snssaiCnt)
+uint8_t BuildSliceReportToDu(SlicePmList *slicePm, uint8_t snssaiCnt)
 {
    CmLList  *node = NULLP;
    RlcTptPerSnssai *snssaiNode = NULLP;
-   Direction dir = DIR_UL;
    SlicePmList *sliceStats = NULLP;   /*Slice metric */
-   SliceIdentifier snssaiVal ;
-   uint8_t snssaiIdx = 0;
 
    if(snssaiCnt == 0)
    {
@@ -1085,45 +1082,75 @@ uint8_t BuildSliceReportToDu(uint8_t snssaiCnt)
       RLC_FREE_SHRABL_BUF(RLC_MEM_REGION_UL, RLC_POOL, sliceStats, sizeof(SlicePmList));
       return RFAILED;
    }
-   while(dir < DIR_BOTH)
-   {
-      node = arrTputPerSnssai[dir]->first;
-      if(node == NULLP)
-      {
-         DU_LOG("\nERROR  -->  RLC: No SNSSAI in list");
-         RLC_FREE_SHRABL_BUF(RLC_MEM_REGION_UL, RLC_POOL, sliceStats, sizeof(SlicePmList));
-         RLC_FREE_SHRABL_BUF(RLC_MEM_REGION_UL, RLC_POOL, sliceStats->sliceRecord, (snssaiCnt * (sizeof(SlicePm))));
-         return RFAILED;
-      }
 
-      while(node)
-      {
-         snssaiIdx = 0;
-         snssaiNode = (RlcTptPerSnssai *)node->node;
-
-         snssaiVal.sst = snssaiNode->snssai->sst;
-         snssaiVal.sd = snssaiNode->snssai->sd[2]+snssaiNode->snssai->sd[1]*10+snssaiNode->snssai->sd[0]*100;
-         if(rlcFindSliceEntry(snssaiVal, &snssaiIdx, sliceStats) == FALSE)
-         {
-            sliceStats->sliceRecord[snssaiIdx].networkSliceIdentifier = snssaiVal;
-            sliceStats->numSlice++;
-         }
-         if(dir == DIR_UL)
-         {
-            sliceStats->sliceRecord[snssaiIdx].ThpUl = snssaiNode->tpt;
-         }
-         else
-         {
-            sliceStats->sliceRecord[snssaiIdx].ThpDl = snssaiNode->tpt;
-         }
-         node = node->next;
-      }
-      dir++;
+   for(int i=0;i<snssaiCnt;i++){
+      memcpy(&sliceStats->sliceRecord[i], &slicePm->sliceRecord[i], sizeof(SlicePm));
    }
+   sliceStats->numSlice = slicePm->numSlice;
 
    sendSlicePmToDu(sliceStats);
    return ROK;
 }
+<<<<<<< Updated upstream
+=======
+
+
+/*******************************************************************
+*
+* @brief Builds the Cell Performance Metrics structure to be sent to DU
+*
+* @details
+*
+*    Function : BuildCellReportToDu
+*
+*    Functionality:
+*      Builds the Cell Performance Metrics structure to be sent to DU
+*
+* @params[in] uint8_t uelCnt
+*             
+* @return ROK     - success
+*         RFAILED - failure
+*
+* ****************************************************************/
+uint8_t BuildCellReportToDu(uint8_t ueCnt, int aveTpt)
+{
+   CmLList  *node = NULLP;
+   RlcTptPerSnssai *snssaiNode = NULLP;
+   Direction dir = DIR_UL;
+   CellPmList *cellStats = NULLP;   /*Slice metric */
+   SliceIdentifier snssaiVal ;
+   long double tpt;
+   uint8_t recordIdx = 0;
+
+   if(ueCnt == 0)
+   {
+      DU_LOG("\nERROR  -->  RLC: No UE to send the Cell PM");
+      return RFAILED;
+   }
+
+   RLC_ALLOC_SHRABL_BUF(RLC_MEM_REGION_UL, RLC_POOL, cellStats, sizeof(CellPmList));
+   if(cellStats == NULLP)
+   {
+      DU_LOG("\nERROR  -->  RLC: Memory Allocation Failed");
+      return RFAILED;
+   }
+
+   cellStats->numUe = ueCnt;
+   RLC_ALLOC_SHRABL_BUF(RLC_MEM_REGION_UL, RLC_POOL, cellStats->ueRecord, 1 * (sizeof(CellPm)));
+
+   if(cellStats->ueRecord == NULLP)
+   {
+      DU_LOG("\nERROR  -->  RLC: Memory Allocation Failed");
+      RLC_FREE_SHRABL_BUF(RLC_MEM_REGION_UL, RLC_POOL, cellStats, sizeof(CellPmList));
+      return RFAILED;
+   }
+
+   cellStats->ueRecord->ThpDl = aveTpt / ueCnt;
+
+   sendCellPmToDu(cellStats);
+   return ROK;
+}
+>>>>>>> Stashed changes
 /**********************************************************************
          End of file
 **********************************************************************/

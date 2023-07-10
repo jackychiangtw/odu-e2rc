@@ -69,7 +69,13 @@ typedef struct rrmPolicyList
 //RrmPolicyList *rrmPolicyList;
 //RrmPolicyList rrmPolicy;
 
+<<<<<<< Updated upstream
 //uint8_t setRrmPolicy(RrmPolicyList rrmPolicy[],uint8_t policyNum);
+=======
+#ifndef O1_ENABLE
+uint8_t setRrmPolicy(RrmPolicyList rrmPolicy[],uint8_t policyNum);
+#endif
+>>>>>>> Stashed changes
 
 void print_paraID_List(paraIdList* node);
 int procE2rcRanStructItem(RANParameter_STRUCTURE_Item_t *ranStructItem, paraIdList *paraIdLinkList);

@@ -39,6 +39,7 @@ typedef struct {
    SNSSAI networkSliceIdentifier;
    double DRB_UEThpDl_SNSSAI;
    double DRB_UEThpUl_SNSSAI;
+   double DRB_PrbUsedDl_SNSSAI;
 }SliceMetricRecord;
 
 typedef struct {

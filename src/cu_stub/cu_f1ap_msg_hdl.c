@@ -2557,7 +2557,8 @@ uint8_t BuildQOSInfo(QosInfo *qosInfo, QoSFlowLevelQoSParameters_t *drbQos, uint
 {
    uint8_t elementCnt = 0, qosCntIdx = 0;
    ProtocolExtensionContainer_4624P74_t *qosIeExt = NULLP;
-
+   int randomFiveQI;
+   randomFiveQI = (rand() % 9) + 1;
    /* NonDynamic5QIDescriptor */
    drbQos->qoS_Characteristics.present = QoS_Characteristics_PR_non_Dynamic_5QI;
    CU_ALLOC(drbQos->qoS_Characteristics.choice.non_Dynamic_5QI,sizeof(NonDynamic5QIDescriptor_t));
@@ -2574,7 +2575,7 @@ uint8_t BuildQOSInfo(QosInfo *qosInfo, QoSFlowLevelQoSParameters_t *drbQos, uint
       if(actionType == ProtocolIE_ID_id_DRBs_ToBeModified_Item)
          drbQos->qoS_Characteristics.choice.non_Dynamic_5QI->fiveQI = FIVE_QI_VALUE8;
       else
-         drbQos->qoS_Characteristics.choice.non_Dynamic_5QI->fiveQI = FIVE_QI_VALUE9;
+         drbQos->qoS_Characteristics.choice.non_Dynamic_5QI->fiveQI = randomFiveQI;
 
       qosInfo->nonDynFiveQI = drbQos->qoS_Characteristics.choice.non_Dynamic_5QI->fiveQI;
    }
@@ -12027,6 +12028,13 @@ void procF1SetupReq(uint32_t *destDuId, F1AP_PDU_t *f1apMsg)
    GNB_DU_Served_Cells_Item_t *srvCellItem = NULLP; 
    GNB_DU_Served_Cells_List_t *duServedCell = NULLP;
 
+<<<<<<< Updated upstream
+=======
+   /* Triggering XN setup request before F1 setup establishment */
+   // if(LOCAL_NODE_TYPE == CLIENT)
+   //    BuildAndSendXnSetupReq();
+
+>>>>>>> Stashed changes
    f1SetupReq = &f1apMsg->choice.initiatingMessage->value.choice.F1SetupRequest;
    for(ieIdx=0; ieIdx < f1SetupReq->protocolIEs.list.count; ieIdx++)
    {

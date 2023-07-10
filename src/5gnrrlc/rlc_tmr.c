@@ -615,7 +615,7 @@ void rlcSnssaiThptTmrExpiry(PTR cb)
    if(snssaiTputBitmap == DIR_BOTH)
    {
       //call the function
-      BuildSliceReportToDu(MAX(snssaiCntUl, snssaiCntDl));
+      // BuildSliceReportToDu(rlcThptCb->snssaiTputInfo.dlTputPerSnssaiList, MAX(snssaiCntUl, snssaiCntDl));
       snssaiTputBitmap = DIR_NONE;
    }
    /* Restart timer */

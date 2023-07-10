@@ -90,6 +90,10 @@
 #define BSR_SR_DELAY_TMR_2560 2560
 
 #define PAGING_SCHED_DELTA  4
+<<<<<<< Updated upstream
+=======
+#define MAX_PLMN 3
+>>>>>>> Stashed changes
 
 typedef enum
 {
@@ -1493,9 +1497,22 @@ typedef struct macSliceCfgReq
 
 typedef struct macSliceCfgRsp
 {
+<<<<<<< Updated upstream
    uint8_t      numSliceCfgRsp;
    MacSliceRsp  **listOfSliceCfgRsp;
 }MacSliceCfgRsp;
+=======
+   uint8_t           usedPrb;
+}MacSlicePrbPmList;
+
+typedef struct macPrbPm
+{
+   uint8_t           usedPrb;
+   uint8_t           totalPrb;
+   uint8_t             sliceNum;
+   MacSlicePrbPmList   *listOfSlicePm;
+}MacPrbPm;
+>>>>>>> Stashed changes
 
 /*As per ORAN-WG8, Slice Cfg and ReCfg are same structures*/
 typedef struct macSliceCfgReq MacSliceRecfgReq;

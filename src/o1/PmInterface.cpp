@@ -47,9 +47,14 @@ int sendSliceMetric(SliceMetricList* sliceMetricList) {
    O1_LOG("\n PmInterfce : Call received from the the du_app code !!");
 
    SliceMetrics metrics;
+
+   O1_LOG("\n PmInterfce : nRecords = %d ", sliceMetricList->nRecords);
  
-   for(int i = 0; i < sliceMetricList->nRecords; i++)
-      metrics.addMetric(sliceMetricList->sliceRecord[i]); 
+   for(int i = 0; i < sliceMetricList->nRecords; i++){
+      metrics.addMetric(sliceMetricList->sliceRecord[i]);
+      O1_LOG("\n PmInterfce : slice %d, throughput = %.2f, PRB = %.2f ", i, sliceMetricList->sliceRecord[i].DRB_UEThpDl_SNSSAI, sliceMetricList->sliceRecord[i].DRB_PrbUsedDl_SNSSAI);
+ 
+   } 
 
    VesEventHandler vesEventHandler;
    if (!vesEventHandler.prepare(VesEventType::PM_SLICE, &metrics))

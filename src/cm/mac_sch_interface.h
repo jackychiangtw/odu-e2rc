@@ -938,6 +938,7 @@ typedef struct lcSchInfo
    uint32_t  schBytes; /* Number of scheduled bytes */
 }LcSchInfo;
 
+<<<<<<< Updated upstream
 typedef struct dlMsgSchedInfo
 {
    bool       isRetx;
@@ -949,6 +950,73 @@ typedef struct dlMsgSchedInfo
    DlPduType  pduPres;
    uint8_t    pdschSlot;
    DlMsgInfo  dlMsgInfo;
+=======
+typedef struct ceSchInfo
+{
+   uint8_t   ceLcId;
+   uint8_t   *ceContent; 
+}CeSchInfo;
+
+typedef struct freqDomainAlloc
+{
+   uint8_t          resAllocType; /* Resource allocation type */
+   union
+   {
+      ResAllocType0    type0;
+      ResAllocType1    type1;
+   }resAlloc;
+}FreqDomainAlloc;
+
+typedef struct transportBlock
+{
+   uint8_t    mcs;       
+   bool       ndi;       
+   uint8_t    rv;        
+   uint16_t   tbSize;    
+   uint8_t    numCe;
+   CeSchInfo  ceSchInfo[MAX_NUM_LC]; 
+   uint8_t    numLc;
+   LcSchInfo  lcSchInfo[MAX_NUM_LC]; 
+}TransportBlock;
+
+/*Append by Jacky for E2 interface report*/
+typedef struct schSlicePrbPmList
+{
+   uint8_t           usedPrb;
+}SchSlicePrbPmList;
+
+/*Append by Jacky for E2 interface report*/
+typedef struct prbMertic
+{
+   uint8_t             usedPrb;
+   uint8_t             totalPrb;
+   uint8_t             sliceNum;
+   SchSlicePrbPmList   *listOfSlicePm;
+}PrbMetric;
+
+typedef struct dlMsgSchedInfo
+{
+   uint16_t        crnti;
+   uint8_t         dciFormatId;
+   uint8_t         harqProcNum;
+   bool            vrbPrbMapping;
+   uint8_t         dlAssignIdx;
+   uint8_t         pucchTpc;
+   uint8_t         pucchResInd;
+   uint8_t         harqFeedbackInd;
+   uint16_t        dlMsgPduLen;
+   uint8_t         *dlMsgPdu;
+   FreqDomainAlloc freqAlloc;
+   TimeDomainAlloc timeAlloc;
+   uint8_t         numOfTbs;
+   TransportBlock  transportBlock[2];
+   BwpCfg          bwp;
+   PdcchCfg        *dlMsgPdcchCfg;
+   PdschCfg        *dlMsgPdschCfg;
+
+   /*Append by Jacky for E2 interface report per UE*/
+   PrbMetric prbMetric;
+>>>>>>> Stashed changes
 }DlMsgSchInfo;
 
 typedef struct dlMsgAlloc
@@ -1019,7 +1087,11 @@ typedef struct dciInfo
    DlDCI    dciInfo;
 }DciInfo;
 
+<<<<<<< Updated upstream
 
+=======
+/* Reference -> O-RAN.WG8.AAD.0-v07.00, Section 11.2.4.3.8 DL Scheduling Information */
+>>>>>>> Stashed changes
 typedef struct dlSchedInfo
 {
    uint16_t cellId;  /* Cell Id */
@@ -1037,6 +1109,9 @@ typedef struct dlSchedInfo
 
    /* Allocation from dedicated DL msg */
    DlMsgAlloc *dlMsgAlloc[MAX_NUM_UE];
+
+   /*Append by Jacky for E2 interface report per cell*/
+   PrbMetric prbMetric;
 
 }DlSchedInfo;
 

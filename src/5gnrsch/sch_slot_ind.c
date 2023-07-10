@@ -41,6 +41,7 @@ File:     sch_slot_ind.c
 #include "mac_sch_interface.h"
 #include "sch.h"
 #include "sch_utils.h"
+#include "sch_slice_based.h"
 #ifdef NR_DRX 
 #include "sch_drx.h"
 #endif
@@ -630,6 +631,9 @@ uint8_t SchProcSlotInd(Pst *pst, SlotTimingInfo *slotInd)
       DU_LOG("\nERROR  -->  SCH : Cell Does not exist");
       return RFAILED;
    }
+
+   DU_LOG("\nDEBUG  --> SCH : Slot Indication received. [%d : %d]", slotInd->sfn, slotInd->slot);
+
    memset(&dlSchedInfo, 0, sizeof(DlSchedInfo));
    schCalcSlotValues(*slotInd, &dlSchedInfo.schSlotValue, cell->numSlots);
    dlBrdcstAlloc = &dlSchedInfo.brdcstAlloc;
@@ -714,12 +718,53 @@ uint8_t SchProcSlotInd(Pst *pst, SlotTimingInfo *slotInd)
       cell->schDlSlotInfo[slot]->ulGrant = NULLP;
    }
 
-   /* Send msg to MAC */
+    /* Send msg to MAC */
+
+   SchSliceBasedSliceCb *sliceCb = NULLP;
+   SchSliceBasedCellCb  *schSpcCell = (SchSliceBasedCellCb *)cell->schSpcCell;
+   CmLList *sliceCbNode = schSpcCell->sliceCbList.first;
+   int slice_cnt = 0;
+   dlSchedInfo.prbMetric.usedPrb = 0;
+
+   // printf("\nJacky --> SCH : Slice Number = %d", schSpcCell->sliceCbList.count);
+
+   dlSchedInfo.prbMetric.sliceNum = schSpcCell->sliceCbList.count;
+   if(dlSchedInfo.prbMetric.sliceNum > 0){
+      if(dlSchedInfo.prbMetric.listOfSlicePm == NULLP){
+         SCH_ALLOC(dlSchedInfo.prbMetric.listOfSlicePm, dlSchedInfo.prbMetric.sliceNum * sizeof(SchSlicePrbPmList));
+      }  
+      slice_cnt = 0;
+      while(sliceCbNode)
+      {
+         sliceCb = (SchSliceBasedSliceCb *)sliceCbNode->node;
+         if(slice_cnt < dlSchedInfo.prbMetric.sliceNum){
+               if(dlSchedInfo.prbMetric.listOfSlicePm){
+                  dlSchedInfo.prbMetric.listOfSlicePm[slice_cnt].usedPrb = sliceCb->allocatedPrb;
+               }
+               
+               dlSchedInfo.prbMetric.usedPrb += sliceCb->allocatedPrb;
+               if(sliceCb->allocatedPrb)
+                  printf("\nJacky --> SCH : Slice # %d : Used Prb = %d", slice_cnt, sliceCb->allocatedPrb);
+               slice_cnt = slice_cnt + 1;
+         }
+         else{
+            DU_LOG("\nJacky  -->  SCH SliceCB is oversize");
+         }
+         sliceCbNode = sliceCbNode->next;
+      }
+   }
+   // printf("\nJacky --> SCH : Cell Used Prb = %d", dlSchedInfo.prbMetric.usedPrb );
+
    ret = sendDlAllocToMac(&dlSchedInfo, schInst);
    if(ret != ROK)
    {
       DU_LOG("\nERROR  -->  SCH : Sending DL Broadcast allocation from SCH to MAC failed");
       return (ret);
+   }
+
+   if(dlSchedInfo.prbMetric.listOfSlicePm){
+      SCH_FREE(dlSchedInfo.prbMetric.listOfSlicePm, dlSchedInfo.prbMetric.sliceNum * sizeof(SchSlicePrbPmList));
+      dlSchedInfo.prbMetric.listOfSlicePm = NULLP;
    }
 
    schInitDlSlot(cell->schDlSlotInfo[slot]);

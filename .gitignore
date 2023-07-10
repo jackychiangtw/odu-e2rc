@@ -1,3 +1,5 @@
 # documentation
 .tox
 docs/_build/
+*.c
+*.c

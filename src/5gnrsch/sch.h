@@ -348,6 +348,7 @@ typedef struct schLcCtxt
 {
    uint8_t lcId;     // logical Channel ID
    uint8_t lcp;      // logical Channel Prioritization
+   uint16_t   fiveQi; // 5QI
    SchLcState lcState;
    uint32_t bo;
    uint16_t   pduSessionId; /*Pdu Session Id*/
