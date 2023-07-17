@@ -44,7 +44,11 @@
 #define MAX_TEID MAX_NUM_DRB * MAX_NUM_UE /*[Spec 29.281]: Max limit is not mentioned but as per GTP-U Header Format, TEID occupies 4 octets */
 
 #define NUM_TUNNEL_TO_PUMP_DATA 6
+<<<<<<< HEAD
 #define NUM_DL_PACKETS 5
+=======
+#define NUM_DL_PACKETS 20
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
 
 uint8_t         sockType;
 uint8_t         protType;

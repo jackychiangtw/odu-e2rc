@@ -745,7 +745,15 @@ uint8_t SchProcSlotInd(Pst *pst, SlotTimingInfo *slotInd)
       cell->schDlSlotInfo[slot]->ulGrant = NULLP;
    }
 
+<<<<<<< HEAD
     /* Send msg to MAC */
+=======
+<<<<<<< Updated upstream
+   /* Send msg to MAC */
+=======
+     /* Send msg to MAC */
+>>>>>>> Stashed changes
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
 
    SchSliceBasedSliceCb *sliceCb = NULLP;
    SchSliceBasedCellCb  *schSpcCell = (SchSliceBasedCellCb *)cell->schSpcCell;
@@ -770,8 +778,16 @@ uint8_t SchProcSlotInd(Pst *pst, SlotTimingInfo *slotInd)
                }
                
                dlSchedInfo.prbMetric.usedPrb += sliceCb->allocatedPrb;
+<<<<<<< HEAD
                if(sliceCb->allocatedPrb)
                   printf("\nJacky --> SCH : Slice # %d : Used Prb = %d", slice_cnt, sliceCb->allocatedPrb);
+=======
+<<<<<<< Updated upstream
+=======
+               if(sliceCb->allocatedPrb)
+                  printf("\nJacky --> SCH : Slice # %d : Used Prb = %d", slice_cnt, sliceCb->allocatedPrb);
+>>>>>>> Stashed changes
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
                slice_cnt = slice_cnt + 1;
          }
          else{
@@ -779,6 +795,30 @@ uint8_t SchProcSlotInd(Pst *pst, SlotTimingInfo *slotInd)
          }
          sliceCbNode = sliceCbNode->next;
       }
+<<<<<<< HEAD
+=======
+<<<<<<< Updated upstream
+      ret = sendDlAllocToMac(&dlSchedInfo, schInst);
+      if(ret != ROK)
+      {
+         DU_LOG("\nERROR  -->  SCH : Sending DL Broadcast allocation from SCH to MAC failed");
+         return (ret);
+      }
+   }
+   else{
+      ret = sendDlAllocToMac(&dlSchedInfo, schInst);
+      if(ret != ROK)
+      {
+         DU_LOG("\nERROR  -->  SCH : Sending DL Broadcast allocation from SCH to MAC failed");
+         return (ret);
+      }
+   }
+
+   if(dlSchedInfo.prbMetric.listOfSlicePm){
+      SCH_FREE(dlSchedInfo.prbMetric.listOfSlicePm, dlSchedInfo.prbMetric.sliceNum * sizeof(SchSlicePrbPmList));
+      dlSchedInfo.prbMetric.listOfSlicePm = NULLP;
+=======
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
    }
    // printf("\nJacky --> SCH : Cell Used Prb = %d", dlSchedInfo.prbMetric.usedPrb );
 
@@ -787,6 +827,7 @@ uint8_t SchProcSlotInd(Pst *pst, SlotTimingInfo *slotInd)
    {
       DU_LOG("\nERROR  -->  SCH : Sending DL Broadcast allocation from SCH to MAC failed");
       return (ret);
+>>>>>>> Stashed changes
    }
 
    if(dlSchedInfo.prbMetric.listOfSlicePm){
@@ -794,6 +835,10 @@ uint8_t SchProcSlotInd(Pst *pst, SlotTimingInfo *slotInd)
       dlSchedInfo.prbMetric.listOfSlicePm = NULLP;
    }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
    schInitDlSlot(cell->schDlSlotInfo[slot]);
    schUlResAlloc(cell, schInst);
 #ifdef NR_DRX 

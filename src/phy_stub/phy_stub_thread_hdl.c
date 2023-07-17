@@ -55,7 +55,7 @@ void GenerateTicks()
    float     milisec = 1;          /* 1ms */
 #endif
    struct timespec req = {0};
-   uint8_t ratio = 2;
+   uint8_t ratio = 4;
 
    slotIndicationStarted = true;
    req.tv_sec = 0;

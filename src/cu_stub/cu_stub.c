@@ -439,7 +439,11 @@ uint8_t startDlData()
    uint32_t duId;
    uint8_t ret = ROK;
    uint8_t cnt = 0;
+<<<<<<< HEAD
    int32_t totalNumOfTestFlow = 1; 
+=======
+   int32_t totalNumOfTestFlow = 15; 
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
    EgtpTeIdCb *teidCb = NULLP;
    
    while(totalNumOfTestFlow)
@@ -464,7 +468,12 @@ uint8_t startDlData()
                      DU_LOG("\nERROR --> EGTP: Issue with teid=%d\n",teId);
                      break;
                   }
+<<<<<<< HEAD
 
+=======
+                  /* TODO : sleep(1) will be removed later once we will be able to
+                   * support the continuous data pack transfer */
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
                   //sleep(1);
                   cnt++;
                }
@@ -541,6 +550,7 @@ void *cuConsoleHandler(void *args)
           * NUM_TUNNEL_TO_PUMP_DATA = 9, NUM_DL_PACKETS = 1.
           * totalDataPacket = totalNumOfTestFlow * NUM_TUNNEL_TO_PUMP_DATA * NUM_DL_PACKETS 
           * totalDataPacket = [500*9*1] */
+<<<<<<< HEAD
          // while(1){
          //    for(int i=0;i<240;i++){
          //       startDlData(16,0,0);
@@ -563,6 +573,14 @@ void *cuConsoleHandler(void *args)
                usleep(135000);
             }
             sleep(15);
+=======
+         while(1){
+            for(int i=0;i<5;i++){
+               startDlData();
+               sleep(2);
+            }
+            sleep(30);
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
          }
          
 #endif

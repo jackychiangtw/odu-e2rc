@@ -1,5 +1,6 @@
 #include "du_e2sm_manager.h"
 
+<<<<<<< HEAD
 uint8_t smInit(){
     uint8_t oid_e2kpmv2[] = "1.3.6.1.4.1.53148.1.2.2.2";
     uint8_t oid_e2kpmv3[] = "1.3.6.1.4.1.53148.1.3.2.2";
@@ -26,6 +27,49 @@ uint8_t smInit(){
     ranFuncInfo[INDEX_OF_RC].ranFunctionRev = 4;
     strcpy(ranFuncInfo[INDEX_OF_RC].ranFunctionOId, oid_e2rc);
 
+=======
+<<<<<<< Updated upstream
+RanFuncInfo ranFuncInfo[SIZE_OF_SERVICE_MODEL] = {{147, 2, "1.3.6.1.4.1.53148.1.2.2.2", }, {168, 3, "1.3.6.1.4.1.53148.1.2.3.2", }, {201, 3, "1.3.6.1.4.1.53148.1.1.2.3", }};
+
+uint8_t smInit(){
+    ranFuncInfo[INDEX_OF_KPM_V2].fillRanFuncDescription = kpmRanFuncDescription;
+    ranFuncInfo[INDEX_OF_KPM_V2].decapActionDefinition = kpmDecapActionDefinition;
+    ranFuncInfo[INDEX_OF_KPM_V2].decapEventTrigDefinition = decapEventTrigDefinitionFormat1;
+=======
+uint8_t smInit(){
+    uint8_t oid_e2kpmv2[] = "1.3.6.1.4.1.53148.1.2.2.2";
+    uint8_t oid_e2kpmv3[] = "1.3.6.1.4.1.53148.1.3.2.2";
+    uint8_t oid_e2rc[] = "1.3.6.1.4.1.53148.1.1.2.3";
+
+    ranFuncInfo[INDEX_OF_KPM_V2].fillRanFuncDescription = kpmRanFuncDescription;
+    ranFuncInfo[INDEX_OF_KPM_V2].decapActionDefinition = kpmDecapActionDefinition;
+    ranFuncInfo[INDEX_OF_KPM_V2].decapEventTrigDefinition = decapEventTrigDefinitionFormat1;
+    ranFuncInfo[INDEX_OF_KPM_V2].ranFunctionId = 168;
+    ranFuncInfo[INDEX_OF_KPM_V2].ranFunctionRev = 2;
+    strcpy(ranFuncInfo[INDEX_OF_KPM_V2].ranFunctionOId, oid_e2kpmv2);
+>>>>>>> Stashed changes
+    
+    ranFuncInfo[INDEX_OF_KPM_V3].fillRanFuncDescription = kpmRanFuncDescriptionV3;
+    ranFuncInfo[INDEX_OF_KPM_V3].decapActionDefinition = kpmDecapActionDefinitionV3;
+    ranFuncInfo[INDEX_OF_KPM_V3].decapEventTrigDefinition = decapEventTrigDefinitionFormat1;
+<<<<<<< Updated upstream
+=======
+    ranFuncInfo[INDEX_OF_KPM_V3].ranFunctionId = 2;
+    ranFuncInfo[INDEX_OF_KPM_V3].ranFunctionRev = 3;
+    strcpy(ranFuncInfo[INDEX_OF_KPM_V3].ranFunctionOId, oid_e2kpmv3);
+>>>>>>> Stashed changes
+
+    ranFuncInfo[INDEX_OF_RC].fillRanFuncDescription = rcFillE2SetupReq;
+    ranFuncInfo[INDEX_OF_RC].procRicCtrlHeader = procE2rcCtrlHeader;
+    ranFuncInfo[INDEX_OF_RC].procRicCtrlMessage = procE2rcCtrlMessage;
+<<<<<<< Updated upstream
+=======
+    ranFuncInfo[INDEX_OF_RC].ranFunctionId = 3;
+    ranFuncInfo[INDEX_OF_RC].ranFunctionRev = 4;
+    strcpy(ranFuncInfo[INDEX_OF_RC].ranFunctionOId, oid_e2rc);
+>>>>>>> Stashed changes
+
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
     return ROK;
 }
 
@@ -47,9 +91,21 @@ uint8_t smFillE2SetupReq(RANfunctions_List_t  *ranfun_list){
 
     // Fill RAN Function item in E2AP
     RANfunction_ItemIEs_t *ranfunc_item;
+<<<<<<< HEAD
     ranfunc_item = (RANfunction_ItemIEs_t*)calloc(USING_SERVICE_MODEL, sizeof(RANfunction_ItemIEs_t));
 
     for(int i=0;i<USING_SERVICE_MODEL;i++){
+=======
+<<<<<<< Updated upstream
+    ranfunc_item = (RANfunction_ItemIEs_t*)calloc(SIZE_OF_SERVICE_MODEL, sizeof(RANfunction_ItemIEs_t));
+
+    for(int i=0;i<SIZE_OF_SERVICE_MODEL;i++){
+=======
+    ranfunc_item = (RANfunction_ItemIEs_t*)calloc(USING_SERVICE_MODEL, sizeof(RANfunction_ItemIEs_t));
+
+    for(int i=0;i<USING_SERVICE_MODEL;i++){
+>>>>>>> Stashed changes
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
         smFillRanFuncItemInfo(&ranfunc_item[i], &ranFuncInfo[i]);
         ranFuncInfo[i].fillRanFuncDescription(&ranfunc_item[i].value.choice.RANfunction_Item.ranFunctionDefinition);
         xer_fprint(stderr, &asn_DEF_RANfunction_ItemIEs, &ranfunc_item[i]);
@@ -57,7 +113,15 @@ uint8_t smFillE2SetupReq(RANfunctions_List_t  *ranfun_list){
     }
 }
 
+<<<<<<< HEAD
 uint8_t smProcRicCtrlHeader(RICcontrolHeader_t *ricCtrlHdr, uint32_t ranFuncId, long reqId, long instanceId){
+=======
+<<<<<<< Updated upstream
+uint8_t smProcRicCtrlHeader(RICcontrolHeader_t *ricCtrlHdr, uint32_t ranFuncId){
+=======
+uint8_t smProcRicCtrlHeader(RICcontrolHeader_t *ricCtrlHdr, uint32_t ranFuncId, long reqId, long instanceId){
+>>>>>>> Stashed changes
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
     for(int i=0;i<SIZE_OF_SERVICE_MODEL;i++){
         if(ranFuncInfo[i].ranFunctionId == ranFuncId){
             return ranFuncInfo[i].procRicCtrlHeader(ricCtrlHdr);
@@ -66,7 +130,15 @@ uint8_t smProcRicCtrlHeader(RICcontrolHeader_t *ricCtrlHdr, uint32_t ranFuncId, 
     return RFAILED;
 }
 
+<<<<<<< HEAD
 uint8_t smProcRicCtrlMessage(RICcontrolMessage_t *ricCtrlMsg, uint32_t ranFuncId, long reqId, long instanceId){
+=======
+<<<<<<< Updated upstream
+uint8_t smProcRicCtrlMessage(RICcontrolMessage_t *ricCtrlMsg, uint32_t ranFuncId){
+=======
+uint8_t smProcRicCtrlMessage(RICcontrolMessage_t *ricCtrlMsg, uint32_t ranFuncId, long reqId, long instanceId){
+>>>>>>> Stashed changes
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
     for(int i=0;i<SIZE_OF_SERVICE_MODEL;i++){
         if(ranFuncInfo[i].ranFunctionId == ranFuncId){
             return ranFuncInfo[i].procRicCtrlMessage(ricCtrlMsg);
@@ -75,7 +147,15 @@ uint8_t smProcRicCtrlMessage(RICcontrolMessage_t *ricCtrlMsg, uint32_t ranFuncId
     return RFAILED;
 }
 
+<<<<<<< HEAD
 uint8_t smDecapEventTrigDefinition(RICeventTriggerDefinition_t *eventTrigDefini, uint32_t ranFuncId, long reqId, long instanceId){
+=======
+<<<<<<< Updated upstream
+uint8_t smDecapEventTrigDefinition(RICeventTriggerDefinition_t *eventTrigDefini, uint32_t ranFuncId){
+=======
+uint8_t smDecapEventTrigDefinition(RICeventTriggerDefinition_t *eventTrigDefini, uint32_t ranFuncId, long reqId, long instanceId){
+>>>>>>> Stashed changes
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
     for(int i=0;i<SIZE_OF_SERVICE_MODEL;i++){
         if(ranFuncInfo[i].ranFunctionId == ranFuncId){
             return ranFuncInfo[i].decapEventTrigDefinition(eventTrigDefini);
@@ -84,7 +164,15 @@ uint8_t smDecapEventTrigDefinition(RICeventTriggerDefinition_t *eventTrigDefini,
     return RFAILED;
 }
 
+<<<<<<< HEAD
 uint8_t smDecapActionDefinition(RICactionDefinition_t *ricdifin, uint32_t ranFuncId, long reqId, long instanceId){
+=======
+<<<<<<< Updated upstream
+uint8_t smDecapActionDefinition(RICactionDefinition_t *ricdifin, uint32_t ranFuncId){
+=======
+uint8_t smDecapActionDefinition(RICactionDefinition_t *ricdifin, uint32_t ranFuncId, long reqId, long instanceId){
+>>>>>>> Stashed changes
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
     for(int i=0;i<SIZE_OF_SERVICE_MODEL;i++){
         if(ranFuncInfo[i].ranFunctionId == ranFuncId){
             return ranFuncInfo[i].decapActionDefinition(ricdifin);

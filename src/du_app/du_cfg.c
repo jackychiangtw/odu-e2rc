@@ -319,7 +319,11 @@ uint8_t readMacCfg()
 
 
 
+<<<<<<< HEAD
 // #ifndef O1_ENABLE
+=======
+#ifndef O1_ENABLE
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
 
    /*Note: Static Configuration, when O1 is not configuring the RRM policy*/
    RrmPolicyList rrmPolicy[3];
@@ -363,7 +367,11 @@ uint8_t readMacCfg()
    rrmPolicy[2].rRMPolicyDedicatedRatio = 10;
 
    cpyRrmPolicyInDuCfgParams(rrmPolicy, 3, &duCfgParam.tempSliceCfg);
+<<<<<<< HEAD
 // #endif
+=======
+#endif
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
 
    return ROK;
 }

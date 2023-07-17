@@ -57,6 +57,7 @@
         "measurementconditem-v300.h": "c",
         "matchingconditem.h": "c",
         "matchingconditem-choice.h": "c",
+<<<<<<< HEAD
         "e2sm-kpm-ranfunction-description.h": "c",
         "sch_slice_based.h": "c",
         "lrg.h": "c",
@@ -126,5 +127,14 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp"
+=======
+<<<<<<< Updated upstream
+        "e2sm-kpm-ranfunction-description.h": "c"
+=======
+        "e2sm-kpm-ranfunction-description.h": "c",
+        "sch_slice_based.h": "c",
+        "lrg.h": "c"
+>>>>>>> Stashed changes
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
     }
 }

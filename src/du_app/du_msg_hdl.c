@@ -2111,8 +2111,13 @@ uint8_t DuProcRlcSliceMetrics(Pst *pst, SlicePmList *sliceStats)
    //     sendSliceMetric(sliceStatsList);
    //  }
 #endif
+<<<<<<< HEAD
 
    kpmStoreSliceRlcMetric(sliceStats);
+=======
+   kpmStoreSliceRlcMetric(sliceStats);
+   // kpmSendSliceMetric();
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
 
    DU_FREE_SHRABL_BUF(pst->region, pst->pool,sliceStats->sliceRecord, (sliceStats->numSlice) * (sizeof(SlicePm)));
    DU_FREE_SHRABL_BUF(pst->region, pst->pool,sliceStats, sizeof(SlicePmList));
@@ -2150,6 +2155,10 @@ uint8_t DuProcRlcCellMetrics(Pst *pst, CellPmList *cellStats)
     }
    else{
       kpmStoreCellRlcMetric(cellStats);
+<<<<<<< HEAD
+=======
+      // kpmSendCellMetric();
+>>>>>>> 65785e7fdb2a1f778048b4a2e22e3222113b14be
    }
 
    
