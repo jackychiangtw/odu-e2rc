@@ -95,7 +95,7 @@
 #define BSR_SR_DELAY_TMR_2560 2560
 
 #define PAGING_SCHED_DELTA  4
-#define MAX_PLMN 2
+#define MAX_PLMN 3
 
 typedef enum
 {
@@ -1653,7 +1653,7 @@ typedef struct macPrbPm
    uint8_t           usedPrb;
    uint8_t           totalPrb;
    uint8_t             sliceNum;
-   MacSlicePrbPmList   **listOfSlicePm;
+   MacSlicePrbPmList   *listOfSlicePm;
 }MacPrbPm;
 
 /*As per ORAN-WG8, Slice Cfg and ReCfg are same structures*/

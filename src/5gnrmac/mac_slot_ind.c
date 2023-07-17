@@ -177,7 +177,7 @@ uint8_t MacProcDlAlloc(Pst *pst, DlSchedInfo *dlSchedInfo)
          currDlSlot = &macCb.macCell[cellIdx]->dlSlot[dlSchedInfo->schSlotValue.ulDciTime.slot];
          currDlSlot->dlInfo.ulGrant = dlSchedInfo->ulGrant;
       }
-
+      
       MacPrbPm      *macPrbPm = NULLP;
       MAC_ALLOC_SHRABL_BUF(macPrbPm, sizeof(MacPrbPm));
       if(macPrbPm == NULLP)
@@ -185,12 +185,20 @@ uint8_t MacProcDlAlloc(Pst *pst, DlSchedInfo *dlSchedInfo)
           DU_LOG("\nERROR  -->  MAC : Failed to allocate memory in MacProcSchSliceRecfgRsp");
           return RFAILED;
       }
-      macPrbPm->sliceNum = 1;
-      // MAC_ALLOC_SHRABL_BUF(macPrbPm->listOfSlicePm, macPrbPm->sliceNum * sizeof(MacSlicePrbPmList*));
-      // MAC_ALLOC_SHRABL_BUF(macPrbPm->listOfSlicePm[0], sizeof(MacSlicePrbPmList));
-      macPrbPm->totalPrb = MAX_NUM_RB;
-      macPrbPm->usedPrb = 0;
-
+      if(dlSchedInfo){
+         // macPrbPm->sliceNum = 2;
+         macPrbPm->sliceNum = dlSchedInfo->prbMetric.sliceNum;
+         if(macPrbPm->sliceNum > 0){
+            MAC_ALLOC_SHRABL_BUF(macPrbPm->listOfSlicePm, macPrbPm->sliceNum * sizeof(MacSlicePrbPmList));
+            if(dlSchedInfo->prbMetric.listOfSlicePm){
+               for(int i=0;i<macPrbPm->sliceNum;i++){
+                  macPrbPm->listOfSlicePm[i].usedPrb = dlSchedInfo->prbMetric.listOfSlicePm[i].usedPrb;
+               }
+            }
+         }
+         macPrbPm->totalPrb = MAX_NUM_RB;
+         macPrbPm->usedPrb = dlSchedInfo->prbMetric.usedPrb;
+      }
       MacSendPrbPmToDu(macPrbPm);
    }
    return ROK;

@@ -30,6 +30,10 @@ STARTUP_CONFIG="startup_config.xml"
 INSTALL="netconf"
 CLEANUP="no"
 SUDO="sudo"
+proc_num="$(nproc --all)"
+if [ -z "$proc_num" ]; then
+    proc_num=1;
+fi
 
 #logging functions
 log_error(){
@@ -97,7 +101,7 @@ install_netconf_lib() {
 
    #1. libssh
    cd $NETCONF_PATH && \
-      git clone -c http.sslverify=false -b v0-7 --depth 1 https://git.libssh.org/projects/libssh.git && \
+      git clone -b v0-7 --depth 1 http://git.libssh.org/projects/libssh.git && \
       cd libssh; mkdir build; cd build && \
       cmake .. && \
       make && \
@@ -111,7 +115,7 @@ install_netconf_lib() {
       cd cJSON && \
       mkdir build && cd build && \
       cmake .. -DENABLE_CJSON_UTILS=On -DENABLE_CJSON_TEST=Off && \
-      make -j4 && \
+      make -j$proc_num && \
       $SUDO make install && \
       $SUDO ldconfig
    check_ret "LIBJSON" "$?"
@@ -122,18 +126,18 @@ install_netconf_lib() {
       cd curl && \
       mkdir build && cd build && \
       cmake -DBUILD_TESTING=OFF .. && \
-      make -j4 && \
+      make -j$proc_num && \
       $SUDO make install && \
       $SUDO ldconfig
    check_ret "LIBCURL" "$?"
 
    # libyang
    cd $NETCONF_PATH && \
-      git clone -b v1.0.184 --depth 1 https://github.com/CESNET/libyang.git && \
+      git clone -b libyang1 --depth 1 https://github.com/CESNET/libyang.git && \
       cd libyang && mkdir build && cd build && \
       cmake -DGEN_LANGUAGE_BINDINGS=ON -DGEN_PYTHON_BINDINGS=OFF \
             -DCMAKE_BUILD_TYPE:String="Debug" -DENABLE_BUILD_TESTS=OFF .. && \
-      make -j2 && \
+      make -j$proc_num && \
       $SUDO make install && \
       $SUDO ldconfig
 
@@ -141,13 +145,13 @@ install_netconf_lib() {
 
    # sysrepo
    cd $NETCONF_PATH && \
-      git clone -b v1.4.70 --depth 1  https://github.com/sysrepo/sysrepo.git && \
+      git clone -b libyang1 --depth 1  https://github.com/sysrepo/sysrepo.git && \
       cd sysrepo && sed -i -e 's/2000/30000/g;s/5000/30000/g' src/common.h.in && \
       mkdir build && cd build && \
       cmake -DGEN_LANGUAGE_BINDINGS=ON -DGEN_PYTHON_BINDINGS=OFF \
             -DCMAKE_BUILD_TYPE:String="Debug" -DENABLE_TESTS=OFF \
 	    -DREPOSITORY_LOC:PATH=/etc/sysrepo .. && \
-      make -j2 && \
+      make -j$proc_num && \
       $SUDO make install && $SUDO make sr_clean && \
       $SUDO ldconfig
 
@@ -155,10 +159,10 @@ install_netconf_lib() {
 
    # libnetconf2
    cd $NETCONF_PATH && \
-      git clone -b v1.1.36 --depth 1 https://github.com/CESNET/libnetconf2.git && \
+      git clone -b libyang1 --depth 1 https://github.com/CESNET/libnetconf2 && \
       cd libnetconf2 && mkdir build && cd build && \
       cmake -DCMAKE_BUILD_TYPE:String="Debug" -DENABLE_BUILD_TESTS=OFF .. && \
-      make -j2 && \
+      make -j$proc_num && \
       $SUDO make install && \
       $SUDO ldconfig
 
@@ -166,11 +170,11 @@ install_netconf_lib() {
 
    # netopeer2
    cd $NETCONF_PATH && \
-      git clone -b v1.1.53 --depth 1 https://github.com/CESNET/Netopeer2.git && \
-      cd Netopeer2 && mkdir build && cd build && \
+      git clone -b libyang1 --depth 1 https://git-ntustoran.ddns.net/oran/netopeer2.git && \
+      cd netopeer2 && mkdir build && cd build && \
       cmake -DCMAKE_BUILD_TYPE:String="Debug" -DNP2SRV_DATA_CHANGE_TIMEOUT=30000 \
             -DNP2SRV_DATA_CHANGE_WAIT=OFF .. && \
-      make -j2 && \
+      make -j$proc_num && \
       $SUDO make install -d
    check_ret "NETOPEER2" "$?"
 

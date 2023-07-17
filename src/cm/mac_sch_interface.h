@@ -1066,6 +1066,21 @@ typedef struct transportBlock
    LcSchInfo  lcSchInfo[MAX_NUM_LC]; 
 }TransportBlock;
 
+/*Append by Jacky for E2 interface report*/
+typedef struct schSlicePrbPmList
+{
+   uint8_t           usedPrb;
+}SchSlicePrbPmList;
+
+/*Append by Jacky for E2 interface report*/
+typedef struct prbMertic
+{
+   uint8_t             usedPrb;
+   uint8_t             totalPrb;
+   uint8_t             sliceNum;
+   SchSlicePrbPmList   *listOfSlicePm;
+}PrbMetric;
+
 typedef struct dlMsgSchedInfo
 {
    uint16_t        crnti;
@@ -1085,6 +1100,9 @@ typedef struct dlMsgSchedInfo
    BwpCfg          bwp;
    PdcchCfg        *dlMsgPdcchCfg;
    PdschCfg        *dlMsgPdschCfg;
+
+   /*Append by Jacky for E2 interface report per UE*/
+   PrbMetric prbMetric;
 }DlMsgSchInfo;
 
 typedef struct schSlotValue
@@ -1163,7 +1181,6 @@ typedef struct dciInfo
    DlDCI          dciInfo;        /* DlDCI */
 }DciInfo;
 
-
 /* Reference -> O-RAN.WG8.AAD.0-v07.00, Section 11.2.4.3.8 DL Scheduling Information */
 typedef struct dlSchedInfo
 {
@@ -1182,6 +1199,9 @@ typedef struct dlSchedInfo
 
    /* Allocation from dedicated DL msg */
    DlMsgSchInfo *dlMsgAlloc[MAX_NUM_UE];
+
+   /*Append by Jacky for E2 interface report per cell*/
+   PrbMetric prbMetric;
 
 }DlSchedInfo;
 

@@ -75,7 +75,9 @@ typedef struct rrmPolicyList
 //RrmPolicyList *rrmPolicyList;
 //RrmPolicyList rrmPolicy;
 
+#ifndef O1_ENABLE
 uint8_t setRrmPolicy(RrmPolicyList rrmPolicy[],uint8_t policyNum);
+#endif
 
 
 uint8_t rcFillE2SetupReq(RANfunctionDefinition_t  *ranFunDefinition);

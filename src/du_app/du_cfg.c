@@ -318,30 +318,11 @@ uint8_t readMacCfg()
    duCfgParam.macCellCfg.initialUlBwp.pucchCommon.pucchGroupHopping = PUCCH_GROUP_HOPPING;
 
 
-#ifndef O1_ENABLE
+
+// #ifndef O1_ENABLE
 
    /*Note: Static Configuration, when O1 is not configuring the RRM policy*/
-   /*
-   RrmPolicyList rrmPolicy;
-   rrmPolicy.id[0] = 1;
-   rrmPolicy.resourceType = PRB;
-   rrmPolicy.rRMMemberNum = 1;
-   memcpy(rrmPolicy.rRMPolicyMemberList[0].mcc,duCfgParam.macCellCfg.cellCfg.plmnInfoList[0].plmn.mcc, 3*sizeof(uint8_t));
-   memcpy(rrmPolicy.rRMPolicyMemberList[0].mnc,duCfgParam.macCellCfg.cellCfg.plmnInfoList[0].plmn.mnc, 3*sizeof(uint8_t));
-   rrmPolicy.rRMPolicyMemberList[0].sst = 1;
-   rrmPolicy.rRMPolicyMemberList[0].sd[0] = 2;
-   rrmPolicy.rRMPolicyMemberList[0].sd[1] = 3;
-   rrmPolicy.rRMPolicyMemberList[0].sd[2] = 4;
-   rrmPolicy.rRMPolicyMaxRatio = 90;
-   rrmPolicy.rRMPolicyMinRatio = 30;
-   rrmPolicy.rRMPolicyDedicatedRatio = 10;
-
-   cpyRrmPolicyInDuCfgParams(&rrmPolicy, 1, &duCfgParam.tempSliceCfg);
-
-   */
-   /*Note: Static Configuration, when O1 is not configuring the RRM policy*/
-   //RrmPolicyList rrmPolicy;
-   RrmPolicyList rrmPolicy[2];
+   RrmPolicyList rrmPolicy[3];
    rrmPolicy[0].id[0] = 1;
    rrmPolicy[0].resourceType = PRB;
    rrmPolicy[0].rRMMemberNum = 1;
@@ -351,8 +332,8 @@ uint8_t readMacCfg()
    rrmPolicy[0].rRMPolicyMemberList[0].sd[0] = 2;
    rrmPolicy[0].rRMPolicyMemberList[0].sd[1] = 3;
    rrmPolicy[0].rRMPolicyMemberList[0].sd[2] = 4;
-   rrmPolicy[0].rRMPolicyMaxRatio = 90;
-   rrmPolicy[0].rRMPolicyMinRatio = 30;
+   rrmPolicy[0].rRMPolicyMaxRatio = 100;
+   rrmPolicy[0].rRMPolicyMinRatio = 34;
    rrmPolicy[0].rRMPolicyDedicatedRatio = 10;
 
    rrmPolicy[1].id[0] = 2;
@@ -360,20 +341,29 @@ uint8_t readMacCfg()
    rrmPolicy[1].rRMMemberNum = 1;
    memcpy(rrmPolicy[1].rRMPolicyMemberList[0].mcc,duCfgParam.macCellCfg.cellCfg.plmnInfoList[0].plmn.mcc, 3*sizeof(uint8_t));
    memcpy(rrmPolicy[1].rRMPolicyMemberList[0].mnc,duCfgParam.macCellCfg.cellCfg.plmnInfoList[0].plmn.mnc, 3*sizeof(uint8_t));
-   rrmPolicy[1].rRMPolicyMemberList[0].sst = 5;
-   rrmPolicy[1].rRMPolicyMemberList[0].sd[0] = 6;
-   rrmPolicy[1].rRMPolicyMemberList[0].sd[1] = 7;
-   rrmPolicy[1].rRMPolicyMemberList[0].sd[2] = 8;
-   rrmPolicy[1].rRMPolicyMaxRatio = 80;
-   rrmPolicy[1].rRMPolicyMinRatio = 40;
-   rrmPolicy[1].rRMPolicyDedicatedRatio = 20;
+   rrmPolicy[1].rRMPolicyMemberList[0].sst = 2;
+   rrmPolicy[1].rRMPolicyMemberList[0].sd[0] = 3;
+   rrmPolicy[1].rRMPolicyMemberList[0].sd[1] = 3;
+   rrmPolicy[1].rRMPolicyMemberList[0].sd[2] = 4;
+   rrmPolicy[1].rRMPolicyMaxRatio = 100;
+   rrmPolicy[1].rRMPolicyMinRatio = 33;
+   rrmPolicy[1].rRMPolicyDedicatedRatio = 10;
 
+   rrmPolicy[2].id[0] = 3;
+   rrmPolicy[2].resourceType = PRB;
+   rrmPolicy[2].rRMMemberNum = 1;
+   memcpy(rrmPolicy[2].rRMPolicyMemberList[0].mcc,duCfgParam.macCellCfg.cellCfg.plmnInfoList[0].plmn.mcc, 3*sizeof(uint8_t));
+   memcpy(rrmPolicy[2].rRMPolicyMemberList[0].mnc,duCfgParam.macCellCfg.cellCfg.plmnInfoList[0].plmn.mnc, 3*sizeof(uint8_t));
+   rrmPolicy[2].rRMPolicyMemberList[0].sst = 3;
+   rrmPolicy[2].rRMPolicyMemberList[0].sd[0] = 4;
+   rrmPolicy[2].rRMPolicyMemberList[0].sd[1] = 3;
+   rrmPolicy[2].rRMPolicyMemberList[0].sd[2] = 4;
+   rrmPolicy[2].rRMPolicyMaxRatio = 100;
+   rrmPolicy[2].rRMPolicyMinRatio = 33;
+   rrmPolicy[2].rRMPolicyDedicatedRatio = 10;
 
-
-   cpyRrmPolicyInDuCfgParams(rrmPolicy, 2, &duCfgParam.tempSliceCfg);
-  
-
-#endif
+   cpyRrmPolicyInDuCfgParams(rrmPolicy, 3, &duCfgParam.tempSliceCfg);
+// #endif
 
    return ROK;
 }
@@ -637,7 +627,7 @@ uint8_t readCfg()
 
 #ifndef O1_ENABLE
    /* Note: Added these below variable for local testing*/
-   Snssai snssai[NUM_OF_SUPPORTED_SLICE] = {{1,{2,3,4}},{5,{6,7,8}}};
+   Snssai snssai[NUM_OF_SUPPORTED_SLICE] = {{1,{2,3,4}},{2,{3,3,4}},{3,{4,3,4}}};
 #endif
 
 #ifdef O1_ENABLE
