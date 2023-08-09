@@ -19,6 +19,7 @@
 /* This file contains message handling functionality for DU APP */
 #include "common_def.h"
 #include "lrg.h"
+#include "du_tmr.h"
 #include "legtp.h"
 #include "lkw.h"
 #include "kwu.h"
@@ -27,6 +28,7 @@
 #include "kwu.x"
 #include "du_app_mac_inf.h"
 #include "du_app_rlc_inf.h"
+#include "du_e2ap_mgr.h"
 #include "du_cfg.h"
 #include "du_app_rlc_inf.h"
 #include "du_mgr.h"
@@ -1863,40 +1865,6 @@ uint8_t DuProcRlcUlUserDataTrans(Pst *pst, RlcUlUserDatInfo *ulUserData)
 
 /*******************************************************************
  *
- * @brief  free the slice cfg rsp
- *
- * @details
- *
- *    Function : duFreeSliceCfgRsp 
- *
- *    Functionality: free the slice cfg rsp 
- *
- * @params[in] Post structure, MacSliceCfgRsp  *cfgRsp
- *             
- * @return ROK     - success
- *         RFAILED - failure
- *
- **********************************************************************/
-void duFreeSliceCfgRsp(Pst *pst,  MacSliceCfgRsp *cfgRsp) 
-{
-   uint8_t cfgIdx;
-
-   if(cfgRsp)
-   {
-      if(cfgRsp->numSliceCfgRsp)
-      {
-         for(cfgIdx = 0; cfgIdx<cfgRsp->numSliceCfgRsp; cfgIdx++)
-         {
-            DU_FREE_SHRABL_BUF(DU_APP_MEM_REGION, DU_POOL, cfgRsp->listOfSliceCfgRsp[cfgIdx], sizeof(MacSliceRsp)); 
-         }
-         DU_FREE_SHRABL_BUF(DU_APP_MEM_REGION, DU_POOL, cfgRsp->listOfSliceCfgRsp, cfgRsp->numSliceCfgRsp * sizeof(MacSliceRsp*)); 
-      }
-      DU_FREE_SHRABL_BUF(DU_APP_MEM_REGION, DU_POOL, cfgRsp, sizeof(MacSliceCfgRsp)); 
-   }
-}
-
-/*******************************************************************
- *
  * @brief process the slice cfg rsp received from MAC
  *
  * @details
@@ -1913,22 +1881,18 @@ void duFreeSliceCfgRsp(Pst *pst,  MacSliceCfgRsp *cfgRsp)
  **********************************************************************/
 uint8_t DuProcMacSliceCfgRsp(Pst *pst,  MacSliceCfgRsp *cfgRsp)
 {
-    uint8_t cfgIdx = 0;
-    
     if(cfgRsp)
     {
-        if(cfgRsp->listOfSliceCfgRsp)
-        {
-            for(cfgIdx = 0; cfgIdx<cfgRsp->numSliceCfgRsp; cfgIdx++)
-            {
-                if(cfgRsp->listOfSliceCfgRsp[cfgIdx]->rsp ==  MAC_DU_APP_RSP_OK)
-                {
-                    duCb.sliceState = SLICE_CONFIGURED;
-                }
-            }
-            DU_LOG("\nINFO  -->  DU_APP : Slice Configuration is done successfully ");
-        }
-        duFreeSliceCfgRsp(pst, cfgRsp);
+       if(cfgRsp->rsp ==  MAC_DU_APP_RSP_OK)
+       {
+          duCb.sliceState = SLICE_CONFIGURED;
+          DU_LOG("\nINFO  -->  DU_APP : Slice configured successfully ");
+       }
+       else
+       {
+          DU_LOG("\nERROR  -->  DU_APP : Slice not available");
+       }
+       DU_FREE_SHRABL_BUF(DU_APP_MEM_REGION, DU_POOL, cfgRsp, sizeof(MacSliceCfgRsp));
     }
     return ROK;
 }
@@ -2038,30 +2002,15 @@ uint8_t BuildAndSendSliceRecfgReq()
  *         RFAILED - failure
  *
  **********************************************************************/
-uint8_t DuProcMacSliceRecfgRsp(Pst *pst,  MacSliceRecfgRsp *reCfgRsp)
+uint8_t DuProcMacSliceRecfgRsp(Pst *pst,  MacSliceRecfgRsp *recfgRsp)
 {
-   uint8_t cfgIdx = 0;
-
-   if(reCfgRsp)
+   if(recfgRsp)
    {
-      if(reCfgRsp->listOfSliceCfgRsp)
+      if(recfgRsp->rsp == MAC_DU_APP_RSP_OK)
       {
-         for(cfgIdx = 0; cfgIdx < reCfgRsp->numSliceCfgRsp; cfgIdx++)
-         {
-            if(reCfgRsp->listOfSliceCfgRsp[cfgIdx]->rsp == MAC_DU_APP_RSP_OK)
-            {
-               duCb.sliceState = SLICE_RECONFIGURED; 
-            }
-            else
-            {
-               DU_LOG("\nERROR  -->  DU_APP : Slice not available");
-            }
-         }
-         DU_LOG("\nINFO  --> DU_APP : Slice ReCOnfiguration response received");
+         duCb.sliceState = SLICE_RECONFIGURED; 
+          DU_LOG("\nINFO  -->  DU_APP : Slice Reconfigured successfully ");
       }
-<<<<<<< Updated upstream
-      duFreeSliceCfgRsp(pst, reCfgRsp);
-=======
       else
       {
          DU_LOG("\nERROR  -->  DU_APP : Slice not available");
@@ -2070,10 +2019,9 @@ uint8_t DuProcMacSliceRecfgRsp(Pst *pst,  MacSliceRecfgRsp *reCfgRsp)
    }
    return ROK;
 }
-
 /*******************************************************************
  *
- * @brief process the mac PRB measurement received from MAC
+ * @brief process the PRB measurement received from MAC
  *
  * @details
  *
@@ -2091,38 +2039,28 @@ uint8_t DuProcMacPrbPm(Pst *pst,  MacPrbPm *macPrbPm)
 {
    if(macPrbPm != NULLP)
    {
-      // DU_LOG("\nINFO  -->  DU_APP : MAC PRB Measurement received successfully ");
-      // DU_LOG("\nINFO  -->  DU_APP : total PRB = %d, Used PRB = %d ", macPrbPm->totalPrb, macPrbPm->usedPrb);
-
       kpmStoreMacMetric(macPrbPm);
       if(macPrbPm->listOfSlicePm){
-         // DU_LOG("\nINFO  -->  DU_APP : macPrbPm->sliceNum = %d ", macPrbPm->sliceNum);
          DU_FREE_SHRABL_BUF(pst->region, pst->pool, macPrbPm->listOfSlicePm, (macPrbPm->sliceNum) * sizeof(MacSlicePrbPmList));
       }
-      
-      // if(macPrbPm->sliceNum>0){
-      //    
-      //       
-      // }
       DU_FREE_SHRABL_BUF(pst->region, pst->pool, macPrbPm, sizeof(MacPrbPm));
    }
    else{
       DU_LOG("\nERROR  -->  DU APP : DuProcMacPrbPm, Empty Metrics");
->>>>>>> Stashed changes
    }
    return ROK;
 }
 
 /*******************************************************************
 *
-* @brief Handles received Slice Metrics from RLC and forward it to E2 
+* @brief Handles received Slice Metrics from RLC and forward it to E2 Handler
 *
 * @details
 *
 *    Function : DuProcRlcSliceMetrics
 *
 *    Functionality:
-*      Handles received Slice Metrics from RLC and forward it to E2
+*      Handles received Slice Metrics from RLC and forward it to E2 Handler
 *
 * @params[in] Post structure pointer
 *              SlicePmList *sliceStats
@@ -2147,38 +2085,17 @@ uint8_t DuProcRlcSliceMetrics(Pst *pst, SlicePmList *sliceStats)
        DU_LOG("\nINFO   -->  DU_APP: SliceId[SST-SD]:%d-%d, DlTput %.5lf, UlTput:%.5lf", sliceStats->sliceRecord[sliceRecord].networkSliceIdentifier.sst,\
                         sliceStats->sliceRecord[sliceRecord].networkSliceIdentifier.sd,sliceStats->sliceRecord[sliceRecord].ThpDl,\
                         sliceStats->sliceRecord[sliceRecord].ThpUl);
-
     }
-#ifdef O1_ENABLE
-   // SliceMetricList *sliceStatsList = (SliceMetricList*)calloc(1, sizeof(SliceMetricList));
-   // sliceStatsList->nRecords = sliceStats->numSlice;
-   // sliceStatsList->sliceRecord = (SliceMetricRecord*)calloc(sliceStatsList->nRecords, sizeof(SliceMetricRecord));
-   //  if(sliceStats)
-   //  {
-   //    for(sliceRecord = 0; sliceRecord < sliceStats->numSlice; sliceRecord++)
-   //    {
-   //       sliceStatsList->sliceRecord[sliceRecord].networkSliceIdentifier.sd = sliceStats->sliceRecord[sliceRecord].networkSliceIdentifier.sd;
-   //       sliceStatsList->sliceRecord[sliceRecord].networkSliceIdentifier.sst = sliceStats->sliceRecord[sliceRecord].networkSliceIdentifier.sst;
-   //       sliceStatsList->sliceRecord[sliceRecord].DRB_UEThpDl_SNSSAI = sliceStats->sliceRecord[sliceRecord].ThpDl;
-   //       sliceStatsList->sliceRecord[sliceRecord].DRB_UEThpDl_SNSSAI = 30;
-   //    }
-   //     sendSliceMetric(sliceStatsList);
-   //  }
-#endif
 
-<<<<<<< Updated upstream
-=======
    kpmStoreSliceRlcMetric(sliceStats);
+   kpmSendMetrics();
 
->>>>>>> Stashed changes
    DU_FREE_SHRABL_BUF(pst->region, pst->pool,sliceStats->sliceRecord, (sliceStats->numSlice) * (sizeof(SlicePm)));
    DU_FREE_SHRABL_BUF(pst->region, pst->pool,sliceStats, sizeof(SlicePmList));
 
    return ROK;
 }
 
-<<<<<<< Updated upstream
-=======
 /*******************************************************************
 *
 * @brief Handles received Cell Metrics from RLC and forward it to E2 
@@ -2210,16 +2127,12 @@ uint8_t DuProcRlcCellMetrics(Pst *pst, CellPmList *cellStats)
    else{
       kpmStoreCellRlcMetric(cellStats);
    }
-
-   
    DU_FREE_SHRABL_BUF(pst->region, pst->pool, cellStats->ueRecord, (cellStats->numUe) * (sizeof(CellPm)));
    DU_FREE_SHRABL_BUF(pst->region, pst->pool, cellStats, sizeof(CellPmList));
 
    return ROK;
 }
 
-
->>>>>>> Stashed changes
 /**********************************************************************
   End of file
  **********************************************************************/

@@ -49,7 +49,8 @@ int plmnListNum = 0;
  *
  * @params[in] sysrepo::S_Session session, const char *module_name,
  *             const char *path, const char *request_xpath,
- *             uint32_t request_id, libyang::S_Data_Node &parent
+ *             uint32_t request_id, libyang::S_Data_Node &parent,
+ *             void *private_data
  * @return SR_ERR_OK/SR_ERR_NOK
  ******************************************************************/
 
@@ -58,7 +59,8 @@ int NrCellDuCb::oper_get_items(sysrepo::S_Session session, \
                                        const char *path, \
                                        const char *request_xpath, \
                                        uint32_t request_id, \
-                                       libyang::S_Data_Node &parent)
+                                       libyang::S_Data_Node &parent, \
+                                       void *private_data)
 {
    O1_LOG("\nO1 NrCellCb : Callback called for path=%s on get request", path);
    libyang::S_Context ctx = session->get_context();
@@ -338,7 +340,8 @@ bool NrCellDuCb::configureCell()
  *
  *
  * @params[in] sysrepo::S_Session session, const char *module_name,
- *             const char *xpath, sr_event_t event, uint32_t request_id
+ *             const char *xpath, sr_event_t event, uint32_t request_id,
+ *             void *private_data
  * @return SR_ERR_OK        - success
  *         SR_ERR_INTERNAL  - failure
  ******************************************************************/
@@ -347,7 +350,8 @@ int NrCellDuCb::module_change(sysrepo::S_Session sess, \
                                     const char *module_name, \
                                     const char *xpath, \
                                     sr_event_t event, \
-                                    uint32_t request_id)
+                                    uint32_t request_id, \
+                                    void *private_data)
 {
    O1_LOG("\nO1 NrCellDuCb : Notification edit sucessful");
 

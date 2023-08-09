@@ -18,6 +18,7 @@
 
 /* This file contains message handling functionality for DU cell management */
 #include "common_def.h"
+#include "du_tmr.h"
 #include "lrg.h"
 #include "legtp.h"
 #include "lrg.x"
@@ -26,6 +27,7 @@
 #include "rgr.x"
 #include "du_app_mac_inf.h"
 #include "du_app_rlc_inf.h"
+#include "du_e2ap_mgr.h"
 #include "du_cfg.h"
 #include "du_mgr.h"
 #include "du_utils.h"
@@ -60,6 +62,12 @@ DuMacDlPcchInd packMacDlPcchIndOpts[] =
    packDuMacDlPcchInd        /* Light weight-loose coupling */
 };
 
+DuMacDlBroadcastReq packMacDlBroadcastReqOpts[] =
+{
+   packDuMacDlBroadcastReq,       /* Loose coupling */
+   MacProcDlBroadcastReq,         /* TIght coupling */
+   packDuMacDlBroadcastReq        /* Light weight-loose coupling */
+};
 /*******************************************************************
  *
  * @brief Processes cells to be activated
@@ -367,7 +375,8 @@ uint8_t duHandleCellUpInd(Pst *pst, OduCellId *cellId)
       raiseCellAlrm(CELL_UP_ALARM_ID, cellId->cellId);
       setCellOpState(cellId->cellId, ENABLED, ACTIVE);
 #endif
-
+       duCfgParam.macCellCfg.cellCfg.opState = OP_ENABLED;
+       duCfgParam.macCellCfg.cellCfg.cellState = CELL_ACTIVE;
    }
 
    if((pst->selector == ODU_SELECTOR_LWLC) || (pst->selector == ODU_SELECTOR_TC))
@@ -399,7 +408,7 @@ uint8_t DuProcMacCellDeleteRsp(Pst *pst, MacCellDeleteRsp *deleteRsp)
 
    if(deleteRsp)
    {
-      if(deleteRsp->result == SUCCESSFUL_RSP)
+      if(deleteRsp->status == SUCCESSFUL)
       {
          GET_CELL_IDX(deleteRsp->cellId, cellIdx);
          DU_LOG("\nINFO   -->  DU APP : MAC CELL Delete Response : SUCCESS [CELL IDX : %d]", deleteRsp->cellId);
@@ -1061,6 +1070,56 @@ uint8_t processPagingMsg(uint16_t cellId, DuPagingMsg *rcvdF1apPagingParam)
    return ROK;
 
 }
+
+/*******************************************************************
+ *
+ * @brief DU build and send dl broacast req  and send it to MAC
+ *
+ * @details
+ *
+ *    Function : duBuildAndSendDlBroadcastReq
+ *
+ *    Functionality: DU build and send dl broacast req and send to MAC
+ *                   
+ *
+ * @params[in] cellId, crnti 
+ * @return ROK     - success
+ *         RFAILED - failure
+ *
+ * ****************************************************************/
+
+uint8_t duBuildAndSendDlBroadcastReq()
+{
+   Pst pst;
+   uint8_t ret =ROK;
+   MacDlBroadcastReq *dlBroadcast=NULLP;
+
+   DU_LOG("\nDEBUG  -->  DU_APP : Building Dl broadcast request");
+
+   DU_ALLOC_SHRABL_BUF(dlBroadcast, sizeof(MacDlBroadcastReq));
+   if(dlBroadcast)
+   {
+      /*TODO - fill MAC DL Broadcast Request*/
+      
+      FILL_PST_DUAPP_TO_MAC(pst, EVENT_MAC_DL_BROADCAST_REQ);
+
+      DU_LOG("\nDEBUG  -->  DU_APP: Sending Dl broadcast  Request to MAC ");
+      ret = (*packMacDlBroadcastReqOpts[pst.selector])(&pst, dlBroadcast);
+      if(ret == RFAILED)
+      {
+         DU_LOG("\nERROR  -->  DU_APP: sendDlBroadcastReqToMac(): Failed to send Dl broadcast  Req to MAC");
+         DU_FREE_SHRABL_BUF(DU_APP_MEM_REGION, DU_POOL, dlBroadcast, sizeof(MacDlBroadcastReq));
+      }
+   }
+   else
+   {
+      DU_LOG("\nERROR  -->   DU_APP: sendDlBroadcastReqToMac(): Failed to allocate memory"); 
+      ret =  RFAILED;
+   }
+
+   return ret;
+}
+
 /**********************************************************************
   End of file
  **********************************************************************/

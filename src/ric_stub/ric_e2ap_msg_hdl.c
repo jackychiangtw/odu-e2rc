@@ -28,6 +28,7 @@
 #include "ProtocolIE-FieldE2.h"
 #include "InitiatingMessageE2.h"
 #include "SuccessfulOutcomeE2.h"
+#include "UnsuccessfulOutcomeE2.h"
 #include "E2AP-PDU.h"
 #include "du_log.h"
 #include "E2nodeComponentInterfaceF1.h"
@@ -245,7 +246,7 @@ uint8_t BuildE2nodeComponentConfigAdditionAck(E2nodeComponentConfigAdditionAck_L
  *         RFAILED - failure
  *
  * ****************************************************************/
-uint8_t BuildAndSendE2SetupRsp(uint32_t duId)
+uint8_t BuildAndSendE2SetupRsp(uint32_t duId, uint8_t transId)
 {
    E2AP_PDU_t         *e2apMsg = NULL;
    E2setupResponse_t  *e2SetupRsp;
@@ -279,7 +280,7 @@ uint8_t BuildAndSendE2SetupRsp(uint32_t duId)
 
       elementCnt = 3;
       e2SetupRsp->protocolIEs.list.count = elementCnt;
-      e2SetupRsp->protocolIEs.list.size  = elementCnt * sizeof(E2setupResponseIEs_t);
+      e2SetupRsp->protocolIEs.list.size  = elementCnt * sizeof(E2setupResponseIEs_t*);
 
       RIC_ALLOC(e2SetupRsp->protocolIEs.list.array, e2SetupRsp->protocolIEs.list.size);
       if(e2SetupRsp->protocolIEs.list.array == NULLP)
@@ -309,7 +310,7 @@ uint8_t BuildAndSendE2SetupRsp(uint32_t duId)
       e2SetupRsp->protocolIEs.list.array[idx]->id = ProtocolIE_IDE2_id_TransactionID;
       e2SetupRsp->protocolIEs.list.array[idx]->criticality = CriticalityE2_reject;
       e2SetupRsp->protocolIEs.list.array[idx]->value.present = E2setupResponseIEs__value_PR_TransactionID; 
-      e2SetupRsp->protocolIEs.list.array[idx]->value.choice.TransactionID  = TRANS_ID;
+      e2SetupRsp->protocolIEs.list.array[idx]->value.choice.TransactionID  = transId;
 
       /* Global RIC ID */
       idx++;
@@ -412,12 +413,17 @@ uint8_t BuildRicRequestId(RICrequestID_t *ricReqId)
  *
  * ****************************************************************/
 
-RICaction_ToBeSetup_Item_t* fillSetupItems(RICaction_ToBeSetup_Item_t *setupItems)
+RICaction_ToBeSetup_Item_t* fillSetupItems(RICaction_ToBeSetup_Item_t *setupItems, uint8_t subscription_type)
 {
    if(setupItems != NULLP)
    {
       setupItems->ricActionID = 0;
       setupItems->ricActionType = RICactionType_report;
+      RIC_ALLOC(setupItems->ricActionDefinition, sizeof(RICactionDefinition_t));
+      if(subscription_type == CELL_SUBSCRIPTION)
+         fillKpmCellActionDefinition(setupItems->ricActionDefinition);
+      else if(subscription_type == SLICE_SUBSCRIPTION)
+         fillKpmSliceActionDefinition(setupItems->ricActionDefinition);
    }
 
    return (setupItems);
@@ -439,14 +445,14 @@ RICaction_ToBeSetup_Item_t* fillSetupItems(RICaction_ToBeSetup_Item_t *setupItem
  *
  * ****************************************************************/
 
-uint8_t fillSubsDetails(RICaction_ToBeSetup_ItemIEs_t *items)
+uint8_t fillSubsDetails(RICaction_ToBeSetup_ItemIEs_t *items, uint8_t subscription_type)
 {
    if(items != NULLP)
    {
       items->id = ProtocolIE_IDE2_id_RICaction_ToBeSetup_Item;
       items->criticality   =  CriticalityE2_ignore;
       items->value.present =  RICaction_ToBeSetup_ItemIEs__value_PR_RICaction_ToBeSetup_Item;
-      fillSetupItems(&(items->value.choice.RICaction_ToBeSetup_Item));
+      fillSetupItems(&(items->value.choice.RICaction_ToBeSetup_Item), subscription_type);
    }
    return ROK;
 }
@@ -477,10 +483,8 @@ uint8_t BuildRicSubsDetails(RICsubscriptionDetails_t *subsDetails)
       /* Octet string to be build here */
       /* Sending PLMN as Octect string */
       uint8_t byteSize = 3;
-      subsDetails->ricEventTriggerDefinition.size = byteSize * sizeof(uint8_t);
-      RIC_ALLOC(subsDetails->ricEventTriggerDefinition.buf,  subsDetails->ricEventTriggerDefinition.size);
-      buildPlmnId(ricCb.ricCfgParams.plmn, subsDetails->ricEventTriggerDefinition.buf);
-      elementCnt = 1;
+      fillKpmEventTrigDefinition(&subsDetails->ricEventTriggerDefinition, 500);
+      elementCnt = 2;
       subsDetails->ricAction_ToBeSetup_List.list.count = elementCnt;
       subsDetails->ricAction_ToBeSetup_List.list.size = \
                       elementCnt * sizeof(RICaction_ToBeSetup_ItemIEs_t);
@@ -493,7 +497,10 @@ uint8_t BuildRicSubsDetails(RICsubscriptionDetails_t *subsDetails)
       } 
       RIC_ALLOC(subsDetails->ricAction_ToBeSetup_List.list.array[0],\
                    sizeof(RICaction_ToBeSetup_ItemIEs_t));
-      fillSubsDetails(subsDetails->ricAction_ToBeSetup_List.list.array[0]);
+      fillSubsDetails(subsDetails->ricAction_ToBeSetup_List.list.array[0], CELL_SUBSCRIPTION);
+      RIC_ALLOC(subsDetails->ricAction_ToBeSetup_List.list.array[1],\
+                   sizeof(RICaction_ToBeSetup_ItemIEs_t));
+      fillSubsDetails(subsDetails->ricAction_ToBeSetup_List.list.array[1], SLICE_SUBSCRIPTION);
    }
    return ROK;
 }
@@ -599,7 +606,7 @@ uint8_t BuildAndSendRicSubscriptionReq(uint32_t duId)
    ricSubscriptionReq->protocolIEs.list.array[idx]->criticality = CriticalityE2_reject;
    ricSubscriptionReq->protocolIEs.list.array[idx]->value.present =\
                                     RICsubscriptionRequest_IEs__value_PR_RANfunctionID;
-   ricSubscriptionReq->protocolIEs.list.array[idx]->value.choice.RANfunctionID = 1;
+   ricSubscriptionReq->protocolIEs.list.array[idx]->value.choice.RANfunctionID = 2;
 
 
    /* Filling RIC Subscription Details */
@@ -673,6 +680,170 @@ void ProcRicSubscriptionResponse(uint32_t duId)
 
 /*******************************************************************
  *
+ * @brief deallocate the memory allocated in E2SetupFailure
+ *
+ * @details
+ *
+ *    Function : FreeE2SetupFailure 
+ *
+ *    Functionality: deallocate the memory allocated in E2SetupFailure 
+ *
+ * @params[in] E2AP_PDU_t *e2apMsg
+ *
+ * @return void
+ * ****************************************************************/
+void FreeE2SetupFailure(E2AP_PDU_t *e2apMsg)
+{
+   uint8_t arrIdx = 0;
+   E2setupFailure_t  *e2SetupFail;
+
+   if(e2apMsg)
+   {
+      if(e2apMsg->choice.unsuccessfulOutcome)
+      {
+         e2SetupFail = &e2apMsg->choice.unsuccessfulOutcome->value.choice.E2setupFailure;
+         if(e2SetupFail->protocolIEs.list.array)
+         {
+            for(arrIdx=0; arrIdx<e2SetupFail->protocolIEs.list.count; arrIdx++)
+            {
+               RIC_FREE(e2SetupFail->protocolIEs.list.array[arrIdx], sizeof(E2setupFailureIEs_t)); 
+            }
+            RIC_FREE(e2SetupFail->protocolIEs.list.array, e2SetupFail->protocolIEs.list.size);
+         }
+         RIC_FREE(e2apMsg->choice.unsuccessfulOutcome, sizeof(UnsuccessfulOutcomeE2_t));
+      }
+      RIC_FREE(e2apMsg, sizeof(E2AP_PDU_t));
+   }
+}
+
+/*******************************************************************
+ *
+ * @brief Buld and send the E2 Setup failure
+ *
+ * @details
+ *
+ *    Function : BuildAndSendE2SetupFailure
+ *
+ *    Functionality:
+ *         - Buld and send the E2 Setup failure
+ * @return ROK     - success
+ *         RFAILED - failure
+ *
+ * ****************************************************************/
+
+uint8_t BuildAndSendE2SetupFailure(uint32_t duId, uint8_t transId)
+{
+   E2AP_PDU_t         *e2apMsg = NULL;
+   E2setupFailure_t   *e2SetupFailure;
+   asn_enc_rval_t     encRetVal;
+   uint8_t            arrIdx;
+   uint8_t            elementCnt;
+   bool  memAllocFailed = false;
+
+   DU_LOG("\nINFO   -->  E2AP : Building E2 Setup failure\n");
+   while(true)
+   {
+      RIC_ALLOC(e2apMsg, sizeof(E2AP_PDU_t));
+      if(e2apMsg == NULLP)
+      {
+         DU_LOG("\nERROR  -->  E2AP : Memory allocation for E2AP-PDU failed");
+         break;
+      }
+      e2apMsg->present =  E2AP_PDU_PR_unsuccessfulOutcome;
+      RIC_ALLOC(e2apMsg->choice.unsuccessfulOutcome , sizeof(struct UnsuccessfulOutcomeE2));
+      if(e2apMsg->choice.unsuccessfulOutcome == NULLP)
+      {
+         DU_LOG("\nERROR  -->  E2AP : Memory allocation for E2AP-PDU failed");
+         break;
+      }
+
+      e2apMsg->choice.unsuccessfulOutcome->procedureCode = ProcedureCodeE2_id_E2setup;
+      e2apMsg->choice.unsuccessfulOutcome->criticality = CriticalityE2_reject;
+      e2apMsg->choice.unsuccessfulOutcome->value.present = UnsuccessfulOutcomeE2__value_PR_E2setupFailure;
+      e2SetupFailure = &e2apMsg->choice.unsuccessfulOutcome->value.choice.E2setupFailure;
+
+      elementCnt = 3;
+      e2SetupFailure->protocolIEs.list.count = elementCnt;
+      e2SetupFailure->protocolIEs.list.size  = elementCnt * sizeof(struct E2setupFailureIEs *);
+
+      RIC_ALLOC(e2SetupFailure->protocolIEs.list.array, e2SetupFailure->protocolIEs.list.size);
+      if(e2SetupFailure->protocolIEs.list.array == NULLP)
+      {
+         DU_LOG("\nERROR  -->  E2AP : Memory allocation for E2FailureIEs failed");
+         break;
+      }
+
+      for(arrIdx=0; arrIdx<elementCnt; arrIdx++)
+      {
+         RIC_ALLOC(e2SetupFailure->protocolIEs.list.array[arrIdx], sizeof(struct E2setupFailureIEs));
+         if(e2SetupFailure->protocolIEs.list.array[arrIdx] == NULLP)
+         {
+            DU_LOG("\nERROR  -->  E2AP : Memory allocation for E2FailureIEs failed");
+            memAllocFailed = true;
+            break;
+         }
+      }
+
+      if(memAllocFailed == true)
+      {
+          DU_LOG("\nERROR  -->  E2AP : Memory allocation for E2FailureIEs failed");
+          break;
+      }
+
+      /* Trans Id */
+      arrIdx = 0;
+      e2SetupFailure->protocolIEs.list.array[arrIdx]->id = ProtocolIE_IDE2_id_TransactionID;
+      e2SetupFailure->protocolIEs.list.array[arrIdx]->criticality = CriticalityE2_reject;
+      e2SetupFailure->protocolIEs.list.array[arrIdx]->value.present = E2setupFailureIEs__value_PR_TransactionID;
+      e2SetupFailure->protocolIEs.list.array[arrIdx]->value.choice.TransactionID  = transId;
+
+      arrIdx++;
+      e2SetupFailure->protocolIEs.list.array[arrIdx]->id = ProtocolIE_IDE2_id_CauseE2;
+      e2SetupFailure->protocolIEs.list.array[arrIdx]->criticality = CriticalityE2_reject;
+      e2SetupFailure->protocolIEs.list.array[arrIdx]->value.present = E2setupFailureIEs__value_PR_CauseE2;
+      e2SetupFailure->protocolIEs.list.array[arrIdx]->value.choice.CauseE2.present = CauseE2_PR_protocol;
+      e2SetupFailure->protocolIEs.list.array[arrIdx]->value.choice.CauseE2.choice.protocol = CauseE2Protocol_unspecified;
+
+      arrIdx++;
+      e2SetupFailure->protocolIEs.list.array[arrIdx]->id = ProtocolIE_IDE2_id_TimeToWaitE2;
+      e2SetupFailure->protocolIEs.list.array[arrIdx]->criticality = CriticalityE2_ignore;
+      e2SetupFailure->protocolIEs.list.array[arrIdx]->value.present = E2setupFailureIEs__value_PR_TimeToWaitE2;
+      e2SetupFailure->protocolIEs.list.array[arrIdx]->value.choice.TimeToWaitE2 = TimeToWaitE2_v5s;
+
+      xer_fprint(stdout, &asn_DEF_E2AP_PDU, e2apMsg);
+      memset(encBuf, 0, ENC_BUF_MAX_LEN);
+      encBufSize = 0;
+      encRetVal = aper_encode(&asn_DEF_E2AP_PDU, 0, e2apMsg, PrepFinalEncBuf, encBuf);
+
+      /* Check encode results */
+      if(encRetVal.encoded == ENCODE_FAIL)
+      {
+         DU_LOG("\nERROR  -->  E2AP : Could not encode E2 Setup failure structure (at %s)\n",\
+               encRetVal.failed_type ? encRetVal.failed_type->name : "unknown");
+         break;
+      }
+      else
+      {
+         DU_LOG("\nDEBUG  -->  E2AP : Created APER encoded buffer for E2 Setup Failure\n");
+         for(int i=0; i< encBufSize; i++)
+         {
+            DU_LOG("%x",encBuf[i]);
+         }
+      }
+
+      if(SendE2APMsg(RIC_APP_MEM_REG, RIC_POOL, duId) != ROK)
+      {
+         DU_LOG("\nERROR  -->  E2AP : Sending E2 Setup Failure failed");
+         break;
+      }
+      break;
+   }
+
+   FreeE2SetupFailure(e2apMsg);
+}
+
+/*******************************************************************
+ *
  * @brief process the e2setup request 
  *
  * @details
@@ -688,10 +859,13 @@ void ProcRicSubscriptionResponse(uint32_t duId)
 
 uint8_t ProcE2SetupReq(uint32_t *duId, E2setupRequest_t  *e2SetupReq)
 {
-   uint8_t arrIdx = 0, e2NodeAddListIdx =0, duIdx = 0;
+   uint8_t arrIdx = 0, e2NodeAddListIdx =0, duIdx = 0, transId =0, ranFuncListIdx = 0;
    DuDb    *duDb = NULLP;
    E2nodeComponentConfigAddition_List_t *e2NodeAddList;
    E2nodeComponentConfigAddition_ItemIEs_t *e2NodeAddItem;
+   RANfunctions_List_t *ranFuncList;
+   RANfunction_ItemIEs_t *ranFuncItem;
+   uint8_t oid_e2kpmv3[] = "1.3.6.1.4.1.53148.1.3.2.2";
 
    if(e2SetupReq)
    {
@@ -703,6 +877,11 @@ uint8_t ProcE2SetupReq(uint32_t *duId, E2setupRequest_t  *e2SetupReq)
                {
                   switch(e2SetupReq->protocolIEs.list.array[arrIdx]->id)
                   {
+                     case ProtocolIE_IDE2_id_TransactionID:
+                     {
+                        transId = e2SetupReq->protocolIEs.list.array[arrIdx]->value.choice.TransactionID; 
+                        break;
+                     }
                      case ProtocolIE_IDE2_id_E2nodeComponentConfigAddition:
                      {
                         e2NodeAddList = &e2SetupReq->protocolIEs.list.array[arrIdx]->value.choice.E2nodeComponentConfigAddition_List;      
@@ -730,7 +909,7 @@ uint8_t ProcE2SetupReq(uint32_t *duId, E2setupRequest_t  *e2SetupReq)
                                        memset(duDb, 0, sizeof(DuDb));
                                        duDb->duId = *duId;
 
-                                       if(BuildAndSendE2SetupRsp(*duId) !=ROK)
+                                       if(BuildAndSendE2SetupRsp(*duId, transId) !=ROK)
                                        {
                                            DU_LOG("\nERROR  -->  E2AP : Failed to build and send E2 setup response");
                                            return RFAILED;
@@ -741,6 +920,24 @@ uint8_t ProcE2SetupReq(uint32_t *duId, E2setupRequest_t  *e2SetupReq)
                            }
                         }
                         break;
+                     }
+                     case ProtocolIE_IDE2_id_RANfunctionsAdded:
+                     {
+                        ranFuncList = &e2SetupReq->protocolIEs.list.array[arrIdx]->value.choice.RANfunctions_List;
+                        if(ranFuncList->list.array)
+                        {
+                           for(ranFuncListIdx = 0; ranFuncListIdx< ranFuncList->list.count; ranFuncListIdx++)
+                           {
+                              if(ranFuncList->list.array[ranFuncListIdx])
+                              {
+                                 ranFuncItem = (RANfunction_ItemIEs_t *) ranFuncList->list.array[ranFuncListIdx];
+                                 if(strcmp(ranFuncItem->value.choice.RANfunction_Item.ranFunctionOID.buf, oid_e2kpmv3) == 0){
+                                    DU_LOG("\nINFO  -->  E2AP : E2SM-KPMv3 OID is found");
+                                    procKpmRanFunDescrpition(ranFuncItem->value.choice.RANfunction_Item.ranFunctionDefinition);
+                                 }
+                              }
+                           }
+                        }
                      }
                      default:
                         break;
@@ -905,6 +1102,271 @@ uint8_t BuildAndSendE2NodeConfigUpdateAck(uint32_t duId)
 }
 
 /*******************************************************************
+ *
+ * @brief Deallocate the memory allocated for E2 Reset Response
+ *
+ * @details
+ *
+ *    Function : FreeE2ResetResponse
+ *
+ *    Functionality:
+ *       - freeing the memory allocated for E2ResetResponse
+ *
+ * @params[in] E2AP_PDU_t *e2apMsg
+ * @return ROK     - success
+ *         RFAILED - failure
+ *
+ * ****************************************************************/
+void FreeE2ResetResponse(E2AP_PDU_t *e2apMsg)
+{
+   uint8_t ieIdx =0;
+   ResetResponseE2_t *resetResponse;
+
+   if(e2apMsg != NULLP)
+   {
+      if(e2apMsg->choice.successfulOutcome != NULLP)
+      {
+         resetResponse = &e2apMsg->choice.successfulOutcome->value.choice.ResetResponseE2;
+         if(resetResponse->protocolIEs.list.array)
+         {
+            for(ieIdx=0; ieIdx < resetResponse->protocolIEs.list.count; ieIdx++)
+            {
+               if(resetResponse->protocolIEs.list.array[ieIdx])
+               {
+                  RIC_FREE(resetResponse->protocolIEs.list.array[ieIdx], sizeof(ResetResponseIEs_t));
+               }
+            }
+            RIC_FREE(resetResponse->protocolIEs.list.array, resetResponse->protocolIEs.list.size);
+         }
+         RIC_FREE(e2apMsg->choice.successfulOutcome, sizeof(SuccessfulOutcomeE2_t));
+      }
+      RIC_FREE(e2apMsg, sizeof(E2AP_PDU_t));
+   }
+}
+
+/*******************************************************************
+ *
+ * @brief Buld and send the E2 Reset Response msg
+ *
+ * @details
+ *
+ *    Function : BuildAndSendE2ResetResponse
+ *
+ *    Functionality:
+ *         - Buld and send the E2 Reset Response Message
+ * @return ROK     - success
+ *         RFAILED - failure
+ *
+ * ****************************************************************/
+uint8_t BuildAndSendResetResponse(uint32_t duId, uint8_t transId)
+{
+   uint8_t           ieIdx = 0, elementCnt = 0;
+   uint8_t           ret = RFAILED;
+   E2AP_PDU_t        *e2apMsg = NULLP;
+   ResetResponseE2_t *resetResponse;
+   asn_enc_rval_t    encRetVal;       /* Encoder return value */
+
+   DU_LOG("\nINFO   -->  E2AP : Building E2 Reset Response Message\n");
+   do
+   {
+      RIC_ALLOC(e2apMsg, sizeof(E2AP_PDU_t));
+      if(e2apMsg == NULLP)
+      {
+         DU_LOG("\nERROR  -->  E2AP : BuildAndSendResetResponse(): Memory allocation for E2AP-PDU failed");
+         break;
+      }
+      e2apMsg->present = E2AP_PDU_PR_successfulOutcome;
+
+      RIC_ALLOC(e2apMsg->choice.successfulOutcome, sizeof(SuccessfulOutcomeE2_t));
+      if(e2apMsg->choice.successfulOutcome == NULLP)
+      {
+         DU_LOG("\nERROR  -->  E2AP : BuildAndSendResetResponse: Memory allocation failed for successfulOutcome");
+         RIC_FREE(e2apMsg, sizeof(E2AP_PDU_t));
+         return RFAILED;
+      }
+ 
+      e2apMsg->choice.successfulOutcome->procedureCode = ProcedureCodeE2_id_Reset;
+      e2apMsg->choice.successfulOutcome->criticality = CriticalityE2_reject;
+      e2apMsg->choice.successfulOutcome->value.present = SuccessfulOutcomeE2__value_PR_ResetResponseE2;
+      resetResponse = &e2apMsg->choice.successfulOutcome->value.choice.ResetResponseE2;
+
+      elementCnt = 1;
+      resetResponse->protocolIEs.list.count = elementCnt;
+      resetResponse->protocolIEs.list.size = elementCnt * sizeof(ResetResponseIEs_t *);
+      RIC_ALLOC(resetResponse->protocolIEs.list.array, resetResponse->protocolIEs.list.size);
+      if(!resetResponse->protocolIEs.list.array)
+      {
+         DU_LOG("\nERROR  -->  E2AP : BuildAndSendResetResponse: Memory allocation failed for protocol IE array");
+         break;
+      }
+
+      for(ieIdx=0; ieIdx < elementCnt; ieIdx++)
+      {
+         RIC_ALLOC(resetResponse->protocolIEs.list.array[ieIdx], sizeof(ResetResponseIEs_t));
+         if(!resetResponse->protocolIEs.list.array[ieIdx])
+         {
+            DU_LOG("\nERROR  -->  E2AP : BuildAndSendResetResponse: Memory allocation failed for protocol IE array element");
+            break;
+         }
+      }
+      if(ieIdx < elementCnt)
+         break;
+
+      ieIdx = 0; 
+      resetResponse->protocolIEs.list.array[ieIdx]->id =  ProtocolIE_IDE2_id_TransactionID;
+      resetResponse->protocolIEs.list.array[ieIdx]->criticality = CriticalityE2_reject;
+      resetResponse->protocolIEs.list.array[ieIdx]->value.present = ResetResponseIEs__value_PR_TransactionID;
+      resetResponse->protocolIEs.list.array[ieIdx]->value.choice.TransactionID = transId;
+
+      xer_fprint(stdout, &asn_DEF_E2AP_PDU, e2apMsg);
+
+      memset(encBuf, 0, ENC_BUF_MAX_LEN);
+      encBufSize = 0;
+      encRetVal = aper_encode(&asn_DEF_E2AP_PDU, 0, e2apMsg, PrepFinalEncBuf, encBuf);
+      if(encRetVal.encoded == ENCODE_FAIL)
+      {
+         DU_LOG("\nERROR  -->  E2AP : Could not encode E2 reset response structure (at %s)\n",\
+               encRetVal.failed_type ? encRetVal.failed_type->name : "unknown");
+         return RFAILED;
+      }
+      else
+      {
+         DU_LOG("\nDEBUG  -->  E2AP : Created APER encoded buffer for E2 Reset Response \n");
+         for(int i=0; i< encBufSize; i++)
+         {
+            DU_LOG("%x",encBuf[i]);
+         }
+      }
+
+      /* Sending msg */
+      if(SendE2APMsg(RIC_APP_MEM_REG, RIC_POOL, duId) != ROK)
+      {
+         DU_LOG("\nERROR  -->  E2AP : Failed to send E2 Reset Response");
+         return RFAILED;
+      }
+
+      ret = ROK;
+      break;
+   }while(true);
+
+   FreeE2ResetResponse(e2apMsg);
+   return ROK;
+}
+
+/*******************************************************************
+ *
+ * @brief process the E2 Reset Request
+ *
+ * @details
+ *
+ *    Function : ProcE2ResetReq
+ *
+ * Functionality: Process E2 Reset Request
+ *
+ * @return ROK     - success
+ *         RFAILED - failure
+ *
+ ******************************************************************/
+
+uint8_t ProcE2ResetReq(uint32_t duId, ResetRequestE2_t  *resetReq)
+{
+   uint8_t ieIdx = 0, duIdx = 0;
+   uint8_t transId = 0, cause = 0;
+   DuDb    *duDb = NULLP;
+
+   if(resetReq)
+   {
+      if(resetReq->protocolIEs.list.array)
+      {
+         for(ieIdx=0; ieIdx < resetReq->protocolIEs.list.count; ieIdx++)
+         {
+            if(resetReq->protocolIEs.list.array[ieIdx])
+            {
+               switch(resetReq->protocolIEs.list.array[ieIdx]->id)
+               {
+                  case ProtocolIE_IDE2_id_TransactionID:
+                     transId = resetReq->protocolIEs.list.array[ieIdx]->value.choice.TransactionID;
+                     break;
+                  case ProtocolIE_IDE2_id_CauseE2:
+                     DU_LOG("\nDEBUG  -->  E2AP : Reset reason %d", resetReq->protocolIEs.list.array[ieIdx]->value.choice.CauseE2.present);
+                     switch(resetReq->protocolIEs.list.array[ieIdx]->value.choice.CauseE2.present)
+                     {
+                        case CauseE2_PR_NOTHING:
+                           break;
+                        case CauseE2_PR_ricRequest:
+                           cause = resetReq->protocolIEs.list.array[ieIdx]->value.choice.CauseE2.choice.ricRequest;
+                           break;
+                        case CauseE2_PR_ricService:
+                           cause = resetReq->protocolIEs.list.array[ieIdx]->value.choice.CauseE2.choice.ricService;
+                           break;
+                        case CauseE2_PR_e2Node:
+                           cause = resetReq->protocolIEs.list.array[ieIdx]->value.choice.CauseE2.choice.e2Node;
+                           break;
+                        case CauseE2_PR_transport:
+                           cause = resetReq->protocolIEs.list.array[ieIdx]->value.choice.CauseE2.choice.transport;
+                           break;
+                        case CauseE2_PR_protocol:
+                           cause = resetReq->protocolIEs.list.array[ieIdx]->value.choice.CauseE2.choice.protocol;
+                           break;
+                        case CauseE2_PR_misc:
+                           cause = resetReq->protocolIEs.list.array[ieIdx]->value.choice.CauseE2.choice.misc;
+                           break;
+                     }
+                     DU_LOG("\nDEBUG  -->  E2AP : Reset cause %d", cause);
+                     break;
+               }
+            }
+         }
+      }
+   }
+   BuildAndSendResetResponse(duId, transId);
+   return ROK;
+}
+
+/*******************************************************************
+ *
+ * @brief process the RIC Indication
+ *
+ * @details
+ *
+ *    Function : ProcRICIndication
+ *
+ * Functionality: Process RIC Indication
+ *
+ * @return ROK     - success
+ *         RFAILED - failure
+ *
+ ******************************************************************/
+
+uint8_t ProcRICIndication(RICindication_t *ricIndication)
+{
+   uint8_t ieIdx = 0, duIdx = 0, ret = ROK;
+   uint8_t transId = 0, cause = 0;
+   DuDb    *duDb = NULLP;
+
+   if(ricIndication)
+   {
+      if(ricIndication->protocolIEs.list.array)
+      {
+         for(ieIdx=0; ieIdx < ricIndication->protocolIEs.list.count; ieIdx++)
+         {
+            if(ricIndication->protocolIEs.list.array[ieIdx])
+            {
+               switch(ricIndication->protocolIEs.list.array[ieIdx]->id)
+               {
+                  case ProtocolIE_IDE2_id_RICindicationMessage:
+                     ret = procKpmRicIndication(ricIndication->protocolIEs.list.array[ieIdx]->value.choice.RICindicationMessage);
+                     DU_LOG("\nDEBUG  -->  E2AP : Process RIC Indication Message");
+                     break;
+               }
+            }
+         }
+      }
+   }
+   return ROK;
+}
+
+/*******************************************************************
 *
 * @brief Handles received E2AP message and sends back response  
 *
@@ -973,59 +1435,66 @@ void E2APMsgHdlr(uint32_t *duId, Buffer *mBuf)
    switch(e2apMsg->present)
    {
       case E2AP_PDU_PR_initiatingMessage:
-      {
-         switch(e2apMsg->choice.initiatingMessage->value.present)
          {
-            case InitiatingMessageE2__value_PR_E2setupRequest:
+            switch(e2apMsg->choice.initiatingMessage->value.present)
             {
-               DU_LOG("\nINFO  -->  E2AP : E2 setup request received");
-               ProcE2SetupReq(duId, &e2apMsg->choice.initiatingMessage->value.choice.E2setupRequest);
-	            break;
-            }
-            case InitiatingMessageE2__value_PR_E2nodeConfigurationUpdate:
-            {
-               DU_LOG("\nINFO  -->  E2AP : E2 node config update received");
-               BuildAndSendE2NodeConfigUpdateAck(*duId);
-               break;
-            }
-            case InitiatingMessageE2__value_PR_RICindication:
-            {
-               DU_LOG("\nINFO  -->  E2AP : RIC Indication Acknowledged");
-	       break;
-            }
-            default:
-            {
-               DU_LOG("\nERROR  -->  E2AP : Invalid type of intiating message [%d]",e2apMsg->choice.initiatingMessage->value.present);
-               return;
-            }
-         }/* End of switch(initiatingMessage) */
-         break;
-      }
-      case E2AP_PDU_PR_successfulOutcome: 
-      {
-         switch(e2apMsg->choice.successfulOutcome->value.present)
-         {
-            case SuccessfulOutcomeE2__value_PR_RICsubscriptionResponse:  
-            {
-               ProcRicSubscriptionResponse(*duId);
-               break;
-            }
-            default:
-            {
-               DU_LOG("\nERROR  -->  E2AP : Invalid type of successfulOutcome message [%d]",e2apMsg->choice.successfulOutcome->value.present);
-               return;
-            }
+               case InitiatingMessageE2__value_PR_E2setupRequest:
+                  {
+                     DU_LOG("\nINFO  -->  E2AP : E2 setup request received");
+                     ProcE2SetupReq(duId, &e2apMsg->choice.initiatingMessage->value.choice.E2setupRequest);
+                     break;
+                  }
+               case InitiatingMessageE2__value_PR_E2nodeConfigurationUpdate:
+                  {
+                     DU_LOG("\nINFO  -->  E2AP : E2 node config update received");
+                     BuildAndSendE2NodeConfigUpdateAck(*duId);
+                     break;
+                  }
+               case InitiatingMessageE2__value_PR_ResetRequestE2:
+                  {
+                     DU_LOG("\nINFO  -->  E2AP : E2 Reset Request received");
+                     ProcE2ResetReq(*duId,  &e2apMsg->choice.initiatingMessage->value.choice.ResetRequestE2);
+                     break;
+                  }
+               case InitiatingMessageE2__value_PR_RICindication:
+                  {
+                     DU_LOG("\nINFO  -->  E2AP : RIC Indication Acknowledged");
+                     ProcRICIndication(&e2apMsg->choice.initiatingMessage->value.choice.RICindication);
+                     break;
+                  }
+               default:
+                  {
+                     DU_LOG("\nERROR  -->  E2AP : Invalid type of intiating message [%d]",e2apMsg->choice.initiatingMessage->value.present);
+                     return;
+                  }
+            }/* End of switch(initiatingMessage) */
             break;
          }
-         break; 
-      }
+      case E2AP_PDU_PR_successfulOutcome: 
+         {
+            switch(e2apMsg->choice.successfulOutcome->value.present)
+            {
+               case SuccessfulOutcomeE2__value_PR_RICsubscriptionResponse:  
+                  {
+                     ProcRicSubscriptionResponse(*duId);
+                     break;
+                  }
+               default:
+                  {
+                     DU_LOG("\nERROR  -->  E2AP : Invalid type of successfulOutcome message [%d]",e2apMsg->choice.successfulOutcome->value.present);
+                     return;
+                  }
+                  break;
+            }
+            break; 
+         }
       default:
-      {
-         DU_LOG("\nERROR  -->  E2AP : Invalid type message type ");
-         return;
-      }
- 
-    }/* End of switch(e2apMsg->present) */
+         {
+            DU_LOG("\nERROR  -->  E2AP : Invalid type message type ");
+            return;
+         }
+
+   }/* End of switch(e2apMsg->present) */
 } /* End of E2APMsgHdlr */
 
 

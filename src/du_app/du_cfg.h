@@ -28,12 +28,12 @@
 #define DU_ID 1
 
 #ifndef O1_ENABLE
-#define DU_IP_V4_ADDR "192.168.8.5"
-#define CU_IP_V4_ADDR "192.168.8.245"
-#define RIC_IP_V4_ADDR "192.168.8.228" /*192.168.8.85*/
+#define DU_IP_V4_ADDR "192.168.130.81"
+#define CU_IP_V4_ADDR "192.168.130.82"  
+#define RIC_IP_V4_ADDR "192.168.130.80" 
 
 #define F1_SCTP_PORT 38472  /* As per the spec 38.472, the registered port number for F1AP is 38472 */
-#define E2_SCTP_PORT 32222 /* 36421 */
+#define E2_SCTP_PORT 36421
 #endif
 
 #define F1_EGTP_PORT  2152  /* As per the spec 29.281, the registered port number for GTP-U is 2152 */
@@ -76,7 +76,8 @@
 #define SUL_ARFCN 100
 #define SUL_BAND 2
 
-#define TIME_CFG 0
+#define TIME_CFG 4
+#define MEAS_TIMING_ARFCN 630432
 #define CARRIER_IDX 1
 #define NUM_TX_ANT 2
 #define NUM_RX_ANT 2
@@ -87,7 +88,8 @@
 #define OFFSET_TO_POINT_A 24                     /* PRB Offset to Point A */
 #define BETA_PSS BETA_PSS_0DB  
 #define SSB_PERIODICITY 20
-#define SSB_SUBCARRIER_OFFSET 0               
+#define SSB_SUBCARRIER_OFFSET 0         
+#define SSB_FREQUENCY  3000000   /*ssbFrequency in kHz*/
 #define SSB_MULT_CARRIER_BAND FALSE
 #define MULT_CELL_CARRIER FALSE
 #define FREQ_LOC_BW  28875             /* DL frequency location and bandwidth. Spec 38.508 Table 4.3.1.0B-1*/
@@ -128,8 +130,6 @@
 #define RSS_MEASUREMENT_UNIT DONT_REPORT_RSSI
 #define RA_CONT_RES_TIMER 64
 #define RA_RSP_WINDOW 10
-#define PRACH_RESTRICTED_SET 0 /* Unrestricted */
-#define ROOT_SEQ_LEN 139
 
 /* MACRCO Ddefine for PDCCH Configuration */
 #define PDCCH_SEARCH_SPACE_ID      1    /* Common search space id */
@@ -218,7 +218,7 @@
 /* Macro definitions for F1 procedures */
 #define CU_DU_NAME_LEN_MAX 30      /* Max length of CU/DU name string */
 #define MAX_F1_CONNECTIONS 65536    /* Max num of F1 connections */
-#define MAX_PLMN           1        /* Max num of broadcast PLMN ids */
+
 #define MAXNRARFCN         3279165  /* Maximum values of NRAFCN */
 #define MAX_NRCELL_BANDS   2       /* Maximum number of frequency bands */
 #define MAX_NUM_OF_SLICE_ITEMS 1024     /* Maximum number of signalled slice support items */
@@ -254,7 +254,7 @@
 #define PHR_PROHIBHIT_TMR 0
 #define PHR_PWR_FACTOR_CHANGE 3
 #define PHR_MODE_OTHER_CG 0
-#define SN_FIELD_LEN 1
+#define SN_FIELD_LEN_12BIT 0 /*As per Spec 38.331, The network configures only value size12 in SN-FieldLengthAM for SRB */
 #define T_POLL_RETRANSMIT 8       /* Enum for 45ms */ 
 #define T_POLL_RETRANSMIT_VAL 45  /* Value in ms */
 #define POLL_PDU 0                /* Enum for 4 pdus */
@@ -715,7 +715,7 @@ typedef struct f1DuCellInfo
    uint16_t           tac;          /* tracking area code */
    uint16_t           epsTac;       /* Configured EPS TAC */
    NrModeInfo         f1Mode;       /* NR mode info : FDD/TDD */
-   uint8_t            measTimeCfg;  /* Measurement timing configuration */
+   uint8_t            measTimeCfgDuration;  /* Measurement timing configuration */
    F1CellDir          cellDir;      /* Cell Direction */
    F1CellType         cellType;     /* Cell Type */
    F1BrdcstPlmnInfo   brdcstPlmnInfo[MAX_BPLMN_NRCELL_MINUS_1]; /* Broadcast PLMN Identity Info List */
@@ -1241,6 +1241,7 @@ typedef struct sib1Params
    long      cellResvdForOpUse;
    long      connEstFailCnt;
    long      connEstFailOffValidity;
+   long      connEstFailOffset;
    SiSchedInfo           siSchedInfo;
    SrvCellCfgCommSib     srvCellCfgCommSib;
 }Sib1Params;
@@ -1251,7 +1252,7 @@ typedef struct duCfgParams
    F1EgtpParams       egtpParams;                  /* EGTP Params */
    uint32_t           maxUe;
    uint32_t           duId;
-   uint8_t            duName[CU_DU_NAME_LEN_MAX];
+   char               *duName;
    SchedulerCfg       schedCfg;
    F1DuSrvdCellInfo   srvdCellLst[MAX_NUM_CELL];  /* Serving cell list *///TODO: this must be removed eventually
    F1RrcVersion       rrcVersion;                 /* RRC version */
@@ -1305,7 +1306,6 @@ typedef struct rrmPolicyList
 DuCfgParams duCfgParam;
 
 /*function declarations */
-void FillSlotConfig();
 uint8_t readClCfg();
 uint8_t readCfg();
 uint8_t duReadCfg(); 

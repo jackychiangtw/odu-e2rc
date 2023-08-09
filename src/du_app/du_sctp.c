@@ -18,6 +18,7 @@
 
 /* This file contains all SCTP related functionality */
 #include "common_def.h"
+#include "du_tmr.h"
 #include "lrg.h"
 #include "legtp.h"
 #include "lrg.x"
@@ -25,6 +26,7 @@
 #include "cm_inet.h"
 #include "cm_inet.x"
 #include "du_app_mac_inf.h"
+#include "du_e2ap_mgr.h"
 #include "du_cfg.h"
 #include "du_sctp.h"
 #include "lsctp.h"
@@ -843,7 +845,7 @@ uint8_t sctpSend(Buffer *mBuf, uint8_t itfType)
 
    if(itfType == F1_INTERFACE)
    {
-      DU_LOG("\nDEBUG   -->  SCTP : sending the message to CU");
+      DU_LOG("\nDEBUG  --> SCTP : sending the message to CU");
 #ifdef CALL_FLOW_DEBUG_LOG
       DU_LOG("\nCall Flow: ENTSCTP -> CU : EVENT_F1AP_MSG_TO_CU\n");
 #endif
@@ -852,7 +854,7 @@ uint8_t sctpSend(Buffer *mBuf, uint8_t itfType)
 
    if(itfType == E2_INTERFACE)
    {
-      DU_LOG("\nDEBUG   -->  SCTP : sending the message to ric");
+      DU_LOG("\nDEBUG  -->  SCTP : sending the message to ric");
 #ifdef CALL_FLOW_DEBUG_LOG
       DU_LOG("\nCall Flow: ENTSCTP -> RIC : EVENT_E2AP_MSG_TO_RIC\n");
 #endif
