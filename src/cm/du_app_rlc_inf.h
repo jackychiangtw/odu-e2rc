@@ -34,8 +34,6 @@
 #define EVENT_RLC_UE_DELETE_REQ 220
 #define EVENT_RLC_UE_DELETE_RSP 221
 #define EVENT_RLC_SLICE_PM_TO_DU 222
-#define EVENT_RLC_UE_PM_TO_DU 223
-
 
 #define RB_ID_SRB 0
 #define RB_ID_DRB 1
@@ -93,6 +91,13 @@ typedef enum
    RLC_CFG_REAS_SNLEN_MIS       ,  /*!< SN Length mismatch */
    RLC_CFG_REAS_INVALID_RGUSAP     /*!< Invalid RGU SAP ID */
 }FailureReason;
+
+typedef enum
+{
+   SUCCESSFUL            ,  /*!< No Failure */
+   INVALID_CELLID      ,  /*!< CellId not present */
+   INVALID_UEID        ,  /*!< UEId not present */
+}UeDeleteResult;
 
 typedef enum
 {
@@ -230,7 +235,7 @@ typedef struct rlcUeDeleteRsp
 {
    uint16_t       cellId;
    uint8_t        ueId;
-   CauseOfResult  status;
+   UeDeleteResult result;
 }RlcUeDeleteRsp;
 
 /* UL RRC Message from RLC to DU APP */
@@ -299,26 +304,6 @@ typedef struct slicePmList
    uint8_t numSlice;
    SlicePm *sliceRecord;
 }SlicePmList;
-
-/*Cell Metric for NW Slicing from RLC to DUAPP*/
-typedef struct cellPm
-{
-   double ThpDl;
-}CellPm;
-
-typedef struct uePm
-{
-   uint16_t   ueId;
-   double ThpDl;
-}UePm;
-
-typedef struct cellPmList
-{
-   CellPm cellRecord;
-   uint8_t numUe;
-   UePm *ueRecord;
-}CellPmList;
-
 
 typedef struct rrcDeliveryReportInfo
 {
@@ -399,11 +384,6 @@ typedef uint8_t (*RlcSlicePmToDuFunc) ARGS((
    Pst           *pst,
    SlicePmList *sliceStats));
 
-/* Cell Metrics from RLC to DU APP */
-typedef uint8_t (*RlcCellPmToDuFunc) ARGS((
-   Pst           *pst,
-   CellPmList *cellStats));
-
 /* Pack/Unpack function declarations */
 uint8_t packDuRlcUeCreateReq(Pst *pst, RlcUeCfg *ueCfg);
 uint8_t unpackRlcUeCreateReq(DuRlcUeCreateReq func, Pst *pst, Buffer *mBuf);
@@ -429,8 +409,6 @@ uint8_t packRlcDuUeDeleteRsp(Pst *pst, RlcUeDeleteRsp *ueDeleteRsp);
 uint8_t unpackRlcUeDeleteRsp(RlcDuUeDeleteRsp func, Pst *pst, Buffer *mBuf);
 uint8_t packRlcDuSlicePm(Pst *pst, SlicePmList *sliceStats);
 uint8_t unpackRlcSlicePm(RlcSlicePmToDuFunc func, Pst *pst, Buffer *mBuf);
-uint8_t packRlcDuCellPm(Pst *pst, CellPmList *cellStats);
-uint8_t unpackRlcCellPm(RlcCellPmToDuFunc func, Pst *pst, Buffer *mBuf);
 
 /* Event Handler function declarations */
 uint8_t RlcProcUeCreateReq(Pst *pst, RlcUeCfg *ueCfg);
@@ -445,7 +423,6 @@ uint8_t RlcProcDlUserDataTransfer(Pst *pst, RlcDlUserDataInfo *dlDataMsgInfo);
 uint8_t RlcProcUeDeleteReq(Pst *pst, RlcUeDelete *ueDelete);
 uint8_t DuProcRlcUeDeleteRsp(Pst *pst, RlcUeDeleteRsp *delRsp);
 uint8_t DuProcRlcSliceMetrics(Pst *pst, SlicePmList *sliceStats);
-uint8_t DuProcRlcCellMetrics(Pst *pst, CellPmList *cellStats);
 #endif /* RLC_INF_H */
 
 /**********************************************************************

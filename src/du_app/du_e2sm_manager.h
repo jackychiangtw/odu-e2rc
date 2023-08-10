@@ -21,13 +21,13 @@
 #define SIZE_OF_SERVICE_MODEL 3
 #define USING_SERVICE_MODEL 3
 
-#define INDEX_OF_KPM_V2 2
+#define INDEX_OF_KPM_V2 1
 #define INDEX_OF_KPM_V3 0
-#define INDEX_OF_RC 1
+#define INDEX_OF_RC 2
 
 uint8_t smFillE2SetupReq(RANfunctions_List_t  *ranfun_list);
-uint8_t smProcEventTrigDefinition(RICeventTriggerDefinition_t *eventTrigDefini, uint32_t ranFuncId, long reqId, long instanceId);
-uint8_t smProcActionDefinition(RICactionDefinition_t *acitiondifin, uint32_t ranFuncId, long reqId, long instanceId);
+uint8_t smDecapEventTrigDefinition(RICeventTriggerDefinition_t *eventTrigDefini, uint32_t ranFuncId, long reqId, long instanceId);
+uint8_t smDecapActionDefinition(RICactionDefinition_t *ricdifin, uint32_t ranFuncId, long reqId, long instanceId);
 uint8_t smProcRicCtrlHeader(RICcontrolHeader_t *ricCtrlHdr, uint32_t ranFuncId, long reqId, long instanceId);
 uint8_t smProcRicCtrlMessage(RICcontrolMessage_t *ricCtrlMsg, uint32_t ranFuncId, long reqId, long instanceId);
 

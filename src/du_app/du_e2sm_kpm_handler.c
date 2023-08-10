@@ -2,545 +2,341 @@
 #include "S-NSSAI.h"
 #include "SD.h"
 
-/*******************************************************************
- *
- * @brief Initialize the E2SM-KPM module
- *
- * @details
- *
- *    Function : kpmInit
- *
- *    Functionality: Initialize the parameters in the KPM module
- *
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+char measInfoStyle1[][25] = {"DRB.UEThpDl", "RRU.PrbUsedDl", "RRU.PrbAvailDl", "RRU.PrbTotDl"}; // UE throughput, Avaliable PRB, Total PRB Usage
+char measInfoStyle2[][25] = {"DRB.UEThpDl.SNSSAI", "RRU.PrbUsedDl.SNSSAI"}; // UE throughput, Used PRB, Total PRB
 
 uint8_t kpmInit(){
-    uint8_t cellMeasName[][25] = {"DRB.UEThpDl", "RRU.PrbUsedDl", "RRU.PrbAvailDl", "RRU.PrbTotDl"}; // UE throughput, Avaliable PRB, Total PRB Usage
-    uint8_t sliceMeasName[][25] = {"DRB.UEThpDl.SNSSAI", "RRU.PrbUsedDl.SNSSAI"}; // UE throughput, Used PRB, Total PRB
+        
+    kpmSlicePmDb.numOfSlice = MAX_SIZE_OF_SLICE;
+    indexOfSliceMacPm = 0;
+    indexOfSliceRlcPm = 0;
+
+    indexOfCellMacPm = 0;
+    indexOfCellRlcPm = 0;
 
     kpmCellIndicationEnable = false;
     kpmSliceIndicationEnable = false;
+
     reportingPeriodFmt1 = 0;
     reportingPeriodFmt3 = 0;
-    kpmIndicationV3Enable = 0;
+    indicationRlcCellCount = 0;
+    indicationRlcSliceCount = 0;
+    indicationMacCellCount= 0;
+    indicationMacSliceCount = 0;
     reportingPeriod = 0;
-    kpiModuleInit();
-    
-    for(int i=0;i<SUPPORTED_CELL_MEAS_ITEM;i++){
-         memcpy(cellMetricName[i], cellMeasName[i], MAX_OF_MEAS_NAME);
-    }
-    
-    for(int i=0;i<SUPPORTED_SLICE_MEAS_ITEM;i++){
-         memcpy(sliceMetricName[i], sliceMeasName[i], MAX_OF_MEAS_NAME);
-    }
-    return ROK;
+    kpmIndicationV3Enable = 0;
+    smoRlcSliceCount = 0;
+    smoMacSliceCount = 0;
+    return 0;
 }
-
-/*******************************************************************
- *
- * @brief Enable the Indication flag
- *
- * @details
- *
- *    Function : kpmEnableIndication
- *
- *    Functionality: Enable the Indication flag
- *
- * @param[in] flag, bool* for indication flag
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
 
 uint8_t kpmEnableIndication(bool *flag){
-    if(flag){
-        *flag = true;
-        return ROK;
-    }else{
-        DU_LOG("\nERROR  --> E2SM-KPM: Failed to enable the flag, %d",__LINE__);
-        return RFAILED;
-    } 
+    *flag = true;
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in the Octet String
- *
- * @details
- *
- *    Function : kpmFillOctetString
- *
- *    Functionality: copy the memory from uint8_t src to Octet_String_t dst
- *
- * @param[in] dst, Octet_String_t* for destination
- * @param[in] src, uint8_t* for source
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillOctetString(OCTET_STRING_t *dst, uint8_t *src){
-    dst->size = strlen((const char*)src);
-    DU_ALLOC(dst->buf, dst->size);
-    if(dst->buf == NULL){
-        DU_LOG("\nERROR  --> E2SM-KPM: Memory allocation failed for kpmFillOctetString %d",__LINE__);
-        return RFAILED;
-    }
-    memcpy(dst->buf, src, dst->size);
-    return ROK;
-}
-
-/*******************************************************************
- *
- * @brief Fill in the RAN Function Name
- *
- * @details
- *
- *    Function : kpmFillRanFunctionName
- *
- *    Functionality: Fill in the RAN Function Name for RAN Function Description
- *
- * @param[in] ranfunc_name, RANFunction_Name_t* for input source
- * @param[in] kpmVersion, uint8_t for indicating the E2SM-KPM version
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillRanFunctionName(RANfunction_Name_t *ranfunc_name, uint8_t kpmVersion){
-    uint8_t ret = ROK;
+uint8_t fillRanFunctionName(RANfunction_Name_t *ranfunc_name, uint8_t kpmVersion){
     uint8_t ranfunc_defin[] = "ORAN-E2SM-KPM"; // RAN Function Definition,
     uint8_t ranfunc_descr[] = "KPM monitor"; // RAN function description
-    uint8_t ranfunc_oidv2[] = "1.3.6.1.4.1.53148.1.2.2.2"; // RAN function service model OIDv2
-    uint8_t ranfunc_oidv3[] = "1.3.6.1.4.1.53148.1.3.2.2"; // RAN function service model OIDv3
+    uint8_t ranfunc_oidv2[] = "1.3.6.1.4.1.53148.1.2.2.2"; // RAN function service model OID
+    uint8_t ranfunc_oidv3[] = "1.3.6.1.4.1.53148.1.3.2.2"; 
 
-    ret = kpmFillOctetString(&ranfunc_name->ranFunction_ShortName, ranfunc_defin);
-    if(ret != ROK){
-        DU_LOG("\nERROR  --> E2SM-KPM: Failed to assign RAN Function short name, %d",__LINE__);
+    ranfunc_name->ranFunction_ShortName.size = strlen((const char*)ranfunc_defin);
+    // allocate memory for ranfunc_name->ranFunction_ShortName.buf by DU_ALLOC
+    DU_ALLOC(ranfunc_name->ranFunction_ShortName.buf, ranfunc_name->ranFunction_ShortName.size);
+    if(ranfunc_name->ranFunction_ShortName.buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ranfunc_name->ranFunction_ShortName.buf");
+        return RFAILED;
+    }    
+    memcpy(ranfunc_name->ranFunction_ShortName.buf, ranfunc_defin, ranfunc_name->ranFunction_ShortName.size);
+
+    ranfunc_name->ranFunction_Description.size = strlen((const char*)ranfunc_descr);
+    // allocation memory for ranfunc_name->ranFunction_Description.buf by DU_ALLOC
+    DU_ALLOC(ranfunc_name->ranFunction_Description.buf, ranfunc_name->ranFunction_Description.size);
+    if(ranfunc_name->ranFunction_Description.buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ranfunc_name->ranFunction_Description.buf");
         return RFAILED;
     }
-    ret = kpmFillOctetString(&ranfunc_name->ranFunction_Description, ranfunc_descr);
-    if(ret != ROK){
-        DU_LOG("\nERROR  --> E2SM-KPM: Failed to assign RAN Function description, %d",__LINE__);
-        return RFAILED;
-    }
+    memcpy(ranfunc_name->ranFunction_Description.buf, ranfunc_descr, ranfunc_name->ranFunction_Description.size);
 
-    if(kpmVersion == 2){
-        ret = kpmFillOctetString(&ranfunc_name->ranFunction_E2SM_OID, ranfunc_oidv2);
-        if(ret != ROK){
-            DU_LOG("\nERROR  --> E2SM-KPM: Failed to assign RAN Function service model OID v2, %d",__LINE__);
-            return RFAILED;
-        }
-    }
-    else if(kpmVersion == 3){
-        ret = kpmFillOctetString(&ranfunc_name->ranFunction_E2SM_OID, ranfunc_oidv3);
-        if(ret != ROK){
-            DU_LOG("\nERROR  --> E2SM-KPM: Failed to assign RAN Function service model OID v3, %d",__LINE__);
-            return RFAILED;
-        }
-    }else{
-        DU_LOG("\nERROR   -->  E2SM-KPM : Invalid KPM version");
-        return RFAILED;
-    }
-
+    // allocation memory for ranFunction_Instance by DU_ALLOC
     DU_ALLOC(ranfunc_name->ranFunction_Instance, sizeof(long));
     if(ranfunc_name->ranFunction_Instance == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for RAN function instance failed");
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ranfunc_name->ranFunction_Instance");
         return RFAILED;
     }
     *ranfunc_name->ranFunction_Instance = 1;
-    return ROK;
+
+    ranfunc_name->ranFunction_E2SM_OID.size = strlen((const char*)ranfunc_oidv2);
+    // allocate memory for ranfunc_name->ranFunction_E2SM_OID.buf by DU_ALLOC
+    DU_ALLOC(ranfunc_name->ranFunction_E2SM_OID.buf, ranfunc_name->ranFunction_E2SM_OID.size);
+    if(ranfunc_name->ranFunction_E2SM_OID.buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ranfunc_name->ranFunction_E2SM_OID.buf");
+        return RFAILED;
+    }
+    if(kpmVersion == 2)
+        memcpy(ranfunc_name->ranFunction_E2SM_OID.buf, ranfunc_oidv2, ranfunc_name->ranFunction_E2SM_OID.size);
+    else if(kpmVersion == 3)
+        memcpy(ranfunc_name->ranFunction_E2SM_OID.buf, ranfunc_oidv3, ranfunc_name->ranFunction_E2SM_OID.size);
+    else{
+        printf("\nERROR   -->  E2SM-KPM : Invalid KPM versionf");
+    }
+
+
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in trigger style item
- *
- * @details
- *
- *    Function : kpmFillTriggerStyleItem
- *
- *    Functionality: Fill in the trigger style item for RAN Function Description
- *
- * @param[in] trigger_style, RIC_EventTriggerStyle_Item_t* for source item
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+uint8_t fillTriggerStyleItem(RIC_EventTriggerStyle_Item_t *trigger_style){
+    printf("\nINFO   -->  E2SM-KPM : Function \"%s\" is start", __func__);
 
-uint8_t kpmFillTriggerStyleItem(RIC_EventTriggerStyle_Item_t *trigger_style){
-    uint8_t trig_name[] = "Periodic report";
-    uint8_t ret = ROK;
     trigger_style->ric_EventTriggerStyle_Type = 1; // KPM only supports type 1
 
-    ret = kpmFillOctetString(&trigger_style->ric_EventTriggerStyle_Name, trig_name);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to assign Event Trigger name, %d",__LINE__);
+    uint8_t trig_name[] = "Periodic report";
+    trigger_style->ric_EventTriggerStyle_Name.size = strlen((const char*)trig_name);
+    // allocate memory for trigger_style->ric_EventTriggerStyle_Name.buf by DU_ALLOC
+    DU_ALLOC(trigger_style->ric_EventTriggerStyle_Name.buf, trigger_style->ric_EventTriggerStyle_Name.size);
+    if(trigger_style->ric_EventTriggerStyle_Name.buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for trigger_style->ric_EventTriggerStyle_Name.buf");
         return RFAILED;
     }
+    memcpy(trigger_style->ric_EventTriggerStyle_Name.buf, trig_name, trigger_style->ric_EventTriggerStyle_Name.size);
     trigger_style->ric_EventTriggerFormat_Type = 1;
-    return ROK;
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in trigger style list
- *
- * @details
- *
- *    Function : kpmFillTriggerStyleList
- *
- *    Functionality: Fill in the trigger style list for RAN Function Description
- *
- * @param[in] triggerStyleList, E2SM_KPM_RANfunction_Description__ric_EventTriggerStyle_List* for source list
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+uint8_t fillTriggerStyleList(struct E2SM_KPM_RANfunction_Description__ric_EventTriggerStyle_List *triggerStyleList){
+    printf("\nINFO   -->  E2SM-KPM : Function \"%s\" is start", __func__);
 
-uint8_t kpmFillTriggerStyleList(struct E2SM_KPM_RANfunction_Description__ric_EventTriggerStyle_List *triggerStyleList){
-    uint8_t ret = ROK;
     RIC_EventTriggerStyle_Item_t *trigger_style;
+    // allocation memory for trigger_style by DU_ALLOC
     DU_ALLOC(trigger_style, sizeof(RIC_EventTriggerStyle_Item_t));
-    if(trigger_style == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Event Trigger Style failed");
+    if(trigger_style == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for trigger_style");
         return RFAILED;
     }
-    ret = kpmFillTriggerStyleItem(trigger_style); // fill one trigger style
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill Event Trigger Style, %d", __LINE__);
-        return RFAILED;
-    }
-    ASN_SEQUENCE_ADD(&triggerStyleList->list, trigger_style);
-    return ROK;
-}
-
-/*******************************************************************
- *
- * @brief Fill in trigger style list in KPMv3
- *
- * @details
- *
- *    Function : kpmFillTriggerStyleListV3
- *
- *    Functionality: Fill in the trigger style item for RAN Function Description
- *
- * @param[in] triggerStyleList, E2SM_KPM_RANfunction_Description_v300__ric_EventTriggerStyle_List* for source list
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillTriggerStyleListV3(struct E2SM_KPM_RANfunction_Description_v300__ric_EventTriggerStyle_List *triggerStyleList){
-    uint8_t ret = ROK;
-    RIC_EventTriggerStyle_Item_t *trigger_style;
-    DU_ALLOC(trigger_style, sizeof(RIC_EventTriggerStyle_Item_t));
-    if(trigger_style == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Event Trigger Style failed, %d", __LINE__);
-        return RFAILED;
-    }
-    ret = kpmFillTriggerStyleItem(trigger_style); // fill one trigger style
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill Event Trigger Style, %d", __LINE__);
-        return RFAILED;
-    }
+    fillTriggerStyleItem(trigger_style); // fill one trigger style
     ASN_SEQUENCE_ADD(&triggerStyleList->list, trigger_style);
     
-    return ROK;
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in report style item in style 1
- *
- * @details
- *
- *    Function : kpmFillReportStyleItemStyle1
- *
- *    Functionality: Fill in the trigger style list for cell metrics
- *
- * @param[in] report_style, RIC_ReportStyle_Item_t* for source item
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+uint8_t fillTriggerStyleListV3(struct E2SM_KPM_RANfunction_Description_v300__ric_EventTriggerStyle_List *triggerStyleList){
+    printf("\nINFO   -->  E2SM-KPM : Function \"%s\" is start", __func__);
 
-uint8_t kpmFillReportStyleItemStyle1(RIC_ReportStyle_Item_t *report_style){
-    uint8_t report_name[] = "O-DU Cell Metrics for SLA Functionality";
-    uint8_t ret = ROK;
-    report_style->ric_ReportStyle_Type = 1; // For Report
-    ret = kpmFillOctetString(&report_style->ric_ReportStyle_Name, report_name);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to assign Report Style name of cell metrics, %d",__LINE__);
+    RIC_EventTriggerStyle_Item_t *trigger_style;
+    // allocation memory for trigger_style by DU_ALLOC
+    DU_ALLOC(trigger_style, sizeof(RIC_EventTriggerStyle_Item_t));
+    if(trigger_style == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for trigger_style");
         return RFAILED;
     }
+    fillTriggerStyleItem(trigger_style); // fill one trigger style
+    ASN_SEQUENCE_ADD(&triggerStyleList->list, trigger_style);
+    
+    return 0;
+}
+
+uint8_t fillReportStyleItemStyle1(RIC_ReportStyle_Item_t *report_style){
+    int measurementSize = sizeof(measInfoStyle1) / sizeof(*measInfoStyle1);
+
+    report_style->ric_ReportStyle_Type = 1; // For Report
+    uint8_t report_name[] = "O-DU Cell Metrics for SLA Functionality";
+    report_style->ric_ReportStyle_Name.size = strlen((const char*)report_name);
+    // allocate memory for report_style->ric_ReportStyle_Name.buf by DU_ALLOC
+    DU_ALLOC(report_style->ric_ReportStyle_Name.buf, report_style->ric_ReportStyle_Name.size);
+    if(report_style->ric_ReportStyle_Name.buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for report_style->ric_ReportStyle_Name.buf");
+        return RFAILED;
+    }
+    memcpy(report_style->ric_ReportStyle_Name.buf, report_name, report_style->ric_ReportStyle_Name.size);
+
     report_style->ric_IndicationHeaderFormat_Type = 1; // only 1 supported in KPM 2.03
     report_style->ric_IndicationMessageFormat_Type = 1;
     report_style->ric_ActionFormat_Type = 1; // new in KPM 2.0
+
     MeasurementInfo_Action_Item_t *measure_item;
-    DU_ALLOC(measure_item, SUPPORTED_CELL_MEAS_ITEM * sizeof(MeasurementInfo_Action_Item_t));
-    if(measure_item == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for measurement info action item of cell metrics failed, %d", __LINE__);
+    // allocate memory for measure_item by DU_ALLOC
+    DU_ALLOC(measure_item, measurementSize * sizeof(MeasurementInfo_Action_Item_t));
+    if(measure_item == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measure_item");
         return RFAILED;
     }
-    for(int i=0;i<SUPPORTED_CELL_MEAS_ITEM;i++){
-        ret = kpmFillOctetString(&measure_item[i].measName, cellMetricName[i]);
-        if(ret != ROK){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Failed to assign Measurement Info Action measurement name of cell metrics, %d",__LINE__);
+
+    for(int i=0;i<measurementSize;i++){
+        measure_item[i].measName.size = strlen((const char*)measInfoStyle1[i]);
+        // allocate memory for measure_item[i].measName.buf by DU_ALLOC
+        DU_ALLOC(measure_item[i].measName.buf, measure_item[i].measName.size);
+        if(measure_item[i].measName.buf == NULL){
+            printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measure_item[i].measName.buf");
             return RFAILED;
         }
+        memcpy(measure_item[i].measName.buf, measInfoStyle1[i], measure_item[i].measName.size);
         ASN_SEQUENCE_ADD(&report_style->measInfo_Action_List.list, measure_item + i);
     }
-    return ROK;
+
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in report style item in style 1 of KPMv3
- *
- * @details
- *
- *    Function : kpmFillReportStyleItemStyle1V3
- *
- *    Functionality: Fill in the trigger style item for cell metrics
- *
- * @param[in] report_style, RIC_ReportStyle_Item_v300_t* for source item
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillReportStyleItemStyle1V3(RIC_ReportStyle_Item_v300_t *report_style){
-    uint8_t ret = ROK;
-    uint8_t report_name[] = "O-DU Cell Metrics for SLA Functionality";
+uint8_t fillReportStyleItemStyle1V3(RIC_ReportStyle_Item_v300_t *report_style){
+    int measurementSize = sizeof(measInfoStyle1) / sizeof(*measInfoStyle1);
 
     report_style->ric_ReportStyle_Type = 1; // For Report
-    ret = kpmFillOctetString(&report_style->ric_ReportStyle_Name, report_name);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to assign Report Style name of cell metrics, %d",__LINE__);
+    uint8_t report_name[] = "O-DU Cell Metrics for SLA Functionality";
+    report_style->ric_ReportStyle_Name.size = strlen((const char*)report_name);
+    // allocate memory for report_style->ric_ReportStyle_Name.buf by DU_ALLOC
+    DU_ALLOC(report_style->ric_ReportStyle_Name.buf, report_style->ric_ReportStyle_Name.size);
+    if(report_style->ric_ReportStyle_Name.buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for report_style->ric_ReportStyle_Name.buf");
         return RFAILED;
     }
+    memcpy(report_style->ric_ReportStyle_Name.buf, report_name, report_style->ric_ReportStyle_Name.size);
 
     report_style->ric_IndicationHeaderFormat_Type = 1; // only 1 supported in KPM 2.03
     report_style->ric_IndicationMessageFormat_Type = 1;
     report_style->ric_ActionFormat_Type = 1; // new in KPM 2.0
 
     MeasurementInfo_Action_Item_v300_t *measure_item;
-    DU_ALLOC(measure_item, SUPPORTED_CELL_MEAS_ITEM * sizeof(MeasurementInfo_Action_Item_v300_t));
+    // allocate memory for measure_item by DU_ALLOC
+    DU_ALLOC(measure_item, measurementSize * sizeof(MeasurementInfo_Action_Item_v300_t));
     if(measure_item == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for measurement info action item of cell metrics failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measure_item");
         return RFAILED;
     }
 
-    for(int i=0;i<SUPPORTED_CELL_MEAS_ITEM;i++){
-        ret = kpmFillOctetString(&measure_item[i].measName, cellMetricName[i]);
-        if(ret != ROK){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Failed to assign Measurement Info Action measurement name of cell metrics, %d",__LINE__);
+    for(int i=0;i<measurementSize;i++){
+        measure_item[i].measName.size = strlen((const char*)measInfoStyle1[i]);
+        // allocate memory for measure_item[i].measName.buf by DU_ALLOC
+        DU_ALLOC(measure_item[i].measName.buf, measure_item[i].measName.size);
+        if(measure_item[i].measName.buf == NULL){
+            printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measure_item[i].measName.buf");
             return RFAILED;
         }
+        memcpy(measure_item[i].measName.buf, measInfoStyle1[i], measure_item[i].measName.size);
         ASN_SEQUENCE_ADD(&report_style->measInfo_Action_List.list, measure_item + i);
     }
-    return ROK;
+
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in report style item in style 2
- *
- * @details
- *
- *    Function : kpmFillReportStyleItemStyle2
- *
- *    Functionality: Fill in the trigger style item for slice metrics
- *
- * @param[in] report_style, RIC_ReportStyle_Item_t* for source item
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+uint8_t fillReportStyleItemStyle2(RIC_ReportStyle_Item_t *report_style){
+    int measurementSize = sizeof(measInfoStyle2) / sizeof(*measInfoStyle2);
 
-uint8_t kpmFillReportStyleItemStyle2(RIC_ReportStyle_Item_t *report_style){
-    uint8_t ret = ROK;
+    report_style->ric_ReportStyle_Type = 3; // For reporting slice measurement
     uint8_t report_name[] = "O-DU Slice Metrics for SLA Functionality";
-
-    ret = kpmFillOctetString(&report_style->ric_ReportStyle_Name, report_name);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to assign Report Style name of slice metrics, %d",__LINE__);
+    report_style->ric_ReportStyle_Name.size = strlen((const char*)report_name);
+    // allocate memory for report_style->ric_ReportStyle_Name.buf by DU_ALLOC
+    DU_ALLOC(report_style->ric_ReportStyle_Name.buf, report_style->ric_ReportStyle_Name.size);
+    if(report_style->ric_ReportStyle_Name.buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for report_style->ric_ReportStyle_Name.buf");
         return RFAILED;
     }
-    report_style->ric_ReportStyle_Type = 3; // For reporting slice measurement
+    memcpy(report_style->ric_ReportStyle_Name.buf, report_name, report_style->ric_ReportStyle_Name.size);
+
     report_style->ric_IndicationHeaderFormat_Type = 1; // only 1 supported in KPM 2.03
     report_style->ric_IndicationMessageFormat_Type = 2; // For conditional reporting
     report_style->ric_ActionFormat_Type = 3; // new in KPM 2.0
 
     MeasurementInfo_Action_Item_t *measure_item;
-    DU_ALLOC(measure_item, SUPPORTED_SLICE_MEAS_ITEM * sizeof(MeasurementInfo_Action_Item_t));
+    // allocate memory for measure_item by DU_ALLOC
+    DU_ALLOC(measure_item, measurementSize * sizeof(MeasurementInfo_Action_Item_t));
     if(measure_item == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for measurement info action item of slice metrics failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measure_item");
         return RFAILED;
     }
-    for(int i=0;i<SUPPORTED_SLICE_MEAS_ITEM;i++){
-        ret = kpmFillOctetString(&measure_item[i].measName, sliceMetricName[i]);
-        if(ret != ROK){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Failed to assign Measurement Info Action measurement name of slice metrics, %d",__LINE__);
+
+    for(int i=0;i<measurementSize;i++){
+        measure_item[i].measName.size = strlen((const char*)measInfoStyle2[i]);
+        // allocate memory for measure_item[i].measName.buf by DU_ALLOC
+        DU_ALLOC(measure_item[i].measName.buf, measure_item[i].measName.size);
+        if(measure_item[i].measName.buf == NULL){
+            printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measure_item[i].measName.buf");
             return RFAILED;
         }
+        memcpy(measure_item[i].measName.buf, measInfoStyle2[i], measure_item[i].measName.size);
         ASN_SEQUENCE_ADD(&report_style->measInfo_Action_List.list, measure_item + i);
     }
-    return ROK;
+
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in report style item in style 2 of KPMv3
- *
- * @details
- *
- *    Function : kpmFillReportStyleItemStyle2V3
- *
- *    Functionality: Fill in the trigger style item for slice metrics
- *
- * @param[in] report_style, RIC_ReportStyle_Item_v300_t* for source item
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+uint8_t fillReportStyleItemStyle2V3(RIC_ReportStyle_Item_v300_t *report_style){
+    int measurementSize = sizeof(measInfoStyle2) / sizeof(*measInfoStyle2);
 
-uint8_t kpmFillReportStyleItemStyle2V3(RIC_ReportStyle_Item_v300_t *report_style){
-    uint8_t ret = ROK;
+    report_style->ric_ReportStyle_Type = 3; // For reporting slice measurement
     uint8_t report_name[] = "O-DU Slice Metrics for SLA Functionality";
+    report_style->ric_ReportStyle_Name.size = strlen((const char*)report_name);
+    // allocate memory for report_style->ric_ReportStyle_Name.buf by DU_ALLOC
+    DU_ALLOC(report_style->ric_ReportStyle_Name.buf, report_style->ric_ReportStyle_Name.size);
+    if(report_style->ric_ReportStyle_Name.buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for report_style->ric_ReportStyle_Name.buf");
+        return RFAILED;
+    }
+    memcpy(report_style->ric_ReportStyle_Name.buf, report_name, report_style->ric_ReportStyle_Name.size);
 
     report_style->ric_IndicationHeaderFormat_Type = 1; // only 1 supported in KPM 2.03
     report_style->ric_IndicationMessageFormat_Type = 2; // For conditional reporting
     report_style->ric_ActionFormat_Type = 3; // new in KPM 2.0
-    report_style->ric_ReportStyle_Type = 3; // For reporting slice measurement
-    
-    ret = kpmFillOctetString(&report_style->ric_ReportStyle_Name, report_name);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to assign Report Style name of slice metrics, %d",__LINE__);
-        return RFAILED;
-    }
 
     MeasurementInfo_Action_Item_v300_t *measure_item;
-    DU_ALLOC(measure_item, SUPPORTED_SLICE_MEAS_ITEM * sizeof(MeasurementInfo_Action_Item_v300_t));
+    // allocate memory for measure_item by DU_ALLOC
+    DU_ALLOC(measure_item, measurementSize * sizeof(MeasurementInfo_Action_Item_v300_t));
     if(measure_item == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for measurement info action item of slice metrics failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measure_item");
         return RFAILED;
     }
 
-    for(int i=0;i<SUPPORTED_SLICE_MEAS_ITEM;i++){
-        ret = kpmFillOctetString(&measure_item[i].measName, sliceMetricName[i]);
-        if(ret != ROK){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Failed to assign Measurement Info Action measurement name of slice metrics, %d",__LINE__);
+    for(int i=0;i<measurementSize;i++){
+        measure_item[i].measName.size = strlen((const char*)measInfoStyle2[i]);
+        // allocate memory for measure_item[i].measName.buf by DU_ALLOC
+        DU_ALLOC(measure_item[i].measName.buf, measure_item[i].measName.size);
+        if(measure_item[i].measName.buf == NULL){
+            printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measure_item[i].measName.buf");
             return RFAILED;
         }
+        memcpy(measure_item[i].measName.buf, measInfoStyle2[i], measure_item[i].measName.size);
         ASN_SEQUENCE_ADD(&report_style->measInfo_Action_List.list, measure_item + i);
     }
-    return ROK;
+
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in report style list
- *
- * @details
- *
- *    Function : kpmFillReportStyleList
- *
- *    Functionality: Fill in the trigger style list for cell/slice metrics
- *
- * @param[in] reportStyleList, E2SM_KPM_RANfunction_Description__ric_ReportStyle_List* for source item
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillReportStyleList(struct E2SM_KPM_RANfunction_Description__ric_ReportStyle_List *reportStyleList){
-    uint8_t ret = ROK;
+uint8_t fillReportStyleList(struct E2SM_KPM_RANfunction_Description__ric_ReportStyle_List *reportStyleList){
     RIC_ReportStyle_Item_t *report_style;
-    DU_ALLOC(report_style, sizeof(RIC_ReportStyle_Item_t) * 2); // slice metrics and cell metrics
-    if(report_style == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for report style item failed, %d", __LINE__);
+    // allocation memory for report_style by DU_ALLOC
+    DU_ALLOC(report_style, sizeof(RIC_ReportStyle_Item_t) * 2);
+    if(report_style == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for report_style");
         return RFAILED;
     }
-    ret = kpmFillReportStyleItemStyle1(report_style);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill report style item style 1, %d", __LINE__);
-        return RFAILED;
-    }
-    ret = kpmFillReportStyleItemStyle2(report_style+1);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill report style item style 2, %d", __LINE__);
-        return RFAILED;
-    }
+    fillReportStyleItemStyle1(report_style);
+    fillReportStyleItemStyle2(report_style+1);
     ASN_SEQUENCE_ADD(&reportStyleList->list, report_style);
     ASN_SEQUENCE_ADD(&reportStyleList->list, report_style+1);
-    return ROK;
+
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in report style list of KPMv3
- *
- * @details
- *
- *    Function : kpmFillReportStyleListV3
- *
- *    Functionality: Fill in the trigger style list for cell/slice metrics
- *
- * @param[in] reportStyleList, E2SM_KPM_RANfunction_Description_v300__ric_ReportStyle_List* for source item
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillReportStyleListV3(struct E2SM_KPM_RANfunction_Description_v300__ric_ReportStyle_List *reportStyleList){
-    uint8_t ret = ROK;
+uint8_t fillReportStyleListV3(struct E2SM_KPM_RANfunction_Description_v300__ric_ReportStyle_List *reportStyleList){
     RIC_ReportStyle_Item_v300_t *report_style;
-    DU_ALLOC(report_style, sizeof(RIC_ReportStyle_Item_v300_t) * 2); // slice metrics and cell metrics
-    if(report_style == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for report style item failed, %d", __LINE__);
+    // allocation memory for report_style by DU_ALLOC
+    DU_ALLOC(report_style, sizeof(RIC_ReportStyle_Item_v300_t) * 2);
+    if(report_style == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for report_style");
         return RFAILED;
     }
-    ret = kpmFillReportStyleItemStyle1V3(report_style);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill report style item style 1, %d", __LINE__);
-        return RFAILED;
-    }
-    ret = kpmFillReportStyleItemStyle2V3(report_style+1);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill report style item style 2, %d", __LINE__);
-        return RFAILED;
-    }
+    fillReportStyleItemStyle1V3(report_style);
+    fillReportStyleItemStyle2V3(report_style+1);
     ASN_SEQUENCE_ADD(&reportStyleList->list, report_style);
     ASN_SEQUENCE_ADD(&reportStyleList->list, report_style+1);
-    return ROK;
-}
 
-/*******************************************************************
- *
- * @brief Deallocate the memory allocated for RANfunction_Name_t 
- *
- * @details
- *
- *    Function : kpmFreeRanFuncName
- *
- *    Functionality: freeing the memory allocated for RANfunction_Name_t
- *
- * @param[in] ranfunc_name, RANfunction_Name_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+    return 0;
+}
 
 uint8_t kpmFreeRanFuncName(RANfunction_Name_t *ranfunc_name){
-    if(ranfunc_name->ranFunction_Description.size){
+    if(ranfunc_name->ranFunction_Description.size>0){
         DU_FREE(ranfunc_name->ranFunction_Description.buf, ranfunc_name->ranFunction_Description.size);
     }
-    if(ranfunc_name->ranFunction_ShortName.size){
+    if(ranfunc_name->ranFunction_ShortName.size>0){
         DU_FREE(ranfunc_name->ranFunction_ShortName.buf, ranfunc_name->ranFunction_ShortName.size);
     }
     if(ranfunc_name->ranFunction_Description.size){
@@ -549,24 +345,9 @@ uint8_t kpmFreeRanFuncName(RANfunction_Name_t *ranfunc_name){
     if(ranfunc_name->ranFunction_Instance){
         DU_FREE(ranfunc_name->ranFunction_Instance, sizeof(long));
     }
-    return ROK;
-}
 
-/*******************************************************************
- *
- * @brief Deallocate the memory allocated for E2SM_KPM_RANfunction_Description__ric_EventTriggerStyle_List 
- *
- * @details
- *
- *    Function : kpmFreeEventTrigStyleList
- *
- *    Functionality: freeing the memory allocated for E2SM_KPM_RANfunction_Description__ric_EventTriggerStyle_List
- *
- * @param[in] eventTrigStyleList, E2SM_KPM_RANfunction_Description__ric_EventTriggerStyle_List*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+    return 0;
+}
 
 uint8_t kpmFreeEventTrigStyleList(struct E2SM_KPM_RANfunction_Description__ric_EventTriggerStyle_List *eventTrigStyleList){
     for(int i=0;i<eventTrigStyleList->list.count;i++){
@@ -578,24 +359,8 @@ uint8_t kpmFreeEventTrigStyleList(struct E2SM_KPM_RANfunction_Description__ric_E
             }
         }  
     }
-    return ROK;
+    return 0;
 }
-
-/*******************************************************************
- *
- * @brief Deallocate the memory allocated for E2SM_KPM_RANfunction_Description__ric_ReportStyle_List 
- *
- * @details
- *
- *    Function : kpmFreeReportStyleList
- *
- *    Functionality: freeing the memory allocated for E2SM_KPM_RANfunction_Description__ric_ReportStyle_List
- *
- * @param[in] reportStyleList, E2SM_KPM_RANfunction_Description__ric_ReportStyle_List*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
 
 uint8_t kpmFreeReportStyleList(struct E2SM_KPM_RANfunction_Description__ric_ReportStyle_List *reportStyleList){
     for(int i=0;i<reportStyleList->list.count;i++){
@@ -617,85 +382,51 @@ uint8_t kpmFreeReportStyleList(struct E2SM_KPM_RANfunction_Description__ric_Repo
             }
         }
     }
-    return ROK;
-}
+    return 0;
 
-/*******************************************************************
- *
- * @brief Deallocate the memory allocated for E2SM_KPM_RANfunction_Description_t 
- *
- * @details
- *
- *    Function : kpmFreeRanFuncDesc
- *
- *    Functionality: freeing the memory allocated for RAN Function Description
- *
- * @param[in] ranfunc_desc, E2SM_KPM_RANfunction_Description_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+}
 
 uint8_t kpmFreeRanFuncDesc(E2SM_KPM_RANfunction_Description_t *ranfunc_desc){
     kpmFreeRanFuncName(&ranfunc_desc->ranFunction_Name);
     if(ranfunc_desc->ric_EventTriggerStyle_List){
         kpmFreeEventTrigStyleList(ranfunc_desc->ric_EventTriggerStyle_List);
     }
-    return ROK;
+    return 0;
+
 }
 
-/*******************************************************************
- *
- * @brief Build the RAN Function Description of KPMv3 
- *
- * @details
- *
- *    Function : kpmFillRanFuncDescriptionV3
- *
- *    Functionality: Fills the RAN Function Description of KPMv3
- *
- * @param[in] ranFunDefinition, RANfunctionDefinition_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillRanFuncDescriptionV3(RANfunctionDefinition_t  *ranFunDefinition){
+uint8_t kpmRanFuncDescriptionV3(RANfunctionDefinition_t  *ranFunDefinition){
     asn_codec_ctx_t *opt_cod = 0;
-    uint8_t ret = ROK;
     E2SM_KPM_RANfunction_Description_v300_t *ranfunc_desc;
+    // allocate memory for ranfunc_desc by DU_ALLOC
     DU_ALLOC(ranfunc_desc, sizeof(E2SM_KPM_RANfunction_Description_v300_t));
     if(ranfunc_desc == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for RAN Function Description failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ranfunc_desc");
         return RFAILED;
     }
 
     ASN_STRUCT_RESET(asn_DEF_E2SM_KPM_RANfunction_Description_v300, ranfunc_desc);
-
-    ret = kpmFillRanFunctionName(&ranfunc_desc->ranFunction_Name, 3);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill RAN Function Name, %d", __LINE__);
+    
+    if(fillRanFunctionName(&ranfunc_desc->ranFunction_Name, 3) != 0){
         return RFAILED;
     }
 
+    // allocate memory for ranfunc_desc->ric_EventTriggerStyle_List by DU_ALLOC
     DU_ALLOC(ranfunc_desc->ric_EventTriggerStyle_List, sizeof(struct E2SM_KPM_RANfunction_Description_v300__ric_EventTriggerStyle_List));
-    if(ranfunc_desc->ric_EventTriggerStyle_List == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for RAN Function Description - Event Trigger Style List failed, %d", __LINE__);
+    if(ranfunc_desc->ric_EventTriggerStyle_List == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ranfunc_desc->ric_EventTriggerStyle_List");
         return RFAILED;
     }
+    // allocate memory for ranfunc_desc->ric_ReportStyle_List by DU_ALLOC
     DU_ALLOC(ranfunc_desc->ric_ReportStyle_List, sizeof(struct E2SM_KPM_RANfunction_Description_v300__ric_ReportStyle_List));
     if(ranfunc_desc->ric_ReportStyle_List == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for RAN Function Description - Report Style List failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ranfunc_desc->ric_ReportStyle_List");
         return RFAILED;
     }
-    ret = kpmFillTriggerStyleListV3(ranfunc_desc->ric_EventTriggerStyle_List);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill Trigger Style List, %d", __LINE__);
+    if(fillTriggerStyleListV3(ranfunc_desc->ric_EventTriggerStyle_List) != 0){
         return RFAILED;
     }
-    ret = kpmFillReportStyleListV3(ranfunc_desc->ric_ReportStyle_List);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill Report Style List, %d", __LINE__);
+    if(fillReportStyleListV3(ranfunc_desc->ric_ReportStyle_List) != 0){
         return RFAILED;
     }
 
@@ -710,421 +441,289 @@ uint8_t kpmFillRanFuncDescriptionV3(RANfunctionDefinition_t  *ranFunDefinition){
          &asn_DEF_E2SM_KPM_RANfunction_Description,
          ranfunc_desc, e2smbuffer, e2smbuffer_size);
     
-    if(encRetVal.encoded == -1){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to encode RAN Function Description, %d", __LINE__);
+    if(encRetVal.encoded == -1)
         return RFAILED;
-    }else{
-        DU_ALLOC(ranFunDefinition->buf, encRetVal.encoded *  sizeof(uint8_t));
-        if(ranFunDefinition->buf == NULLP){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for RAN Function Description failed, %d", __LINE__);
-            return RFAILED;
-        }
-        ranFunDefinition->size = encRetVal.encoded;
-        memcpy(ranFunDefinition->buf, e2smbuffer, encRetVal.encoded);
-        return ROK;
-    }    
+
+    // allocation memory for ranFunDefinition->buf by DU_ALLOC
+    DU_ALLOC(ranFunDefinition->buf, encRetVal.encoded *  sizeof(uint8_t));
+    if(ranFunDefinition->buf == NULL){
+        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation failed for ranFunDefinition->buf");
+        return RFAILED;
+    }
+    ranFunDefinition->size = encRetVal.encoded;
+    memcpy(ranFunDefinition->buf, e2smbuffer, encRetVal.encoded);
+
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Build the RAN Function Description
- *
- * @details
- *
- *    Function : kpmFillRanFuncDescription
- *
- *    Functionality: Fills the RAN Function Description
- *
- * @param[in] ranFunDefinition, RANfunctionDefinition_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
 
-uint8_t kpmFillRanFuncDescription(RANfunctionDefinition_t  *ranFunDefinition){
-    uint8_t ret = ROK;
+uint8_t kpmRanFuncDescription(RANfunctionDefinition_t  *ranFunDefinition)
+{
     asn_codec_ctx_t *opt_cod = 0;
+
+    kpmInit();
     E2SM_KPM_RANfunction_Description_t *ranfunc_desc;
+    // allocate memory for ranfunc_desc by DU_ALLOC
     DU_ALLOC(ranfunc_desc, sizeof(E2SM_KPM_RANfunction_Description_t));
     if(ranfunc_desc == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for RAN Function Description failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ranfunc_desc");
         return RFAILED;
     }
 
     ASN_STRUCT_RESET(asn_DEF_E2SM_KPM_RANfunction_Description, ranfunc_desc);
-    ret = kpmFillRanFunctionName(&ranfunc_desc->ranFunction_Name, 2);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill RAN Function Name, %d", __LINE__);
+
+    if(fillRanFunctionName(&ranfunc_desc->ranFunction_Name, 2) != 0){
+        return RFAILED;
+    }
+    // allocation memory for ranfunc_desc->ric_EventTriggerStyle_List by DU_ALLOC
+    DU_ALLOC(ranfunc_desc->ric_EventTriggerStyle_List, sizeof(struct E2SM_KPM_RANfunction_Description__ric_EventTriggerStyle_List));
+    if(ranfunc_desc->ric_EventTriggerStyle_List == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ranfunc_desc->ric_EventTriggerStyle_List");
+        return RFAILED;
+    }
+    // allocation memory for ranfunc_desc->ric_ReportStyle_List by DU_ALLOC
+    DU_ALLOC(ranfunc_desc->ric_ReportStyle_List, sizeof(struct E2SM_KPM_RANfunction_Description__ric_ReportStyle_List));
+    if(ranfunc_desc->ric_ReportStyle_List == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ranfunc_desc->ric_ReportStyle_List");
+        return RFAILED;
+    }
+    if(fillTriggerStyleList(ranfunc_desc->ric_EventTriggerStyle_List) != 0){
+        return RFAILED;
+    }
+    if(fillReportStyleList(ranfunc_desc->ric_ReportStyle_List) != 0){
         return RFAILED;
     }
 
-    DU_ALLOC(ranfunc_desc->ric_EventTriggerStyle_List, sizeof(struct E2SM_KPM_RANfunction_Description__ric_EventTriggerStyle_List));
-    if(ranfunc_desc->ric_EventTriggerStyle_List == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for RAN Function Description - Event Trigger Style List failed, %d", __LINE__);
-        return RFAILED;
-    }
-    DU_ALLOC(ranfunc_desc->ric_ReportStyle_List, sizeof(struct E2SM_KPM_RANfunction_Description__ric_ReportStyle_List));
-    if(ranfunc_desc->ric_ReportStyle_List == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for RAN Function Description - Report Style List failed, %d", __LINE__);
-        return RFAILED;
-    }
-    ret = kpmFillTriggerStyleList(ranfunc_desc->ric_EventTriggerStyle_List);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill Trigger Style List, %d", __LINE__);
-        return RFAILED;
-    }
-    ret = kpmFillReportStyleList(ranfunc_desc->ric_ReportStyle_List);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill Report Style List, %d", __LINE__);
-        return RFAILED;
-    }
     xer_fprint(stderr, &asn_DEF_E2SM_KPM_RANfunction_Description, ranfunc_desc);
 
     uint8_t e2smbuffer[8192];
     size_t e2smbuffer_size = 8192;
     asn_enc_rval_t     encRetVal;
+
     encRetVal = asn_encode_to_buffer(opt_cod,
          ATS_ALIGNED_BASIC_PER,
          &asn_DEF_E2SM_KPM_RANfunction_Description,
          ranfunc_desc, e2smbuffer, e2smbuffer_size);
     
-    if(encRetVal.encoded == -1){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to encode RAN Function Description, %d", __LINE__);
+    if(encRetVal.encoded == -1)
         return RFAILED;
-    }else{
-        DU_ALLOC(ranFunDefinition->buf, encRetVal.encoded *  sizeof(uint8_t));
-        if(ranFunDefinition->buf == NULLP){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for RAN Function Description failed, %d", __LINE__);
-            return RFAILED;
-        }
-        ranFunDefinition->size = encRetVal.encoded;
-        memcpy(ranFunDefinition->buf, e2smbuffer, encRetVal.encoded);
-        return ROK;
+
+    // allocation memory for ranFunDefinition->buf by DU_ALLOC
+    DU_ALLOC(ranFunDefinition->buf, encRetVal.encoded *  sizeof(uint8_t));
+    if(ranFunDefinition->buf == NULL){
+        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation failed for ranFunDefinition->buf");
+        return RFAILED;
     }
+    ranFunDefinition->size = encRetVal.encoded;
+    memcpy(ranFunDefinition->buf, e2smbuffer, encRetVal.encoded);
+
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Build the measurement info item
- *
- * @details
- *
- *    Function : kpmFillMeasInfoItem
- *
- *    Functionality: Fills the MeasurementInfoItem_t for indication message
- *
- * @param[in] measInfoItem, MeasurementInfoItem_t*, destination
- * @param[in] measName, measInfoItem*, the source of measurement name
- * @param[in] size, int, the size of the measurement name
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillMeasInfoItem(MeasurementInfoItem_t *measInfoItem, uint8_t *measName, int size){
+uint8_t fillMeasInfoItem(MeasurementInfoItem_t *measInfoItem, uint8_t *measName, int size){
     LabelInfoItem_t *measLabelInfo;
+    // allocate memory for measLabelInfo by DU_ALLOC
     DU_ALLOC(measLabelInfo, sizeof(LabelInfoItem_t));
-    if(measLabelInfo == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Label Info item failed, %d", __LINE__);
+    if(measLabelInfo == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measLabelInfo");
         return RFAILED;
     }
 
     long *measLabelInfo_noLabel;
+    // allocate memory for measLabelInfo_noLabel by DU_ALLOC
     DU_ALLOC(measLabelInfo_noLabel, sizeof(long));
     if(measLabelInfo_noLabel == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for No Label of Label Info Item failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measLabelInfo_noLabel");
         return RFAILED;
     }
     measInfoItem->measType.present = MeasurementType_PR_measName; // Choose name or ID
     measInfoItem->measType.choice.measName.size = size;
+    // allocate memory for measInfoItem->measType.choice.measName.buf by DU_ALLOC
     DU_ALLOC(measInfoItem->measType.choice.measName.buf, size);
     if(measInfoItem->measType.choice.measName.buf == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for measurement name of lLbel info item failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measInfoItem->measType.choice.measName.buf");
         return RFAILED;
     }
     memcpy(measInfoItem->measType.choice.measName.buf, measName, measInfoItem->measType.choice.measName.size);
+
     *measLabelInfo_noLabel = MeasurementLabel__noLabel_true;
     measLabelInfo->measLabel.noLabel = measLabelInfo_noLabel;
+
     ASN_SEQUENCE_ADD(&measInfoItem->labelInfoList.list, measLabelInfo);
-    return ROK;
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Build the measurement info item of KPMv3
- *
- * @details
- *
- *    Function : kpmFillMeasInfoItemV3
- *
- *    Functionality: Fills the MeasurementInfoItem_v300_t for indication message
- *
- * @param[in] measInfoItem, MeasurementInfoItem_v300_t*, destination
- * @param[in] measName, measInfoItem*, the source of measurement name
- * @param[in] size, int, the size of the measurement name
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillMeasInfoItemV3(MeasurementInfoItem_v300_t *measInfoItem, uint8_t *measName, int size){
+uint8_t fillMeasInfoItemV3(MeasurementInfoItem_v300_t *measInfoItem, uint8_t *measName, int size){
     LabelInfoItem_v300_t *measLabelInfo;
+    // allocate memory for measLabelInfo by DU_ALLOC
     DU_ALLOC(measLabelInfo, sizeof(LabelInfoItem_v300_t));
     if(measLabelInfo == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Label Info Item failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measLabelInfo");
         return RFAILED;
     }
 
     long *measLabelInfo_noLabel;
+    // allocate memory for measLabelInfo_noLabel by DU_ALLOC
     DU_ALLOC(measLabelInfo_noLabel, sizeof(long));
     if(measLabelInfo_noLabel == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for No Label of Label Info Item failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measLabelInfo_noLabel");
         return RFAILED;
     }
     measInfoItem->measType.present = MeasurementType_PR_measName; // Choose name or ID
     measInfoItem->measType.choice.measName.size = size;
+    // allocate memory for measInfoItem->measType.choice.measName.buf by DU_ALLOC
     DU_ALLOC(measInfoItem->measType.choice.measName.buf, size);
     if(measInfoItem->measType.choice.measName.buf == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for measurement name of lLbel info item failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measInfoItem->measType.choice.measName.buf");
         return RFAILED;
     }
     memcpy(measInfoItem->measType.choice.measName.buf, measName, measInfoItem->measType.choice.measName.size);
+
     *measLabelInfo_noLabel = MeasurementLabel__noLabel_true;
     measLabelInfo->measLabel.noLabel = measLabelInfo_noLabel;
+
     ASN_SEQUENCE_ADD(&measInfoItem->labelInfoList.list, measLabelInfo);
-    return ROK;
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Process the event trigger definition format 1
- *
- * @details
- *
- *    Function : kpmProcEventTrigDefinitionFormat1
- *
- *    Functionality: Process the RICeventTriggerDefinition_t and get reporting period
- *
- * @param[in] defini, RICeventTriggerDefinition_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmProcEventTrigDefinitionFormat1(RICeventTriggerDefinition_t *defini){
+uint8_t decapEventTrigDefinitionFormat1(RICeventTriggerDefinition_t *defini){
     asn_dec_rval_t  rval;
     E2SM_KPM_EventTriggerDefinition_t *kpmEventTrig;
-    // DU_ALLOC(kpmEventTrig, sizeof(E2SM_KPM_EventTriggerDefinition_t));
-    kpmEventTrig = (E2SM_KPM_EventTriggerDefinition_t *)calloc(1, sizeof(E2SM_KPM_EventTriggerDefinition_t));
-    if(kpmEventTrig == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Event Trigger Definition failed, %d", __LINE__);
+    // allocate memory for kpmEventTrig by DU_ALLOC
+    DU_ALLOC(kpmEventTrig, sizeof(E2SM_KPM_EventTriggerDefinition_t));
+    if(kpmEventTrig == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for kpmEventTrig");
         return RFAILED;
     }
-    DU_LOG("\nINFO   -->  E2SM-KPM : Decap Event Trigger Definition<<<<\n");
+    printf("\nINFO   -->  E2SM-KPM : Decap Event Trigger Definition<<<<\n");
 
     rval = aper_decode(0, &asn_DEF_E2SM_KPM_EventTriggerDefinition, (void **)&kpmEventTrig, defini->buf, defini->size, 0, 0);
     if(rval.code == RC_FAIL || rval.code == RC_WMORE)
    {
-      DU_LOG("\nERROR  -->  E2SM-KPM : Could not decode Event Trigger Definition, %d", __LINE__);
-      return RFAILED;
+      printf("\nERROR  -->  E2SM-KPM : ASN decode failed");
    }
+    
     xer_fprint(stdout, &asn_DEF_E2SM_KPM_EventTriggerDefinition, kpmEventTrig);
-    DU_LOG("\nINFO  -->  E2SM-KPM : Report Period is %ld\n", kpmEventTrig->eventDefinition_formats.choice.eventDefinition_Format1->reportingPeriod);
+    printf("\nINFO  -->  E2SM-KPM : Report Period is %ld\n", kpmEventTrig->eventDefinition_formats.choice.eventDefinition_Format1->reportingPeriod);
     reportingPeriod = kpmEventTrig->eventDefinition_formats.choice.eventDefinition_Format1->reportingPeriod;
-    ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_EventTriggerDefinition, kpmEventTrig);
-    return ROK;
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Get the index of measurement name for cell metrics
- *
- * @details
- *
- *    Function : kpmCellMeasNameIsSupport
- *
- *    Functionality: Return the index of measurement name
- *
- * @param[in] measNameBuf, uint8_t*
- * @return index, int
- *
- ******************************************************************/
+int actionFmt1measNameIsSupport(uint8_t *measNameBuf){
+    int measSize = sizeof(measInfoStyle1) / sizeof(*measInfoStyle1);
 
-int kpmCellMeasNameIsSupport(uint8_t *measNameBuf){
-    for(int i=0;i<SUPPORTED_CELL_MEAS_ITEM;i++){
-        if(strcmp((const char*)measNameBuf, cellMetricName[i]) == 0)
+    for(int i=0;i<measSize;i++){
+        if(strcmp((const char*)measNameBuf, measInfoStyle1[i]) == 0)
             return i;
     }
     return -1; 
 }
 
-/*******************************************************************
- *
- * @brief Get the index of measurement name for slice metrics
- *
- * @details
- *
- *    Function : kpmSliceMeasNameIsSupport
- *
- *    Functionality: Return the index of measurement name
- *
- * @param[in] measNameBuf, uint8_t*
- * @return index, int
- *
- ******************************************************************/
+int actionFmt3measNameIsSupport(uint8_t *measNameBuf){
+    int measSize = sizeof(measInfoStyle2) / sizeof(*measInfoStyle2);
 
-int kpmSliceMeasNameIsSupport(uint8_t *measNameBuf){
-    for(int i=0;i<SUPPORTED_SLICE_MEAS_ITEM;i++){
-        if(strcmp((const char*)measNameBuf, sliceMetricName[i]) == 0)
+    for(int i=0;i<measSize;i++){
+        if(strcmp((const char*)measNameBuf, measInfoStyle2[i]) == 0)
             return i;
     }
-    return -1;
+    return -1; 
 }
 
-/*******************************************************************
- *
- * @brief Process the action definition format 1
- *
- * @details
- *
- *    Function : kpmProcActionDefinitionFmt1
- *
- *    Functionality: Process the E2SM_KPM_ActionDefinition_Format1_t and get subscription information for cell metric
- *
- * @param[in] actionDefinFormat1, E2SM_KPM_ActionDefinition_Format1_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmProcActionDefinitionFmt1(E2SM_KPM_ActionDefinition_Format1_t *actionDefinFormat1){
+uint8_t decapActionDefinitionFmt1(E2SM_KPM_ActionDefinition_Format1_t *actionDefinFormat1){
     int index;
+    printf("\nINFO  -->  E2SM-KPM : Granularity Period is %ld\n", actionDefinFormat1->granulPeriod);
     sizeOfMeasNameFmt1 = 0;
-    DU_LOG("\nINFO  -->  E2SM-KPM : Granularity Period is %ld\n", actionDefinFormat1->granulPeriod);
+
     for(int i=0;i<actionDefinFormat1->measInfoList.list.count;i++){
-        if(actionDefinFormat1->measInfoList.list.array[i]->measType.present == MeasurementType_PR_measID){
-            DU_LOG("\nERROR  -->  E2SM-KPM : Measurement ID is not supported \n");
-            return RFAILED;
-        }
+        if(actionDefinFormat1->measInfoList.list.array[i]->measType.present == MeasurementType_PR_measID)
+            printf("\nINFO  -->  E2SM-KPM : Measurement ID is %ld", actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measID);
         else if(actionDefinFormat1->measInfoList.list.array[i]->measType.present == MeasurementType_PR_measName){
-            index = kpmCellMeasNameIsSupport(actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measName.buf);
+            // printf("\nINFO  -->  E2SM-KPM : Measurement Name is %s", actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measName.buf);
+            index = actionFmt1measNameIsSupport(actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measName.buf);
             if(index != -1){
-                DU_LOG("\nINFO  -->  E2SM-KPM : Measurement name \"%s\" of Cell metric is valid", actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measName.buf);
-                memcpy(indicationMeasNameFmt1[sizeOfMeasNameFmt1], cellMetricName[index], strlen((const char*)cellMetricName[index])+1);
+                printf("\nINFO  -->  E2SM-KPM : %s in Fmt 1 is valid", actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measName.buf);
+                memcpy(indicationMeasNameFmt1[sizeOfMeasNameFmt1], measInfoStyle1[index], strlen((const char*)measInfoStyle1[index])+1);
                 sizeOfMeasNameFmt1++;
             }
             else{
-                DU_LOG("\nINFO  -->  E2SM-KPM : Measurement name \"%s\" of Cell metric is invalid \n", actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measName.buf);
+                printf("\nINFO  -->  E2SM-KPM : Measurement name is invalid \n");
                 return RFAILED;
             }
         }
         else{
-            DU_LOG("\nINFO  -->  E2SM-KPM : Measurement type is invalid \n");
-            return RFAILED;
+            printf("\nINFO  -->  E2SM-KPM : Measurement type is invalid \n");
         }
     }
+
     for(int i=0;i<sizeOfMeasNameFmt1;i++){
-        DU_LOG("\nINFO  -->  E2SM-KPM : # %d Measurement name is \"%s\"", i, indicationMeasNameFmt1[i]);
+        printf("\nINFO  -->  E2SM-KPM : # %d Measurement name is %s", i, indicationMeasNameFmt1[i]);
     }
     if(sizeOfMeasNameFmt1>0)
         return ROK;
     else
         return RFAILED;
+
 }
 
-/*******************************************************************
- *
- * @brief Process the action definition format 1 of KPMv3
- *
- * @details
- *
- *    Function : kpmProcActionDefinitionFmt1V3
- *
- *    Functionality: Process the E2SM_KPM_ActionDefinition_Format1_v300_t and get subscription information for cell metric
- *
- * @param[in] actionDefinFormat1, E2SM_KPM_ActionDefinition_Format1_v300_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmProcActionDefinitionFmt1V3(E2SM_KPM_ActionDefinition_Format1_v300_t *actionDefinFormat1){
+uint8_t decapActionDefinitionFmt1V3(E2SM_KPM_ActionDefinition_Format1_v300_t *actionDefinFormat1){
     int index;
+    printf("\nINFO  -->  E2SM-KPMv3 : Granularity Period is %ld\n", actionDefinFormat1->granulPeriod);
     sizeOfMeasNameFmt1 = 0;
-    DU_LOG("\nINFO  -->  E2SM-KPM : Granularity Period is %ld\n", actionDefinFormat1->granulPeriod);
+
     for(int i=0;i<actionDefinFormat1->measInfoList.list.count;i++){
-        if(actionDefinFormat1->measInfoList.list.array[i]->measType.present == MeasurementType_PR_measID){
-            DU_LOG("\nERROR  -->  E2SM-KPM : Measurement ID is not supported \n");
-            return RFAILED;
-        }
+        if(actionDefinFormat1->measInfoList.list.array[i]->measType.present == MeasurementType_PR_measID)
+            printf("\nINFO  -->  E2SM-KPMv3 : Measurement ID is %ld", actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measID);
         else if(actionDefinFormat1->measInfoList.list.array[i]->measType.present == MeasurementType_PR_measName){
-            index = kpmCellMeasNameIsSupport(actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measName.buf);
+            printf("\nINFO  -->  E2SM-KPMv3 : Measurement Name is %s", actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measName.buf);
+            index = actionFmt1measNameIsSupport(actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measName.buf);
             if(index != -1){
-                DU_LOG("\nINFO  -->  E2SM-KPM : Measurement name \"%s\" of Cell metric is valid", actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measName.buf);
-                memcpy(indicationMeasNameFmt1[sizeOfMeasNameFmt1], cellMetricName[index], strlen((const char*)cellMetricName[index])+1);
+                printf("\nINFO  -->  E2SM-KPMv3 : Measurement name in Fmt 1 is valid, %d\n", index);
+                memcpy(indicationMeasNameFmt1[sizeOfMeasNameFmt1], measInfoStyle1[index], strlen((const char*)measInfoStyle1[index])+1);
                 sizeOfMeasNameFmt1++;
             }
             else{
-                DU_LOG("\nINFO  -->  E2SM-KPM : Measurement name \"%s\" of Cell metric is invalid \n", actionDefinFormat1->measInfoList.list.array[i]->measType.choice.measName.buf);
+                printf("\nINFO  -->  E2SM-KPMv3 : Measurement name is invalid \n");
                 return RFAILED;
             }
         }
         else{
-            DU_LOG("\nINFO  -->  E2SM-KPM : Measurement type is invalid \n");
-            return RFAILED;
+            printf("\nINFO  -->  E2SM-KPMv3 : Measurement type is invalid \n");
         }
     }
+
     for(int i=0;i<sizeOfMeasNameFmt1;i++){
-        DU_LOG("\nINFO  -->  E2SM-KPM : # %d Measurement name is \"%s\"", i, indicationMeasNameFmt1[i]);
+        printf("\nINFO  -->  E2SM-KPMv3 : # %d Measurement name is %s", i, indicationMeasNameFmt1[i]);
     }
     if(sizeOfMeasNameFmt1>0)
         return ROK;
     else
         return RFAILED;
+
 }
 
-/*******************************************************************
- *
- * @brief Process the action definition format 3
- *
- * @details
- *
- *    Function : kpmProcActionDefinitionFmt3
- *
- *    Functionality: Process the E2SM_KPM_ActionDefinition_Format3_t and get subscription information for slice metric
- *
- * @param[in] actionDefinFormat3, E2SM_KPM_ActionDefinition_Format3_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmProcActionDefinitionFmt3(E2SM_KPM_ActionDefinition_Format3_t *actionDefinFormat3){
+uint8_t decapActionDefinitionFmt3(E2SM_KPM_ActionDefinition_Format3_t *actionDefinFormat3){
     int index;
+    printf("\nINFO  -->  E2SM-KPM : Granularity Period is %ld\n", actionDefinFormat3->granulPeriod);
     sizeOfMeasNameFmt3 = 0;
-    DU_LOG("\nINFO  -->  E2SM-KPM : Granularity Period is %ld\n", actionDefinFormat3->granulPeriod);
+
     for(int i=0;i<actionDefinFormat3->measCondList.list.count;i++){
-        if(actionDefinFormat3->measCondList.list.array[i]->measType.present == MeasurementType_PR_measID){
-            DU_LOG("\nERROR  -->  E2SM-KPM : Measurement ID is not supported \n");
-            return RFAILED;
-        }
+        if(actionDefinFormat3->measCondList.list.array[i]->measType.present == MeasurementType_PR_measID)
+            printf("\nINFO  -->  E2SM-KPM : Measurement ID is %ld", actionDefinFormat3->measCondList.list.array[i]->measType.choice.measID);
         else if(actionDefinFormat3->measCondList.list.array[i]->measType.present == MeasurementType_PR_measName){
-            index = kpmSliceMeasNameIsSupport(actionDefinFormat3->measCondList.list.array[i]->measType.choice.measName.buf);
+            printf("\nINFO  -->  E2SM-KPM : Measurement Name is %s", actionDefinFormat3->measCondList.list.array[i]->measType.choice.measName.buf);
+            index = actionFmt3measNameIsSupport(actionDefinFormat3->measCondList.list.array[i]->measType.choice.measName.buf);
             if(index != -1){
-                DU_LOG("\nINFO  -->  E2SM-KPM : Measurement name \"%s\" of Slice metric is valid", actionDefinFormat3->measCondList.list.array[i]->measType.choice.measName.buf);
-                memcpy(indicationMeasNameFmt3[sizeOfMeasNameFmt3], sliceMetricName[index], strlen((const char*)sliceMetricName[index])+1);
+                printf("\nINFO  -->  E2SM-KPM : Measurement name in Fmt 3 is valid \n");
+                memcpy(indicationMeasNameFmt3[sizeOfMeasNameFmt3], measInfoStyle2[index], strlen((const char*)measInfoStyle2[index])+1);
                 sizeOfMeasNameFmt3++;
-            }else{
-                DU_LOG("\nINFO  -->  E2SM-KPM : Measurement name \"%s\" of Slice metric is invalid \n", actionDefinFormat3->measCondList.list.array[i]->measType.choice.measName.buf);
-                return RFAILED;
             }
         }
         else{
-            DU_LOG("\nINFO  -->  E2SM-KPM : Measurement type is invalid \n");
+            printf("\nINFO  -->  E2SM-KPM : Measurement type is invalid \n");
         }
     }
     for(int i=0;i<sizeOfMeasNameFmt3;i++){
-        DU_LOG("\nINFO  -->  E2SM-KPM : # %d Measurement name is \"%s\"", i, indicationMeasNameFmt3[i]);
+        printf("\nINFO  -->  E2SM-KPM : # %d Measurement name is %s", i, indicationMeasNameFmt3[i]);
     }
     if(sizeOfMeasNameFmt3>0)
         return ROK;
@@ -1132,48 +731,29 @@ uint8_t kpmProcActionDefinitionFmt3(E2SM_KPM_ActionDefinition_Format3_t *actionD
         return RFAILED;
 }
 
-/*******************************************************************
- *
- * @brief Process the action definition format 3 of KPMv3
- *
- * @details
- *
- *    Function : kpmProcActionDefinitionFmt3V3
- *
- *    Functionality: Process the E2SM_KPM_ActionDefinition_Format3_v300_t and get subscription information for slice metric
- *
- * @param[in] actionDefinFormat3, E2SM_KPM_ActionDefinition_Format3_v300_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmProcActionDefinitionFmt3V3(E2SM_KPM_ActionDefinition_Format3_v300_t *actionDefinFormat3){
+uint8_t decapActionDefinitionFmt3V3(E2SM_KPM_ActionDefinition_Format3_v300_t *actionDefinFormat3){
     int index;
+    printf("\nINFO  -->  E2SM-KPMv3 : Granularity Period is %ld\n", actionDefinFormat3->granulPeriod);
     sizeOfMeasNameFmt3 = 0;
-    DU_LOG("\nINFO  -->  E2SM-KPM : Granularity Period is %ld\n", actionDefinFormat3->granulPeriod);
+
     for(int i=0;i<actionDefinFormat3->measCondList.list.count;i++){
-        if(actionDefinFormat3->measCondList.list.array[i]->measType.present == MeasurementType_PR_measID){
-            DU_LOG("\nERROR  -->  E2SM-KPM : Measurement ID is not supported \n");
-            return RFAILED;
-        }
+        if(actionDefinFormat3->measCondList.list.array[i]->measType.present == MeasurementType_PR_measID)
+            printf("\nINFO  -->  E2SM-KPMv3 : Measurement ID is %ld", actionDefinFormat3->measCondList.list.array[i]->measType.choice.measID);
         else if(actionDefinFormat3->measCondList.list.array[i]->measType.present == MeasurementType_PR_measName){
-            index = kpmSliceMeasNameIsSupport(actionDefinFormat3->measCondList.list.array[i]->measType.choice.measName.buf);
+            printf("\nINFO  -->  E2SM-KPMv3 : Measurement Name is %s", actionDefinFormat3->measCondList.list.array[i]->measType.choice.measName.buf);
+            index = actionFmt3measNameIsSupport(actionDefinFormat3->measCondList.list.array[i]->measType.choice.measName.buf);
             if(index != -1){
-                DU_LOG("\nINFO  -->  E2SM-KPM : Measurement name \"%s\" of Slice metric is valid", actionDefinFormat3->measCondList.list.array[i]->measType.choice.measName.buf);
-                memcpy(indicationMeasNameFmt3[sizeOfMeasNameFmt3], sliceMetricName[index], strlen((const char*)sliceMetricName[index])+1);
+                printf("\nINFO  -->  E2SM-KPMv3 : Measurement name in Fmt 3 is valid \n");
+                memcpy(indicationMeasNameFmt3[sizeOfMeasNameFmt3], measInfoStyle2[index], strlen((const char*)measInfoStyle2[index])+1);
                 sizeOfMeasNameFmt3++;
-            }else{
-                DU_LOG("\nINFO  -->  E2SM-KPM : Measurement name \"%s\" of Slice metric is invalid \n", actionDefinFormat3->measCondList.list.array[i]->measType.choice.measName.buf);
-                return RFAILED;
             }
         }
         else{
-            DU_LOG("\nINFO  -->  E2SM-KPM : Measurement type is invalid \n");
+            printf("\nINFO  -->  E2SM-KPMv3 : Measurement type is invalid \n");
         }
     }
-    for(int i=0;i<sizeOfMeasNameFmt3;i++){
-        DU_LOG("\nINFO  -->  E2SM-KPM : # %d Measurement name is \"%s\"", i, indicationMeasNameFmt3[i]);
+     for(int i=0;i<sizeOfMeasNameFmt3;i++){
+        printf("\nINFO  -->  E2SM-KPM : # %d Measurement name is %s", i, indicationMeasNameFmt3[i]);
     }
     if(sizeOfMeasNameFmt3>0)
         return ROK;
@@ -1181,154 +761,112 @@ uint8_t kpmProcActionDefinitionFmt3V3(E2SM_KPM_ActionDefinition_Format3_v300_t *
         return RFAILED;
 }
 
-/*******************************************************************
- *
- * @brief Process the action definition
- *
- * @details
- *
- *    Function : kpmProcActionDefinition
- *
- *    Functionality: Process the Action Defintion in RIC Subscription Request
- *
- * @param[in] ricdifin, RICactionDefinition_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+uint8_t kpmDecapActionDefinition(RICactionDefinition_t *ricdifin){
+    printf("\nINFO   -->  E2SM-KPM : Decap Action Definition<<<<\n");
 
-uint8_t kpmProcActionDefinition(RICactionDefinition_t *ricdifin){
-    uint8_t ret = ROK;
     asn_dec_rval_t  rval;
-    E2SM_KPM_ActionDefinition_t *actionDefin = (E2SM_KPM_ActionDefinition_t*)calloc(1, sizeof(E2SM_KPM_ActionDefinition_t));
-    DU_LOG("\nINFO   -->  E2SM-KPM : Decap Action Definition<<<<\n");
-    // DU_ALLOC(actionDefin, sizeof(E2SM_KPM_ActionDefinition_t));
+    E2SM_KPM_ActionDefinition_t *actionDefin;
+    // allocate memory for actionDefin by DU_ALLOC
+    DU_ALLOC(actionDefin, sizeof(E2SM_KPM_ActionDefinition_t));
     if(actionDefin == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Action Definition failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for actionDefin");
         return RFAILED;
     }
+
     rval = aper_decode(0, &asn_DEF_E2SM_KPM_ActionDefinition, (void **)&actionDefin, ricdifin->buf, ricdifin->size, 0, 0);
     if(rval.code == RC_FAIL || rval.code == RC_WMORE)
     {
-        DU_LOG("\nERROR  -->  E2SM-KPM : Could not decode Action Definition, %d", __LINE__);
-        return RFAILED;
+      printf("\nERROR  -->  E2SM-KPM : Action Definition decode failed %d\n", rval.code);
     }
     
     xer_fprint(stdout, &asn_DEF_E2SM_KPM_ActionDefinition, actionDefin);
-    DU_LOG("\nINFO   -->  E2SM-KPM: RIC Style Type = %ld", actionDefin->ric_Style_Type);
-    
+    printf("\nINFO   -->  E2SM-KPM: RIC Style Type = %ld", actionDefin->ric_Style_Type);
+
     switch(actionDefin->actionDefinition_formats.present){
         case E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format1:
-            ret = kpmProcActionDefinitionFmt1(actionDefin->actionDefinition_formats.choice.actionDefinition_Format1);
-            if(ret != ROK){
-                DU_LOG("\nERROR  -->  E2SM-KPM: Invaild Action Definition of Format 1, %d", __LINE__);
+            if(decapActionDefinitionFmt1(actionDefin->actionDefinition_formats.choice.actionDefinition_Format1) == ROK){
+                kpmEnableIndication(&kpmCellIndicationEnable);
+                reportingPeriodFmt1 = reportingPeriod; 
+                printf("\nINFO   -->  E2SM-KPM: Reporting Period format 1 = %d", reportingPeriodFmt1);
+            }
+            else{
+                printf("\nINFO   -->  E2SM-KPM: Subscription Definition isn't supported");
                 return RFAILED;
             }
-            kpmEnableIndication(&kpmCellIndicationEnable);
-            reportingPeriodFmt1 = reportingPeriod; 
-            DU_LOG("\nINFO   -->  E2SM-KPM: Reporting Period format 1 = %d", reportingPeriodFmt1);
-            break;
+            
+        break;
         case E2SM_KPM_ActionDefinition__actionDefinition_formats_PR_actionDefinition_Format3:
-            ret = kpmProcActionDefinitionFmt3(actionDefin->actionDefinition_formats.choice.actionDefinition_Format3);
-            if(ret != ROK){
-                DU_LOG("\nERROR  -->  E2SM-KPM: Invaild Action Definition of Format 3, %d", __LINE__);
+            if(decapActionDefinitionFmt3(actionDefin->actionDefinition_formats.choice.actionDefinition_Format3) == ROK){
+                kpmEnableIndication(&kpmSliceIndicationEnable);
+                reportingPeriodFmt3 = reportingPeriod; 
+                printf("\nINFO   -->  E2SM-KPM: Reporting Period format 3 = %d", reportingPeriodFmt3);
+            }
+            else{
+                printf("\nINFO   -->  E2SM-KPM: Subscription Definition isn't supported");
                 return RFAILED;
             }
-            kpmEnableIndication(&kpmSliceIndicationEnable);
-            reportingPeriodFmt3 = reportingPeriod; 
-            DU_LOG("\nINFO   -->  E2SM-KPM: Reporting Period format 3 = %d", reportingPeriodFmt3);
         break;
         default:
-            DU_LOG("\nINFO   -->  E2SM-KPM: Invaild Action Definition format %d, %d", actionDefin->actionDefinition_formats.present, __LINE__);
-            return RFAILED;
+            printf("\nINFO   -->  E2 Agent: Action Definition Format doesn't support");
     }
+
     kpmIndicationV3Enable = 0;
-    ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_ActionDefinition, actionDefin);
-    return ROK;
+    // ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_ActionDefinition, actionDefin);
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Process the action definition of KPMv3
- *
- * @details
- *
- *    Function : kpmProcActionDefinitionV3
- *
- *    Functionality: Process the Action Defintion in RIC Subscription Request
- *
- * @param[in] ricdifin, RICactionDefinition_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+uint8_t kpmDecapActionDefinitionV3(RICactionDefinition_t *ricdifin){
+    printf("\nINFO   -->  E2SM-KPMv3 : Decap Action Definition v3<<<<\n");
 
-uint8_t kpmProcActionDefinitionV3(RICactionDefinition_t *ricdifin){
-    uint8_t ret = ROK;
     asn_dec_rval_t  rval;
-    E2SM_KPM_ActionDefinition_v300_t *actionDefin = (E2SM_KPM_ActionDefinition_v300_t*)calloc(1, sizeof(E2SM_KPM_ActionDefinition_v300_t));
-    DU_LOG("\nINFO   -->  E2SM-KPMv3 : Decap Action Definition v3<<<<\n");
-    // DU_ALLOC(actionDefin, sizeof(E2SM_KPM_ActionDefinition_v300_t));
+    E2SM_KPM_ActionDefinition_v300_t *actionDefin;
+    // allocate memory for actionDefin by DU_ALLOC
+    DU_ALLOC(actionDefin, sizeof(E2SM_KPM_ActionDefinition_v300_t));
     if(actionDefin == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Action Definition failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPMv3 : Memory allocation failed for actionDefin");
         return RFAILED;
     }
 
     rval = aper_decode(0, &asn_DEF_E2SM_KPM_ActionDefinition_v300, (void **)&actionDefin, ricdifin->buf, ricdifin->size, 0, 0);
     if(rval.code == RC_FAIL || rval.code == RC_WMORE)
     {
-        DU_LOG("\nERROR  -->  E2SM-KPM : Could not decode Action Definition, %d", __LINE__);
-        return RFAILED;
+      printf("\nERROR  -->  E2SM-KPMv3 : Action Definition decode failed %d\n", rval.code);
     }
     
     xer_fprint(stdout, &asn_DEF_E2SM_KPM_ActionDefinition_v300, actionDefin);
-    DU_LOG("\nINFO   -->  E2SM-KPMv3: RIC Style Type = %ld", actionDefin->ric_Style_Type);
+    printf("\nINFO   -->  E2SM-KPMv3: RIC Style Type = %ld", actionDefin->ric_Style_Type);
 
     switch(actionDefin->actionDefinition_formats.present){
         case E2SM_KPM_ActionDefinition_v300__actionDefinition_formats_PR_actionDefinition_Format1:
-            ret = kpmProcActionDefinitionFmt1V3(actionDefin->actionDefinition_formats.choice.actionDefinition_Format1);
-            if(ret != ROK){
-                DU_LOG("\nERROR  -->  E2SM-KPM: Invaild Action Definition of Format 1, %d", __LINE__);
-                return RFAILED;
+            if(decapActionDefinitionFmt1V3(actionDefin->actionDefinition_formats.choice.actionDefinition_Format1) == ROK){
+                kpmEnableIndication(&kpmCellIndicationEnable);
+                reportingPeriodFmt1 = reportingPeriod; 
+                printf("\nINFO   -->  E2SM-KPMv3: Reporting Period format 1 = %d", reportingPeriodFmt1);
             }
-            kpmEnableIndication(&kpmCellIndicationEnable);
-            reportingPeriodFmt1 = reportingPeriod; 
-            DU_LOG("\nINFO   -->  E2SM-KPM: Reporting Period format 1 = %d", reportingPeriodFmt1);
-            break;
+            else{
+                printf("\nINFO   -->  E2SM-KPMv3: Subscription Definition isn't supported");
+            }
+            
+        break;
         case E2SM_KPM_ActionDefinition_v300__actionDefinition_formats_PR_actionDefinition_Format3:
-            ret = kpmProcActionDefinitionFmt3V3(actionDefin->actionDefinition_formats.choice.actionDefinition_Format3);
-            if(ret != ROK){
-                DU_LOG("\nERROR  -->  E2SM-KPM: Invaild Action Definition of Format 3, %d", __LINE__);
-                return RFAILED;
+            if(decapActionDefinitionFmt3V3(actionDefin->actionDefinition_formats.choice.actionDefinition_Format3) == ROK){
+                kpmEnableIndication(&kpmSliceIndicationEnable);
+                reportingPeriodFmt3 = reportingPeriod; 
+                printf("\nINFO   -->  E2SM-KPMv3: Reporting Period format 3 = %d", reportingPeriodFmt3);
             }
-            kpmEnableIndication(&kpmSliceIndicationEnable);
-            reportingPeriodFmt3 = reportingPeriod; 
-            DU_LOG("\nINFO   -->  E2SM-KPM: Reporting Period format 3 = %d", reportingPeriodFmt3);
+            else{
+                printf("\nINFO   -->  E2SM-KPMv3: Subscription Definition isn't supported");
+            }
         break;
         default:
-            DU_LOG("\nINFO   -->  E2SM-KPM: Invaild Action Definition format %d, %d", actionDefin->actionDefinition_formats.present, __LINE__);
-            return RFAILED;
+            printf("\nINFO   -->  E2SM-KPMv3: Action Definition Format doesn't support");
     }
-    kpmIndicationV3Enable = 1;
-    ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_ActionDefinition, actionDefin);
-    return ROK;
-}
 
-/*******************************************************************
- *
- * @brief Deallocate the memory allocated for E2SM_KPM_IndicationHeader_Format1_t 
- *
- * @details
- *
- *    Function : kpmFreeIndicationHeader
- *
- *    Functionality: freeing the memory allocated for E2SM_KPM_IndicationHeader_Format1_t
- *
- * @param[in] indicaHeaderFormat1, E2SM_KPM_IndicationHeader_Format1_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+    kpmIndicationV3Enable = 1;
+    // ASN_STRUCT_FREE(asn_DEF_E2SM_KPM_ActionDefinition, actionDefin);
+    return 0;
+
+}
 
 uint8_t kpmFreeIndicationHeader(E2SM_KPM_IndicationHeader_Format1_t *indicaHeaderFormat1){
     if(indicaHeaderFormat1->colletStartTime.size>0){
@@ -1348,24 +886,8 @@ uint8_t kpmFreeIndicationHeader(E2SM_KPM_IndicationHeader_Format1_t *indicaHeade
     if(indicaHeaderFormat1->fileFormatversion){
         kpmFreeOctetString(indicaHeaderFormat1->fileFormatversion); 
     }
-   return ROK;
+   return 0;
 }
-
-/*******************************************************************
- *
- * @brief Deallocate the memory allocated for E2SM_KPM_IndicationHeader_Format1_t of KPMv3
- *
- * @details
- *
- *    Function : kpmFreeIndicationHeaderV3
- *
- *    Functionality: freeing the memory allocated for E2SM_KPM_IndicationHeader_Format1_v300_t
- *
- * @param[in] indicaHeaderFormat1, E2SM_KPM_IndicationHeader_Format1_v300_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
 
 uint8_t kpmFreeIndicationHeaderV3(E2SM_KPM_IndicationHeader_Format1_v300_t *indicaHeaderFormat1){
     if(indicaHeaderFormat1->colletStartTime.size>0){
@@ -1385,238 +907,170 @@ uint8_t kpmFreeIndicationHeaderV3(E2SM_KPM_IndicationHeader_Format1_v300_t *indi
     if(indicaHeaderFormat1->fileFormatversion){
         kpmFreeOctetString(indicaHeaderFormat1->fileFormatversion); 
     }
-   return ROK;
+   return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in the optinal item of Indication Header format 1
- *
- * @details
- *
- *    Function : kpmFillIndicationHeaderFormat1Optional
- *
- *    Functionality: Fills the optional items of Indication Header format 1
- *
- * @param[in] indicaHeaderFormat1, E2SM_KPM_IndicationHeader_Format1_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillIndicationHeaderFormat1Optional(E2SM_KPM_IndicationHeader_Format1_t *indicaHeaderFormat1){
-    uint8_t ret = ROK;
+uint8_t fillIndicationHeaderFormat1Optional(E2SM_KPM_IndicationHeader_Format1_t *indicaHeaderFormat1){
     uint8_t sender[] = "NTUST";
     uint8_t type[] = "DU";
     uint8_t vendor[] = "OSC";
 
     DU_ALLOC(indicaHeaderFormat1->senderName, sizeof(PrintableString_t));
-    if(indicaHeaderFormat1->senderName == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Sender Name failed, %d", __LINE__);
-        return RFAILED;
-    }
     DU_ALLOC(indicaHeaderFormat1->senderType, sizeof(PrintableString_t));
-    if(indicaHeaderFormat1->senderType == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Sender Type failed, %d", __LINE__);
-        return RFAILED;
-    }
     DU_ALLOC(indicaHeaderFormat1->vendorName, sizeof(PrintableString_t));
-    if(indicaHeaderFormat1->vendorName == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Vendor Name failed, %d", __LINE__);
+
+    // allocate memory for senderName.buf by DU_ALLOC
+    DU_ALLOC(indicaHeaderFormat1->senderName->buf, sizeof(sender) * sizeof(uint8_t));
+    if(indicaHeaderFormat1->senderName->buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaHeaderFormat1->senderName.buf");
         return RFAILED;
     }
-    ret = kpmFillOctetString(indicaHeaderFormat1->senderName, sender);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill Sender Name, %d", __LINE__);
+    indicaHeaderFormat1->senderName->size = sizeof(sender);
+    memcpy(indicaHeaderFormat1->senderName->buf, sender, indicaHeaderFormat1->senderName->size);
+
+    // allocate memory for senderType.buf by DU_ALLOC
+    DU_ALLOC(indicaHeaderFormat1->senderType->buf, sizeof(type) * sizeof(uint8_t));
+    if(indicaHeaderFormat1->senderType->buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaHeaderFormat1->senderType.buf");
         return RFAILED;
     }
-    ret = kpmFillOctetString(indicaHeaderFormat1->senderType, type);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill Sender Type, %d", __LINE__);
+    indicaHeaderFormat1->senderType->size = sizeof(type);
+    memcpy(indicaHeaderFormat1->senderType->buf, type, indicaHeaderFormat1->senderType->size);
+
+    // allocate memory for vendorName.buf by DU_ALLOC
+    DU_ALLOC(indicaHeaderFormat1->vendorName->buf, sizeof(vendor) * sizeof(uint8_t));
+    if(indicaHeaderFormat1->vendorName->buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaHeaderFormat1->vendorName.buf");
         return RFAILED;
     }
-    ret = kpmFillOctetString(indicaHeaderFormat1->vendorName, vendor);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill Vendor Name, %d", __LINE__);
-        return RFAILED;
-    }
-    return ROK;
+    indicaHeaderFormat1->vendorName->size = sizeof(vendor);
+    memcpy(indicaHeaderFormat1->vendorName->buf, vendor, indicaHeaderFormat1->vendorName->size);
+
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in the optinal item of Indication Header format 1 of KPMv3
- *
- * @details
- *
- *    Function : kpmFillIndicationHeaderFormat1OptionalV3
- *
- *    Functionality: Fills the optional items of Indication Header format 1
- *
- * @param[in] indicaHeaderFormat1, E2SM_KPM_IndicationHeader_Format1_v300_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillIndicationHeaderFormat1OptionalV3(E2SM_KPM_IndicationHeader_Format1_v300_t *indicaHeaderFormat1){
-    uint8_t ret = ROK;
+uint8_t fillIndicationHeaderFormat1OptionalV3(E2SM_KPM_IndicationHeader_Format1_v300_t *indicaHeaderFormat1){
     uint8_t sender[] = "NTUST";
     uint8_t type[] = "DU";
     uint8_t vendor[] = "OSC";
 
     DU_ALLOC(indicaHeaderFormat1->senderName, sizeof(PrintableString_t));
-    if(indicaHeaderFormat1->senderName == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Sender Name failed, %d", __LINE__);
-        return RFAILED;
-    }
     DU_ALLOC(indicaHeaderFormat1->senderType, sizeof(PrintableString_t));
-    if(indicaHeaderFormat1->senderType == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Sender Type failed, %d", __LINE__);
-        return RFAILED;
-    }
     DU_ALLOC(indicaHeaderFormat1->vendorName, sizeof(PrintableString_t));
-    if(indicaHeaderFormat1->vendorName == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Vendor Name failed, %d", __LINE__);
+
+    // allocate memory for senderName.buf by DU_ALLOC
+    DU_ALLOC(indicaHeaderFormat1->senderName->buf, sizeof(sender) * sizeof(uint8_t));
+    if(indicaHeaderFormat1->senderName->buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaHeaderFormat1->senderName.buf");
         return RFAILED;
     }
-    ret = kpmFillOctetString(indicaHeaderFormat1->senderName, sender);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill Sender Name, %d", __LINE__);
+    indicaHeaderFormat1->senderName->size = sizeof(sender);
+    memcpy(indicaHeaderFormat1->senderName->buf, sender, indicaHeaderFormat1->senderName->size);
+
+    // allocate memory for senderType.buf by DU_ALLOC
+    DU_ALLOC(indicaHeaderFormat1->senderType->buf, sizeof(type) * sizeof(uint8_t));
+    if(indicaHeaderFormat1->senderType->buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaHeaderFormat1->senderType.buf");
         return RFAILED;
     }
-    ret = kpmFillOctetString(indicaHeaderFormat1->senderType, type);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill Sender Type, %d", __LINE__);
+    indicaHeaderFormat1->senderType->size = sizeof(type);
+    memcpy(indicaHeaderFormat1->senderType->buf, type, indicaHeaderFormat1->senderType->size);
+
+    // allocate memory for vendorName.buf by DU_ALLOC
+    DU_ALLOC(indicaHeaderFormat1->vendorName->buf, sizeof(vendor) * sizeof(uint8_t));
+    if(indicaHeaderFormat1->vendorName->buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaHeaderFormat1->vendorName.buf");
         return RFAILED;
     }
-    ret = kpmFillOctetString(indicaHeaderFormat1->vendorName, vendor);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill Vendor Name, %d", __LINE__);
-        return RFAILED;
-    }
-    return ROK;
+    indicaHeaderFormat1->vendorName->size = sizeof(vendor);
+    memcpy(indicaHeaderFormat1->vendorName->buf, vendor, indicaHeaderFormat1->vendorName->size);
+
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in the Indication Header format 1
- *
- * @details
- *
- *    Function : kpmFillIndicationHeaderFormat1
- *
- *    Functionality: Fills Indication Header format 1 of RIC Indication
- *
- * @param[in] indicaHeaderFormat1, E2SM_KPM_IndicationHeader_Format1_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillIndicationHeaderFormat1(E2SM_KPM_IndicationHeader_Format1_t *indicaHeaderFormat1){
-    uint8_t ret = ROK;    
+uint8_t fillIndicationHeaderFormat1(E2SM_KPM_IndicationHeader_Format1_t *indicaHeaderFormat1){
+    //printf("Function \"%s\" is start\n", __func__);
+    
     time_t now = time(NULL);
+    // unsigned long timestamp = (unsigned long)now * 1000; // 64-bit timestamp defined in section 6 of IETF RFC 5905
     unsigned long timestamp = (unsigned long)now;
     uint8_t ts[4];
     for(int i=0;i<4;i++){
         ts[i] = timestamp % 256;
         timestamp = timestamp / 256;
     }
+    // allocate memory for colletStartTime.buf by DU_ALLOC
     DU_ALLOC(indicaHeaderFormat1->colletStartTime.buf, 4 * sizeof(uint8_t));
     if(indicaHeaderFormat1->colletStartTime.buf == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Collect Start Time failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaHeaderFormat1->colletStartTime.buf");
         return RFAILED;
     }
     indicaHeaderFormat1->colletStartTime.size = 4;
     memcpy(indicaHeaderFormat1->colletStartTime.buf,ts, 4);
-    ret = kpmFillIndicationHeaderFormat1Optional(indicaHeaderFormat1);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill Indication Header of optional item, %d", __LINE__);
+    if(fillIndicationHeaderFormat1Optional(indicaHeaderFormat1) != RFAILED){
         return RFAILED;
     }
+
     return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in the Indication Header format 1 of KPMv3
- *
- * @details
- *
- *    Function : kpmFillIndicationHeaderFormat1V3
- *
- *    Functionality: Fills Indication Header format 1 of RIC Indication
- *
- * @param[in] indicaHeaderFormat1, E2SM_KPM_IndicationHeader_Format1_v300_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+uint8_t fillIndicationHeaderFormat1V3(E2SM_KPM_IndicationHeader_Format1_v300_t *indicaHeaderFormat1){
+    //printf("Function \"%s\" is start\n", __func__);
 
-uint8_t kpmFillIndicationHeaderFormat1V3(E2SM_KPM_IndicationHeader_Format1_v300_t *indicaHeaderFormat1){
-    uint8_t ret = ROK;    
     struct timeval current_time;
     gettimeofday(&current_time, NULL);
+
     uint64_t timestamp = (uint64_t)current_time.tv_sec * 1000000 + current_time.tv_usec;
+
+    // printf("64-bit timestamp in microseconds: %llu\n", timestamp);
+    // unsigned long timestamp = (unsigned long)now * 1000; // 64-bit timestamp defined in section 6 of IETF RFC 5905
+    // unsigned long timestamp = (unsigned long)now;
     uint8_t ts[8];
     for(int i=0;i<8;i++){
         ts[i] = timestamp % 256;
         timestamp = timestamp / 256;
     }
+    // allocate memory for colletStartTime.buf by DU_ALLOC
     DU_ALLOC(indicaHeaderFormat1->colletStartTime.buf, 8 * sizeof(uint8_t));
     if(indicaHeaderFormat1->colletStartTime.buf == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Collect Start Time failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaHeaderFormat1->colletStartTime.buf");
         return RFAILED;
     }
     indicaHeaderFormat1->colletStartTime.size = 8;
     memcpy(indicaHeaderFormat1->colletStartTime.buf,ts, 8);
-    ret = kpmFillIndicationHeaderFormat1OptionalV3(indicaHeaderFormat1);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill Indication Header of optional item, %d", __LINE__);
+    if(fillIndicationHeaderFormat1OptionalV3(indicaHeaderFormat1) != RFAILED){
         return RFAILED;
     }
+
     return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in the Indication Header
- *
- * @details
- *
- *    Function : kpmFillRicIndicationHeader
- *
- *    Functionality: Fills Indication Header of RIC Indication by E2AP Handler
- *
- * @param[in] indicaHeaderFormat1, RICindicationHeader_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
 
-uint8_t kpmFillRicIndicationHeader(RICindicationHeader_t *ricIndicationHeader){
-    uint8_t ret = ROK;
-    DU_LOG("\nINFO   -->  E2SM-KPM : Fill KPM RIC Indication Header");
+uint8_t fillRicIndicationHeader(RICindicationHeader_t *ricIndicationHeader){
+    printf("\nINFO   -->  E2SM-KPM : Fill KPM RIC Indication Header");
+
     E2SM_KPM_IndicationHeader_t *indicaHeader;
+    // allocate memory for indicaHeader by DU_ALLOC
     DU_ALLOC(indicaHeader, sizeof(E2SM_KPM_IndicationHeader_t));
     if(indicaHeader == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Indication Header failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaHeader");
         return RFAILED;
     }
     E2SM_KPM_IndicationHeader_Format1_t *indicaHeaderFormat1;
+    // allocate memory for indicaHeaderFormat1 by DU_ALLOC
     DU_ALLOC(indicaHeaderFormat1, sizeof(E2SM_KPM_IndicationHeader_Format1_t));
     if(indicaHeaderFormat1 == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Indication Header Format1 failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaHeaderFormat1");
         return RFAILED;
     }
-    ret = kpmFillIndicationHeaderFormat1(indicaHeaderFormat1);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill Indication Header Format1, %d", __LINE__);
-        return RFAILED;
+    
+    if(fillIndicationHeaderFormat1(indicaHeaderFormat1) != RFAILED){
+        return RFAILED; 
     }
+
     indicaHeader->indicationHeader_formats.present = E2SM_KPM_IndicationHeader__indicationHeader_formats_PR_indicationHeader_Format1;
     indicaHeader->indicationHeader_formats.choice.indicationHeader_Format1 = indicaHeaderFormat1;
+
     xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationHeader, indicaHeader);
 
     uint8_t e2smbuffer[8192] = {0, };
@@ -1630,19 +1084,13 @@ uint8_t kpmFillRicIndicationHeader(RICindicationHeader_t *ricIndicationHeader){
           indicaHeader, e2smbuffer, e2smbuffer_size);
 
     if(er.encoded == -1){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Could not encode E2SM-KPM Indication Header, %d", __LINE__);
-        kpmFreeIndicationHeader(indicaHeaderFormat1);
-        DU_FREE(indicaHeaderFormat1, sizeof(E2SM_KPM_IndicationHeader_Format1_t));
-        DU_FREE(indicaHeader, sizeof(E2SM_KPM_IndicationHeader_t));
-        return RFAILED;
+        printf("\nERROR   -->  E2SM-KPM : Encode E2SM-KPM Indication Header failed");
     }
     else{
+        // allocate memory for ricIndicationHeader->buf
         DU_ALLOC(ricIndicationHeader->buf, er.encoded * sizeof(uint8_t));
         if(ricIndicationHeader->buf == NULL){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Indication Header failed, %d", __LINE__);
-            kpmFreeIndicationHeader(indicaHeaderFormat1);
-            DU_FREE(indicaHeaderFormat1, sizeof(E2SM_KPM_IndicationHeader_Format1_t));
-            DU_FREE(indicaHeader, sizeof(E2SM_KPM_IndicationHeader_t));
+            printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ricIndicationHeader->buf");
             return RFAILED;
         }
         ricIndicationHeader->size = er.encoded;
@@ -1652,52 +1100,41 @@ uint8_t kpmFillRicIndicationHeader(RICindicationHeader_t *ricIndicationHeader){
     kpmFreeIndicationHeader(indicaHeaderFormat1);
     DU_FREE(indicaHeaderFormat1, sizeof(E2SM_KPM_IndicationHeader_Format1_t));
     DU_FREE(indicaHeader, sizeof(E2SM_KPM_IndicationHeader_t));
-    return ROK;
+    return 0;
+
 }
 
-/*******************************************************************
- *
- * @brief Fill in the Indication Header of KPMv3
- *
- * @details
- *
- *    Function : kpmFillRicIndicationHeaderV3
- *
- *    Functionality: Fills Indication Header of RIC Indication by E2AP Handler
- *
- * @param[in] indicaHeaderFormat1, RICindicationHeader_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+uint8_t fillRicIndicationHeaderV3(RICindicationHeader_t *ricIndicationHeader){
+    printf("\nINFO   -->  E2SM-KPMv3 : Fill KPM RIC Indication Header");
 
-uint8_t kpmFillRicIndicationHeaderV3(RICindicationHeader_t *ricIndicationHeader){
-    uint8_t ret = ROK;
-    DU_LOG("\nINFO   -->  E2SM-KPM : Fill KPM RIC Indication Header");
     E2SM_KPM_IndicationHeader_v300_t *indicaHeader;
+    // allocate memory for indicaHeader by DU_ALLOC
     DU_ALLOC(indicaHeader, sizeof(E2SM_KPM_IndicationHeader_v300_t));
     if(indicaHeader == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Indication Header failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPMv3 : Memory allocation failed for indicaHeader");
         return RFAILED;
     }
     E2SM_KPM_IndicationHeader_Format1_v300_t *indicaHeaderFormat1;
+    // allocate memory for indicaHeaderFormat1 by DU_ALLOC
     DU_ALLOC(indicaHeaderFormat1, sizeof(E2SM_KPM_IndicationHeader_Format1_v300_t));
     if(indicaHeaderFormat1 == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Indication Header Format1 failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPMv3 : Memory allocation failed for indicaHeaderFormat1");
         return RFAILED;
     }
-    ret = kpmFillIndicationHeaderFormat1V3(indicaHeaderFormat1);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Failed to fill Indication Header Format1, %d", __LINE__);
-        return RFAILED;
+    
+    if(fillIndicationHeaderFormat1V3(indicaHeaderFormat1) != RFAILED){
+        return RFAILED; 
     }
+
     indicaHeader->indicationHeader_formats.present = E2SM_KPM_IndicationHeader_v300__indicationHeader_formats_PR_indicationHeader_Format1;
     indicaHeader->indicationHeader_formats.choice.indicationHeader_Format1 = indicaHeaderFormat1;
+
     xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationHeader_v300, indicaHeader);
 
     uint8_t e2smbuffer[8192] = {0, };
     size_t e2smbuffer_size = 8192;
     asn_codec_ctx_t *opt_cod = 0;
+    
     asn_enc_rval_t er =
     asn_encode_to_buffer(opt_cod,
           ATS_ALIGNED_BASIC_PER,
@@ -1705,19 +1142,13 @@ uint8_t kpmFillRicIndicationHeaderV3(RICindicationHeader_t *ricIndicationHeader)
           indicaHeader, e2smbuffer, e2smbuffer_size);
 
     if(er.encoded == -1){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Could not encode E2SM-KPM Indication Header, %d", __LINE__);
-        kpmFreeIndicationHeaderV3(indicaHeaderFormat1);
-        DU_FREE(indicaHeaderFormat1, sizeof(E2SM_KPM_IndicationHeader_Format1_v300_t));
-        DU_FREE(indicaHeader, sizeof(E2SM_KPM_IndicationHeader_v300_t));
-        return RFAILED;
+        printf("\nERROR   -->  E2SM-KPMv3 : Encode E2SM-KPM Indication Header failed");
     }
     else{
+        // allocate memory for ricIndicationHeader->buf
         DU_ALLOC(ricIndicationHeader->buf, er.encoded * sizeof(uint8_t));
         if(ricIndicationHeader->buf == NULL){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Indication Header failed, %d", __LINE__);
-            kpmFreeIndicationHeaderV3(indicaHeaderFormat1);
-            DU_FREE(indicaHeaderFormat1, sizeof(E2SM_KPM_IndicationHeader_Format1_v300_t));
-            DU_FREE(indicaHeader, sizeof(E2SM_KPM_IndicationHeader_v300_t));
+            printf("\nERROR   -->  E2SM-KPMv3 : Memory allocation failed for ricIndicationHeader->buf");
             return RFAILED;
         }
         ricIndicationHeader->size = er.encoded;
@@ -1727,63 +1158,31 @@ uint8_t kpmFillRicIndicationHeaderV3(RICindicationHeader_t *ricIndicationHeader)
     kpmFreeIndicationHeaderV3(indicaHeaderFormat1);
     DU_FREE(indicaHeaderFormat1, sizeof(E2SM_KPM_IndicationHeader_Format1_v300_t));
     DU_FREE(indicaHeader, sizeof(E2SM_KPM_IndicationHeader_v300_t));
-    return ROK;
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in the measurement record item for slice metrics
- *
- * @details
- *
- *    Function : kpmFillSliceMeasDataItem
- *
- *    Functionality: Fills MeasurementDataItem_t of Indication Message
- *
- * @param[in] measDataItem, MeasurementDataItem_t*, the destination to fill in
- * @param[in] intValue, unsigned long, the source
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillSliceMeasDataItem(MeasurementDataItem_t *measDataItem, unsigned long intValue){
+uint8_t fillSliceMeasDataItem(MeasurementDataItem_t *measDataItem, unsigned long intValue){
+    //printf("Function \"%s\" is start\n", __func__);
     MeasurementRecordItem_t *measRecordItem;
+    // allocate memory for measRecordItem by DU_ALLOC
     DU_ALLOC(measRecordItem, sizeof(MeasurementRecordItem_t));
-    if(measRecordItem == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Record Item failed, %d", __LINE__);
+    if(measRecordItem == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measRecordItem");
         return RFAILED;
     }
+    
     measRecordItem->present = MeasurementRecordItem_PR_integer;
     measRecordItem->choice.integer = intValue; 
     ASN_SEQUENCE_ADD(&measDataItem->measRecord.list, measRecordItem);
-    return ROK;
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in the measurement record item for cell metrics
- *
- * @details
- *
- *    Function : kpmFillCellMeasDataItem
- *
- *    Functionality: Fills MeasurementDataItem_t of Indication Message
- *
- * @param[in] measDataItem, MeasurementDataItem_t*, the destination to fill in
- * @param[in] present, MeasurementRecordItem_PR, the source type
- * @param[in] integer, int, the source if type is integer
- * @param[in] real, double, the source if type is real
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillCellMeasDataItem(MeasurementDataItem_t *item, MeasurementRecordItem_PR present, int integer, double real){
+uint8_t fillMeasDataItem(MeasurementDataItem_t *item, MeasurementRecordItem_PR present, int integer, double real){
     MeasurementRecordItem_t *measRecordItem;
+    // allocate memory for measRecordItem by DU_ALLOC
     DU_ALLOC(measRecordItem, sizeof(MeasurementRecordItem_t));
-    if(measRecordItem == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Record Item failed, %d", __LINE__);
+    if(measRecordItem == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measRecordItem");
         return RFAILED;
     }
     
@@ -1799,190 +1198,116 @@ uint8_t kpmFillCellMeasDataItem(MeasurementDataItem_t *item, MeasurementRecordIt
         measRecordItem->present = MeasurementRecordItem_PR_noValue;
     }
     else{
-        DU_LOG("\nERROR   -->  E2SM-KPM : Invalid Measurement Record Item, %d", __LINE__);
         return RFAILED;
     }
     ASN_SEQUENCE_ADD(&item->measRecord.list, measRecordItem);
-    return ROK;
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in the Indication Message format 1 for cell metrics
- *
- * @details
- *
- *    Function : kpmFillIndicationMessageFormat1
- *
- *    Functionality: Fills E2SM_KPM_IndicationMessage_Format1_t of Indication Message
- *
- * @param[in] indicaMessageFormat1, E2SM_KPM_IndicationMessage_Format1_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillIndicationMessageFormat1(E2SM_KPM_IndicationMessage_Format1_t *indicaMessageFormat1){
-    uint8_t ret = ROK;
+uint8_t fillIndicationMessageFormat1(E2SM_KPM_IndicationMessage_Format1_t *indicaMessageFormat1){
     int index;
 
     MeasurementDataItem_t *measDataItem;
+    // allocate memory for measDataItem by DU_ALLOC
     DU_ALLOC(measDataItem, sizeOfMeasNameFmt1 * sizeof(MeasurementDataItem_t));
-    if(measDataItem == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Data Item failed, %d", __LINE__);
+    if(measDataItem == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measDataItem");
         return RFAILED;
     }
     MeasurementInfoList_t *measInfoList;
+    // allocate memory for measInfoList by DU_ALLOC
     DU_ALLOC(measInfoList, sizeof(MeasurementInfoList_t));
-    if(measInfoList == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Info List failed, %d", __LINE__);
+    if(measInfoList == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measInfoList");
         return RFAILED;
     }
     MeasurementInfoItem_t *measInfoItem;
+    // allocate memory for measInfoItem by DU_ALLOC
     DU_ALLOC(measInfoItem, sizeOfMeasNameFmt1 * sizeof(MeasurementInfoItem_t));
-    if(measInfoItem == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Info Item failed, %d", __LINE__);
+    if(measInfoItem == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measInfoItem");
         return RFAILED;
     }
 
     for(int i=0;i<sizeOfMeasNameFmt1;i++){
-        index = kpmCellMeasNameIsSupport(indicationMeasNameFmt1[i]);
+        index = actionFmt1measNameIsSupport(indicationMeasNameFmt1[i]);
         if(index == 0){
-            ret = kpmFillCellMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_real, 0, (double)kpmCellPmDb.avgThpDl);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Data Item, %d", __LINE__);
-                return RFAILED;
-            }
-            DU_LOG("\nINFO   -->  E2SM-KPM : # %d Cell Measurement \"%s\" : %f", i, indicationMeasNameFmt1[index], kpmCellPmDb.avgThpDl);
+            fillMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_real, 0, (double)kpmCellPmDb.avgThpDl);
+            printf("\nINFO   -->  E2SM-KPM : Cell Measurement \"%s\" : %d", indicationMeasNameFmt1[index], kpmCellPmDb.avgThpDl);
         }
         else if(index == 1){
-            ret = kpmFillCellMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_integer, kpmCellPmDb.avgUsedPrb, 0);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Data Item, %d", __LINE__);
-                return RFAILED;
-            }
-            DU_LOG("\nINFO   -->  E2SM-KPM : # %d Cell Measurement \"%s\" : %d", i, indicationMeasNameFmt1[index], kpmCellPmDb.avgUsedPrb);
+            fillMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_integer, kpmCellPmDb.avgUsedPrb, 0);
+            printf("\nINFO   -->  E2SM-KPM : Cell Measurement \"%s\" : %d", indicationMeasNameFmt1[index], kpmCellPmDb.avgUsedPrb);
+
         }
         else if(index == 2){
-            ret = kpmFillCellMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_integer, kpmCellPmDb.avgTotalPrb, 0);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Data Item, %d", __LINE__);
-                return RFAILED;
-            }
-            DU_LOG("\nINFO   -->  E2SM-KPM : # %d Cell Measurement \"%s\" : %d", i, indicationMeasNameFmt1[index], kpmCellPmDb.avgTotalPrb);
+            fillMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_integer, kpmCellPmDb.avgTotalPrb, 0);
+            printf("\nINFO   -->  E2SM-KPM : Cell Measurement \"%s\" : %d", indicationMeasNameFmt1[index], kpmCellPmDb.avgTotalPrb);
+
         }
         else if(index == 3){
-            ret = kpmFillCellMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_integer, (int)kpmCellPmDb.avgUsagePrb, 0);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Data Item, %d", __LINE__);
-                return RFAILED;
-            }
-            DU_LOG("\nINFO   -->  E2SM-KPM : # %d Cell Measurement \"%s\" : %d", i, indicationMeasNameFmt1[index], kpmCellPmDb.avgUsagePrb);
-        }else{
-            DU_LOG("\nERROR   -->  E2SM-KPM : Invalid Cell Measurement name, %d", __LINE__);
-            return RFAILED;
+            fillMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_integer, (int)kpmCellPmDb.avgUsagePrb, 0);
+            printf("\nINFO   -->  E2SM-KPM : Cell Measurement \"%s\" : %f", indicationMeasNameFmt1[index], kpmCellPmDb.avgUsagePrb);
+
         }
+         
+
     }
 
     indicaMessageFormat1->measInfoList = measInfoList;
     for(int i=0;i<sizeOfMeasNameFmt1;i++){
-        ret = kpmFillMeasInfoItem(measInfoItem+i, (uint8_t*)indicationMeasNameFmt1[i], strlen((const char*)indicationMeasNameFmt1[i]));
-        if(ret != ROK){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Info Item, %d", __LINE__);
-            return RFAILED;
-        }
+        fillMeasInfoItem(measInfoItem+i, (uint8_t*)indicationMeasNameFmt1[i], strlen((const char*)indicationMeasNameFmt1[i]));
         ASN_SEQUENCE_ADD(&indicaMessageFormat1->measInfoList->list, measInfoItem+i);
         ASN_SEQUENCE_ADD(&indicaMessageFormat1->measData.list, measDataItem+i);
     }
     xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage_Format1, indicaMessageFormat1);
-    return ROK; 
+    return 0; 
 }
 
-/*******************************************************************
- *
- * @brief Fill in the Indication Message format 1 for cell metrics of KPMv3
- *
- * @details
- *
- *    Function : kpmFillIndicationMessageFormat1V3
- *
- *    Functionality: Fills E2SM_KPM_IndicationMessage_Format1_v300_t of Indication Message
- *
- * @param[in] indicaMessageFormat1, E2SM_KPM_IndicationMessage_Format1_v300_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillIndicationMessageFormat1V3(E2SM_KPM_IndicationMessage_Format1_v300_t *indicaMessageFormat1){
-    uint8_t ret = ROK;
+uint8_t fillIndicationMessageFormat1V3(E2SM_KPM_IndicationMessage_Format1_v300_t *indicaMessageFormat1){
     int index;
 
     MeasurementDataItem_t *measDataItem;
+    // allocate memory for measDataItem by DU_ALLOC
     DU_ALLOC(measDataItem, sizeOfMeasNameFmt1 * sizeof(MeasurementDataItem_t));
-    if(measDataItem == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Data Item failed, %d", __LINE__);
+    if(measDataItem == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measDataItem");
         return RFAILED;
     }
     MeasurementInfoList_v300_t *measInfoList;
+    // allocate memory for measInfoList by DU_ALLOC
     DU_ALLOC(measInfoList, sizeof(MeasurementInfoList_v300_t));
-    if(measInfoList == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Info List failed, %d", __LINE__);
+    if(measInfoList == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measInfoList");
         return RFAILED;
     }
     MeasurementInfoItem_v300_t *measInfoItem;
+    // allocate memory for measInfoItem by DU_ALLOC
     DU_ALLOC(measInfoItem, sizeOfMeasNameFmt1 * sizeof(MeasurementInfoItem_v300_t));
-    if(measInfoItem == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Info Item failed, %d", __LINE__);
+    if(measInfoItem == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measInfoItem");
         return RFAILED;
     }
 
     for(int i=0;i<sizeOfMeasNameFmt1;i++){
-        index = kpmCellMeasNameIsSupport(indicationMeasNameFmt1[i]);
+        index = actionFmt1measNameIsSupport(indicationMeasNameFmt1[i]);
         if(index == 0){
-            ret = kpmFillCellMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_real, 0, (double)kpmCellPmDb.avgThpDl);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Data Item, %d", __LINE__);
-                return RFAILED;
-            }
-            DU_LOG("\nINFO   -->  E2SM-KPM : # %d Cell Measurement \"%s\" : %f", i, indicationMeasNameFmt1[index], kpmCellPmDb.avgThpDl);
+            fillMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_real, 0, (double)kpmCellPmDb.avgThpDl);
         }
         else if(index == 1){
-            ret = kpmFillCellMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_integer, kpmCellPmDb.avgUsedPrb, 0);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Data Item, %d", __LINE__);
-                return RFAILED;
-            }
-            DU_LOG("\nINFO   -->  E2SM-KPM : # %d Cell Measurement \"%s\" : %d", i, indicationMeasNameFmt1[index], kpmCellPmDb.avgUsedPrb);
+            fillMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_integer, kpmCellPmDb.avgUsedPrb, 0);
         }
         else if(index == 2){
-            ret = kpmFillCellMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_integer, kpmCellPmDb.avgTotalPrb, 0);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Data Item, %d", __LINE__);
-                return RFAILED;
-            }
-            DU_LOG("\nINFO   -->  E2SM-KPM : # %d Cell Measurement \"%s\" : %d", i, indicationMeasNameFmt1[index], kpmCellPmDb.avgTotalPrb);
+            fillMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_integer, kpmCellPmDb.avgTotalPrb, 0);
         }
         else if(index == 3){
-            ret = kpmFillCellMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_integer, (int)kpmCellPmDb.avgUsagePrb, 0);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Data Item, %d", __LINE__);
-                return RFAILED;
-            }
-            DU_LOG("\nINFO   -->  E2SM-KPM : # %d Cell Measurement \"%s\" : %d", i, indicationMeasNameFmt1[index], kpmCellPmDb.avgUsagePrb);
-        }else{
-            DU_LOG("\nERROR   -->  E2SM-KPM : Invalid Cell Measurement name, %d", __LINE__);
-            return RFAILED;
+            fillMeasDataItem(measDataItem + i, MeasurementRecordItem_PR_integer, (int)kpmCellPmDb.avgUsagePrb, 0);
         }
     }
 
     indicaMessageFormat1->measInfoList = measInfoList;
     for(int i=0;i<sizeOfMeasNameFmt1;i++){
-        ret = kpmFillMeasInfoItemV3(measInfoItem+i, (uint8_t*)indicationMeasNameFmt1[i], strlen((const char*)indicationMeasNameFmt1[i]));
-        if(ret != ROK){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Info Item, %d", __LINE__);
-            return RFAILED;
-        }
+        fillMeasInfoItemV3(measInfoItem+i, (uint8_t*)indicationMeasNameFmt1[i], strlen((const char*)indicationMeasNameFmt1[i]));
         ASN_SEQUENCE_ADD(&indicaMessageFormat1->measInfoList->list, measInfoItem+i);
         ASN_SEQUENCE_ADD(&indicaMessageFormat1->measData.list, measDataItem+i);
     }
@@ -1990,209 +1315,171 @@ uint8_t kpmFillIndicationMessageFormat1V3(E2SM_KPM_IndicationMessage_Format1_v30
     return 0; 
 }
 
-/*******************************************************************
- *
- * @brief Fill in the matching conditional item for slice information
- *
- * @details
- *
- *    Function : kpmFillSliceMeasCondItem
- *
- *    Functionality: Fills kpmFillSliceMeasCondItem of Indication Message
- *
- * @param[in] measCondItem, MeasurementCondUEidItem_t*, the destination
- * @param[in] measureName, char[], the measure name source
- * @param[in] snssai, Snssai*, the slice ID source
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
 
-uint8_t kpmFillSliceMeasCondItem(MeasurementCondUEidItem_t *measCondItem, char measureName[], Snssai snssai){
-    uint8_t ret = ROK;
+uint8_t fillMeasCondItem(MeasurementCondUEidItem_t *measCondItem, char measureName[], Snssai snssai){
     MatchingCondItem_t *matchCondItem;
+    // allocate memory for matchCondItem by DU_ALLOC
     DU_ALLOC(matchCondItem, sizeof(MatchingCondItem_t));
     if(matchCondItem == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Matching Conditional Item failed");
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem");
         return RFAILED;
     }
 
     measCondItem->measType.present = MeasurementType_PR_measName;
-    ret = kpmFillOctetString(&measCondItem->measType.choice.measName, measureName);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Name, %d", __LINE__);
+    measCondItem->measType.choice.measName.size = strlen((const char*)measureName);
+    // allocate memory for measCondItem->measType.choice.measName.buf by DU_ALLOC
+    DU_ALLOC(measCondItem->measType.choice.measName.buf, measCondItem->measType.choice.measName.size);
+    if(measCondItem->measType.choice.measName.buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measCondItem->measType.choice.measName.buf");
         return RFAILED;
     }
+    memcpy(measCondItem->measType.choice.measName.buf, measureName, measCondItem->measType.choice.measName.size);
+    
     matchCondItem->present = MatchingCondItem_PR_measLabel;
+    //allocate memory for matchCondItem->choice.measLabel by DU_ALLOC
     DU_ALLOC(matchCondItem->choice.measLabel, sizeof(MeasurementLabel_t));
-    if(matchCondItem->choice.measLabel == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Label of Matching Conditional Item failed, %d", __LINE__);
+    if(matchCondItem->choice.measLabel == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->choice.measLabel");
         return RFAILED;
     }
+    // allocte memory for matchCondItem->choice.measLabel->sliceID by DU_ALLOC
     DU_ALLOC(matchCondItem->choice.measLabel->sliceID, sizeof(S_NSSAI_t));
     if(matchCondItem->choice.measLabel->sliceID == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Label Slice ID of Matching Conditional Item failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->choice.measLabel->sliceID");
         return RFAILED;
     }
+
+    // allocate memory for matchCondItem->choice.measLabel->sliceID->sD by DU_ALLOC
     DU_ALLOC(matchCondItem->choice.measLabel->sliceID->sD, sizeof(SD_t));
     if(matchCondItem->choice.measLabel->sliceID->sD == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Label Slice ID - SD of Matching Conditional Item failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->choice.measLabel->sliceID->sD");
         return RFAILED;
     }
+    
     matchCondItem->choice.measLabel->sliceID->sST.size = 1;
+    // allocate memory for matchCondItem->choice.measLabel->sliceID->sST.buf by DU_ALLOC
     DU_ALLOC(matchCondItem->choice.measLabel->sliceID->sST.buf, sizeof(uint8_t));
     if(matchCondItem->choice.measLabel->sliceID->sST.buf == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Label Slice ID - SST of Matching Conditional Item failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->choice.measLabel->sliceID->sST.buf");
         return RFAILED;
     }
     memcpy(matchCondItem->choice.measLabel->sliceID->sST.buf, &snssai.sst, 1);
     matchCondItem->choice.measLabel->sliceID->sD->size = 3;
+    // allocate memory for matchCondItem->choice.measLabel->sliceID->sD.buf by DU_ALLOC
     DU_ALLOC(matchCondItem->choice.measLabel->sliceID->sD->buf, sizeof(uint8_t));
     if(matchCondItem->choice.measLabel->sliceID->sD->buf == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Label Slice ID - SD Octet String of Matching Conditional Item failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->choice.measLabel->sliceID->sD.buf");
         return RFAILED;
     }
     memcpy(matchCondItem->choice.measLabel->sliceID->sD->buf, snssai.sd, 3);
     ASN_SEQUENCE_ADD(&measCondItem->matchingCond.list, matchCondItem);
-    return ROK;
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in the matching conditional item for slice information of KPMv3
- *
- * @details
- *
- *    Function : kpmFillSliceMeasCondItemV3
- *
- *    Functionality: Fills MeasurementCondUEidItem_v300_t of Indication Message
- *
- * @param[in] measCondItem, MeasurementCondUEidItem_v300_t*, the destination
- * @param[in] measureName, char[], the measure name source
- * @param[in] snssai, Snssai*, the slice ID source
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+uint8_t fillMeasCondItemV3(MeasurementCondUEidItem_v300_t *measCondItem, char measureName[], Snssai snssai){
+    printf("\nINFO   -->  E2SM-KPM : Function \"%s\" is start\n", __func__);
 
-uint8_t kpmFillSliceMeasCondItemV3(MeasurementCondUEidItem_v300_t *measCondItem, char measureName[], Snssai snssai){
-    uint8_t ret = ROK;
     MatchingCondItem_v300_t *matchCondItem;
+    // allocate memory for matchCondItem by DU_ALLOC
     DU_ALLOC(matchCondItem, sizeof(MatchingCondItem_v300_t));
     if(matchCondItem == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Matching Conditional Item failed");
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem");
         return RFAILED;
     }
 
     measCondItem->measType.present = MeasurementType_PR_measName;
-    ret = kpmFillOctetString(&measCondItem->measType.choice.measName, measureName);
-    if(ret != ROK){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Name, %d", __LINE__);
+    measCondItem->measType.choice.measName.size = strlen((const char*)measureName);
+    // allocate memory for measCondItem->measType.choice.measName.buf by DU_ALLOC
+    DU_ALLOC(measCondItem->measType.choice.measName.buf, measCondItem->measType.choice.measName.size);
+    if(measCondItem->measType.choice.measName.buf == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measCondItem->measType.choice.measName.buf");
+        return RFAILED;
+    }
+    memcpy(measCondItem->measType.choice.measName.buf, measureName, measCondItem->measType.choice.measName.size);
+
+
+    matchCondItem->matchingCondChoice.present = MatchingCondItem_Choice_PR_measLabel;
+
+    //allocate memory for matchCondItem->matchingCondChoice.choice.measLabel by DU_ALLOC
+    DU_ALLOC(matchCondItem->matchingCondChoice.choice.measLabel, sizeof(MeasurementLabel_t));
+    if(matchCondItem->matchingCondChoice.choice.measLabel == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->matchingCondChoice.choice.measLabel");
+        return RFAILED;
+    }
+    // allocte memory for matchCondItem->matchingCondChoice.choice.measLabel->sliceID by DU_ALLOC
+    DU_ALLOC(matchCondItem->matchingCondChoice.choice.measLabel->sliceID, sizeof(S_NSSAI_t));
+    if(matchCondItem->matchingCondChoice.choice.measLabel->sliceID == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->matchingCondChoice.choice.measLabel->sliceID");
         return RFAILED;
     }
 
-    matchCondItem->matchingCondChoice.present = MatchingCondItem_Choice_PR_measLabel;
-    DU_ALLOC(matchCondItem->matchingCondChoice.choice.measLabel, sizeof(MeasurementLabel_t));
-    if(matchCondItem->matchingCondChoice.choice.measLabel == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Label of Matching Conditional Item failed, %d", __LINE__);
-        return RFAILED;
-    }
-    DU_ALLOC(matchCondItem->matchingCondChoice.choice.measLabel->sliceID, sizeof(S_NSSAI_t));
-    if(matchCondItem->matchingCondChoice.choice.measLabel->sliceID == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Label Slice ID of Matching Conditional Item failed, %d", __LINE__);
-        return RFAILED;
-    }
+    // allocate memory for matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD by DU_ALLOC
     DU_ALLOC(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD, sizeof(SD_t));
     if(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Label Slice ID - SD of Matching Conditional Item failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD");
         return RFAILED;
     }
+    
     matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sST.size = 1;
+    // allocate memory for matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sST.buf by DU_ALLOC
     DU_ALLOC(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sST.buf, sizeof(uint8_t));
     if(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sST.buf == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Label Slice ID - SST of Matching Conditional Item failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sST.buf");
         return RFAILED;
     }
     memcpy(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sST.buf, &snssai.sst, 1);
     matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD->size = 3;
+    // allocate memory for matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD.buf by DU_ALLOC
     DU_ALLOC(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD->buf, sizeof(uint8_t));
     if(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD->buf == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Label Slice ID - SD Octet String of Matching Conditional Item failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD.buf");
         return RFAILED;
     }
     memcpy(matchCondItem->matchingCondChoice.choice.measLabel->sliceID->sD->buf, snssai.sd, 3);
     ASN_SEQUENCE_ADD(&measCondItem->matchingCond.list, matchCondItem);
-    return ROK;
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in the Indication Message format 2 for slice metrics
- *
- * @details
- *
- *    Function : kpmFillIndicationMessageFormat2
- *
- *    Functionality: Fills E2SM_KPM_IndicationMessage_Format2_t of Indication Message
- *
- * @param[in] indicaMessageFormat2, E2SM_KPM_IndicationMessage_Format2_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
 
-uint8_t kpmFillIndicationMessageFormat2(E2SM_KPM_IndicationMessage_Format2_t *indicaMessageFormat2){
-    uint8_t ret = ROK;
-    int styleSize = SUPPORTED_SLICE_MEAS_ITEM;
+uint8_t fillIndicationMessageFormat2(E2SM_KPM_IndicationMessage_Format2_t *indicaMessageFormat2){
+    // printf("\nFunction \"%s\" is start\n", __func__);
+    int styleSize = sizeof(measInfoStyle2) / sizeof(*measInfoStyle2);
     int measSize = MAX_SIZE_OF_SLICE;
     int cnt = 0;
     int index;
     MeasurementDataItem_t *measDataItem;
+    // allocate memory for measDataItem by DU_ALLOC
     DU_ALLOC(measDataItem, measSize * styleSize * sizeof(MeasurementDataItem_t));
     if(measDataItem == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement data item failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measDataItem");
         return RFAILED;
     }
     MeasurementCondUEidItem_t *measCondItem;
+    // allocate memory for measCondItem by DU_ALLOC
     DU_ALLOC(measCondItem, measSize * styleSize * sizeof(MeasurementCondUEidItem_t));
     if(measCondItem == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Conditional Item failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measCondItem");
         return RFAILED;
     }
 
     for(int i=0;i<kpmSlicePmDb.numOfSlice;i++){
         for(int j=0;j<sizeOfMeasNameFmt3;j++){
-            index = kpmSliceMeasNameIsSupport(indicationMeasNameFmt3[j]);
+            index = actionFmt3measNameIsSupport(indicationMeasNameFmt3[j]);
             if(index == 0){
-                ret = kpmFillSliceMeasDataItem(measDataItem + cnt, kpmSlicePmDb.avgThpDl[i]);
-                if(ret != ROK){
-                    DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Data Item, %d", __LINE__);
-                    return RFAILED;
-                }
-                DU_LOG("\nINFO   -->  E2SM-KPM : # %d Slice Measurement \"%s\" in slice {%d-%d%d%d} : %d", j, indicationMeasNameFmt3[index],
+                printf("\nINFO   -->  E2SM-KPM : Slice Measurement \"%s\" in slice {%d-%d%d%d} : %d", indicationMeasNameFmt3[index],
                 kpmSlicePmDb.snssai[i].sst, kpmSlicePmDb.snssai[i].sd[0], kpmSlicePmDb.snssai[i].sd[1],
                 kpmSlicePmDb.snssai[i].sd[2], kpmSlicePmDb.avgThpDl[i]);
+                fillSliceMeasDataItem(measDataItem + cnt, kpmSlicePmDb.avgThpDl[i]);
             }
             else if(index == 1){
-                ret = kpmFillSliceMeasDataItem(measDataItem + cnt, kpmSlicePmDb.avgUsedPrb[i]);
-                if(ret != ROK){
-                    DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Data Item, %d", __LINE__);
-                    return RFAILED;
-                }
-                DU_LOG("\nINFO   -->  E2SM-KPM : # %d Slice Measurement \"%s\" in slice {%d-%d%d%d} : %d", j, indicationMeasNameFmt3[index],
+                printf("\nINFO   -->  E2SM-KPM : Slice Measurement \"%s\" in slice {%d-%d%d%d} : %d", indicationMeasNameFmt3[index],
                 kpmSlicePmDb.snssai[i].sst, kpmSlicePmDb.snssai[i].sd[0], kpmSlicePmDb.snssai[i].sd[1],
                 kpmSlicePmDb.snssai[i].sd[2], kpmSlicePmDb.avgUsedPrb[i]);
+                fillSliceMeasDataItem(measDataItem + cnt, kpmSlicePmDb.avgUsedPrb[i]);
             }
-            else if(index = -1){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Invalid Cell Measurement name, %d", __LINE__);
+            else if(index = -1)
                 return RFAILED;
-            }
-
-            ret = kpmFillSliceMeasCondItem(measCondItem+cnt, indicationMeasNameFmt3[index], kpmSlicePmDb.snssai[i]);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Conditional item for slice, %d", __LINE__);
-                return RFAILED;
-            }
+            fillMeasCondItem(measCondItem+cnt, indicationMeasNameFmt3[index], kpmSlicePmDb.snssai[i]);
             ASN_SEQUENCE_ADD(&indicaMessageFormat2->measData.list, measDataItem+cnt);
             ASN_SEQUENCE_ADD(&indicaMessageFormat2->measCondUEidList.list, measCondItem+cnt);
             cnt = cnt + 1;
@@ -2200,85 +1487,55 @@ uint8_t kpmFillIndicationMessageFormat2(E2SM_KPM_IndicationMessage_Format2_t *in
     }
 
     xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage_Format2, indicaMessageFormat2);
-    return ROK; 
+    return 0; 
 }
 
-/*******************************************************************
- *
- * @brief Fill in the Indication Message format 2 for slice metrics of KPMv3
- *
- * @details
- *
- *    Function : kpmFillIndicationMessageFormat2V3
- *
- *    Functionality: Fills E2SM_KPM_IndicationMessage_Format2_v300_t of Indication Message
- *
- * @param[in] indicaMessageFormat2, E2SM_KPM_IndicationMessage_Format2_v300_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillIndicationMessageFormat2V3(E2SM_KPM_IndicationMessage_Format2_v300_t *indicaMessageFormat2){
-    uint8_t ret = ROK;
-    int styleSize = SUPPORTED_SLICE_MEAS_ITEM;
+uint8_t fillIndicationMessageFormat2V3(E2SM_KPM_IndicationMessage_Format2_v300_t *indicaMessageFormat2){
+    printf("\nFunction \"%s\" is start\n", __func__);
+    int styleSize = sizeof(measInfoStyle2) / sizeof(*measInfoStyle2);
     int measSize = MAX_SIZE_OF_SLICE;
     int cnt = 0;
     int index = 0;
     MeasurementDataItem_t *measDataItem;
+    // allocate memory for measDataItem by DU_ALLOC
     DU_ALLOC(measDataItem, measSize * styleSize * sizeof(MeasurementDataItem_t));
     if(measDataItem == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement data item failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measDataItem");
         return RFAILED;
     }
-    MeasurementCondUEidItem_t *measCondItem;
-    DU_ALLOC(measCondItem, measSize * styleSize * sizeof(MeasurementCondUEidItem_t));
+    MeasurementCondUEidItem_v300_t *measCondItem;
+    // allocate memory for measCondItem by DU_ALLOC
+    DU_ALLOC(measCondItem, measSize * styleSize * sizeof(MeasurementCondUEidItem_v300_t));
     if(measCondItem == NULL){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Measurement Conditional Item failed, %d", __LINE__);
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for measCondItem");
         return RFAILED;
     }
 
     for(int i=0;i<kpmSlicePmDb.numOfSlice;i++){
         for(int j=0;j<sizeOfMeasNameFmt3;j++){
-            index = kpmSliceMeasNameIsSupport(indicationMeasNameFmt3[j]);
+            index = actionFmt3measNameIsSupport(indicationMeasNameFmt3[j]);
             if(index == 0){
-                ret = kpmFillSliceMeasDataItem(measDataItem + cnt, kpmSlicePmDb.avgThpDl[i]);
-                if(ret != ROK){
-                    DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Data Item, %d", __LINE__);
-                    return RFAILED;
-                }
-                DU_LOG("\nINFO   -->  E2SM-KPM : # %d Slice Measurement \"%s\" in slice {%d-%d%d%d} : %d", j, indicationMeasNameFmt3[index],
+                printf("\nINFO   -->  E2SM-KPMv3 : Slice Measurement \"%s\" in slice {%d-%d%d%d} : %d", indicationMeasNameFmt3[index],
                 kpmSlicePmDb.snssai[i].sst, kpmSlicePmDb.snssai[i].sd[0], kpmSlicePmDb.snssai[i].sd[1],
                 kpmSlicePmDb.snssai[i].sd[2], kpmSlicePmDb.avgThpDl[i]);
+                fillSliceMeasDataItem(measDataItem + cnt, kpmSlicePmDb.avgThpDl[i]);
             }
             else if(index == 1){
-                ret = kpmFillSliceMeasDataItem(measDataItem + cnt, kpmSlicePmDb.avgUsedPrb[i]);
-                if(ret != ROK){
-                    DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Data Item, %d", __LINE__);
-                    return RFAILED;
-                }
-                DU_LOG("\nINFO   -->  E2SM-KPM : # %d Slice Measurement \"%s\" in slice {%d-%d%d%d} : %d", j, indicationMeasNameFmt3[index],
+                printf("\nINFO   -->  E2SM-KPMv3 : Slice Measurement \"%s\" in slice {%d-%d%d%d} : %d", indicationMeasNameFmt3[index],
                 kpmSlicePmDb.snssai[i].sst, kpmSlicePmDb.snssai[i].sd[0], kpmSlicePmDb.snssai[i].sd[1],
                 kpmSlicePmDb.snssai[i].sd[2], kpmSlicePmDb.avgUsedPrb[i]);
+                fillSliceMeasDataItem(measDataItem + cnt, kpmSlicePmDb.avgUsedPrb[i]);
             }
-            else if(index = -1){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Invalid Cell Measurement name, %d", __LINE__);
+            else if(index = -1)
                 return RFAILED;
-            }
-
-            ret = kpmFillSliceMeasCondItemV3(measCondItem+cnt, indicationMeasNameFmt3[index], kpmSlicePmDb.snssai[i]);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Conditional item for slice, %d", __LINE__);
-                return RFAILED;
-            }
+            fillMeasCondItemV3(measCondItem+cnt, indicationMeasNameFmt3[index], kpmSlicePmDb.snssai[i]);
             ASN_SEQUENCE_ADD(&indicaMessageFormat2->measData.list, measDataItem+cnt);
             ASN_SEQUENCE_ADD(&indicaMessageFormat2->measCondUEidList.list, measCondItem+cnt);
             cnt = cnt + 1;
         }
     }
-
-    xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage_Format2_v300, indicaMessageFormat2);
-    return ROK; 
+    xer_fprint(stderr, &asn_DEF_E2SM_KPM_IndicationMessage_Format2, indicaMessageFormat2);
+    return 0; 
 }
 
 uint8_t kpmFreeMeasInfoList(MeasurementInfoList_t *measInfoList){
@@ -2290,7 +1547,7 @@ uint8_t kpmFreeMeasInfoList(MeasurementInfoList_t *measInfoList){
             kpmFreeMeasLabel(&measInfoList->list.array[i]->labelInfoList.list.array[j]->measLabel);
         }
     }
-    return ROK;
+    return 0;
 }
 
 uint8_t kpmFreeMeasInfoListV3(MeasurementInfoList_v300_t *measInfoList){
@@ -2302,10 +1559,11 @@ uint8_t kpmFreeMeasInfoListV3(MeasurementInfoList_v300_t *measInfoList){
             kpmFreeMeasLabelV3(&measInfoList->list.array[i]->labelInfoList.list.array[j]->measLabel);
         }
     }
-    return ROK;
+    return 0;
 }
 
 uint8_t kpmFreeRicIndicationMessageFmt1(E2SM_KPM_IndicationMessage_Format1_t *indicaMessageFormat1){
+    // printf("\nFunction \"%s\" is start", __func__);
     kpmFreeMeasData(&indicaMessageFormat1->measData);
     if(indicaMessageFormat1->measInfoList){
         kpmFreeMeasInfoList(indicaMessageFormat1->measInfoList);
@@ -2313,10 +1571,11 @@ uint8_t kpmFreeRicIndicationMessageFmt1(E2SM_KPM_IndicationMessage_Format1_t *in
     if(indicaMessageFormat1->granulPeriod){
         DU_FREE(indicaMessageFormat1->granulPeriod, sizeof(unsigned long));
     }
-    return ROK;
+    return 0;
 }
 
 uint8_t kpmFreeRicIndicationMessageFmt1V3(E2SM_KPM_IndicationMessage_Format1_v300_t *indicaMessageFormat1){
+    // printf("\nFunction \"%s\" is start", __func__);
     kpmFreeMeasData(&indicaMessageFormat1->measData);
     if(indicaMessageFormat1->measInfoList){
         kpmFreeMeasInfoListV3(indicaMessageFormat1->measInfoList);
@@ -2324,71 +1583,29 @@ uint8_t kpmFreeRicIndicationMessageFmt1V3(E2SM_KPM_IndicationMessage_Format1_v30
     if(indicaMessageFormat1->granulPeriod){
         DU_FREE(indicaMessageFormat1->granulPeriod, sizeof(unsigned long));
     }
-    return ROK;
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Fill in the Indication Message
- *
- * @details
- *
- *    Function : kpmFillRicIndicationMessage
- *
- *    Functionality: Fills RICindicationMessage_t to E2AP Handler
- *
- * @param[in] indicaMessageFormat2, E2SM_KPM_IndicationMessage_Format2_v300_t*
- * @param[in] format, int, indicate the Indication Message format
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillRicIndicationMessage(RICindicationMessage_t *ricIndicaMsg, int format){
-    uint8_t ret = ROK;
+uint8_t fillRicindicationMessageFmt1(RICindicationMessage_t *ricIndicaMsg){
     E2SM_KPM_IndicationMessage_t *indicaMessage;
     E2SM_KPM_IndicationMessage_Format1_t *indicaMessageFormat1;
-    E2SM_KPM_IndicationMessage_Format2_t *indicaMessageFormat2;
-
+    // allocate memory for indicaMessage by DU_ALLOC
     DU_ALLOC(indicaMessage, sizeof(E2SM_KPM_IndicationMessage_t));
-    if(indicaMessage == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Indication Message failed, %d", __LINE__);
+    if(indicaMessage == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaMessage");
         return RFAILED;
     }
-    if(format == INDICATION_FORMAT1){
-        DU_ALLOC(indicaMessageFormat1, sizeof(E2SM_KPM_IndicationMessage_Format1_t));
-        if(indicaMessageFormat1 == NULLP){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Indication Message Format 1 failed, %d", __LINE__);
-            return RFAILED;
-        }
-        ret = kpmFillIndicationMessageFormat1(indicaMessageFormat1);  
-        if(ret != ROK){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Indication Message Format 1, %d", __LINE__);
-            DU_FREE(indicaMessage, sizeof(E2SM_KPM_IndicationMessage_t));
-            DU_FREE(indicaMessageFormat1, sizeof(E2SM_KPM_IndicationMessage_Format1_t));
-            return RFAILED;
-        }
-        indicaMessage->indicationMessage_formats.present = E2SM_KPM_IndicationMessage__indicationMessage_formats_PR_indicationMessage_Format1;
-        indicaMessage->indicationMessage_formats.choice.indicationMessage_Format1 = indicaMessageFormat1;
-    }else if(format == INDICATION_FORMAT2){
-        DU_ALLOC(indicaMessageFormat2, sizeof(E2SM_KPM_IndicationMessage_Format2_t));
-        if(indicaMessageFormat2 == NULLP){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Indication Message Format 2 failed, %d", __LINE__);
-            return RFAILED;
-        }
-        ret = kpmFillIndicationMessageFormat2(indicaMessageFormat2);  
-        if(ret != ROK){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Indication Message Format 2, %d", __LINE__);
-            DU_FREE(indicaMessage, sizeof(E2SM_KPM_IndicationMessage_t));
-            DU_FREE(indicaMessageFormat2, sizeof(E2SM_KPM_IndicationMessage_Format2_t));
-            return RFAILED;
-        }
-        indicaMessage->indicationMessage_formats.present = E2SM_KPM_IndicationMessage__indicationMessage_formats_PR_indicationMessage_Format2;
-        indicaMessage->indicationMessage_formats.choice.indicationMessage_Format2 = indicaMessageFormat2;
-    }else{
-        DU_LOG("\nERROR   -->  E2SM-KPM : Invalid Indication Message Format, %d", __LINE__);
+    
+    // allocate memory for indicaMessageFormat1 by DU_ALLOC
+    DU_ALLOC(indicaMessageFormat1, sizeof(E2SM_KPM_IndicationMessage_Format1_t));
+    if(indicaMessageFormat1 == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaMessageFormat1");
         return RFAILED;
     }
+
+    fillIndicationMessageFormat1(indicaMessageFormat1);  
+    indicaMessage->indicationMessage_formats.present = E2SM_KPM_IndicationMessage__indicationMessage_formats_PR_indicationMessage_Format1;
+    indicaMessage->indicationMessage_formats.choice.indicationMessage_Format1 = indicaMessageFormat1;
     
     uint8_t e2smbuffer[8192] = {0, };
     size_t e2smbuffer_size = 8192;
@@ -2401,103 +1618,51 @@ uint8_t kpmFillRicIndicationMessage(RICindicationMessage_t *ricIndicaMsg, int fo
          indicaMessage, e2smbuffer, e2smbuffer_size);
 
     if(er.encoded == -1){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Could not encode Indication Message, %d", __LINE__);
-        DU_LOG("Failed to encode element %s", er.failed_type ? er.failed_type->name : ""); 
-        if(format == INDICATION_FORMAT1){
-            kpmFreeRicIndicationMessageFmt1(indicaMessageFormat1);
-            DU_FREE(indicaMessageFormat1, sizeof(E2SM_KPM_IndicationMessage_Format1_t));
-        }
-        else if(format == INDICATION_FORMAT2){
-            kpmFreeRicIndicationMessageFmt2(indicaMessageFormat2);
-            DU_FREE(indicaMessageFormat2, sizeof(E2SM_KPM_IndicationMessage_Format2_t));
-        }
-        DU_FREE(indicaMessage, sizeof(E2SM_KPM_IndicationMessage_t));
+        printf("\nERROR   -->  E2SM-KPM : Encode asn_DEF_E2SM_KPM_IndicationMessage 1 failed");
+        printf("Failed to encode element %s", er.failed_type ? er.failed_type->name : ""); 
+
         return RFAILED;
     }
     else{
+        // allocate memory for ricIndicaMsg->buf by DU_ALLOC
         DU_ALLOC(ricIndicaMsg->buf, er.encoded * sizeof(uint8_t));
-        if(ricIndicaMsg->buf == NULLP){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for RIC Indication Message failed, %d", __LINE__);
+        ricIndicaMsg->size = er.encoded;
+        if(ricIndicaMsg->buf == NULL){
+            DU_LOG("\nERROR   -->  E2SM-KPM : Allocate memory for ricIndicaMsg->buf failed");
             return RFAILED;
         }
         ricIndicaMsg->size = er.encoded;
         memcpy(ricIndicaMsg->buf,e2smbuffer,er.encoded);
     }
-    if(format == INDICATION_FORMAT1){
-        kpmFreeRicIndicationMessageFmt1(indicaMessageFormat1);
-        DU_FREE(indicaMessageFormat1, sizeof(E2SM_KPM_IndicationMessage_Format1_t));
-    }
-    else if(format == INDICATION_FORMAT2){
-        kpmFreeRicIndicationMessageFmt2(indicaMessageFormat2);
-        DU_FREE(indicaMessageFormat2, sizeof(E2SM_KPM_IndicationMessage_Format2_t));
-    }
+
+    kpmFreeRicIndicationMessageFmt1(indicaMessageFormat1);
+    DU_FREE(indicaMessageFormat1, sizeof(E2SM_KPM_IndicationMessage_Format1_t));
     DU_FREE(indicaMessage, sizeof(E2SM_KPM_IndicationMessage_t));
-    return ROK; 
+
+    return 0; 
 }
 
-/*******************************************************************
- *
- * @brief Fill in the Indication Message of KPMv3
- *
- * @details
- *
- *    Function : kpmFillRicIndicationMessage
- *
- *    Functionality: Fills RICindicationMessage_t to E2AP Handler
- *
- * @param[in] indicaMessageFormat2, E2SM_KPM_IndicationMessage_Format2_v300_t*
- * @param[in] format, int, indicate the Indication Message format
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
-
-uint8_t kpmFillRicIndicationMessageV3(RICindicationMessage_t *ricIndicaMsg, int format){
-    uint8_t ret = ROK;
+int8_t fillRicindicationMessageFmt1V3(RICindicationMessage_t *ricIndicaMsg){
     E2SM_KPM_IndicationMessage_v300_t *indicaMessage;
     E2SM_KPM_IndicationMessage_Format1_v300_t *indicaMessageFormat1;
-    E2SM_KPM_IndicationMessage_Format2_v300_t *indicaMessageFormat2;
-
+    // allocate memory for indicaMessage by DU_ALLOC
     DU_ALLOC(indicaMessage, sizeof(E2SM_KPM_IndicationMessage_v300_t));
-    if(indicaMessage == NULLP){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Indication Message failed, %d", __LINE__);
+    if(indicaMessage == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaMessage");
         return RFAILED;
     }
-    if(format == INDICATION_FORMAT1){
-        DU_ALLOC(indicaMessageFormat1, sizeof(E2SM_KPM_IndicationMessage_Format1_v300_t));
-        if(indicaMessageFormat1 == NULLP){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Indication Message Format 1 failed, %d", __LINE__);
-            return RFAILED;
-        }
-        ret = kpmFillIndicationMessageFormat1V3(indicaMessageFormat1);  
-        if(ret != ROK){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Indication Message Format 1, %d", __LINE__);
-            DU_FREE(indicaMessage, sizeof(E2SM_KPM_IndicationMessage_v300_t));
-            DU_FREE(indicaMessageFormat1, sizeof(E2SM_KPM_IndicationMessage_Format1_v300_t));
-            return RFAILED;
-        }
-        indicaMessage->indicationMessage_formats.present = E2SM_KPM_IndicationMessage_v300__indicationMessage_formats_PR_indicationMessage_Format1;
-        indicaMessage->indicationMessage_formats.choice.indicationMessage_Format1 = indicaMessageFormat1;
-    }else if(format == INDICATION_FORMAT2){
-        DU_ALLOC(indicaMessageFormat2, sizeof(E2SM_KPM_IndicationMessage_Format2_v300_t));
-        if(indicaMessageFormat2 == NULLP){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for Indication Message Format 1 failed, %d", __LINE__);
-            return RFAILED;
-        }
-        ret = kpmFillIndicationMessageFormat2V3(indicaMessageFormat2);  
-        if(ret != ROK){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Indication Message Format 1, %d", __LINE__);
-            DU_FREE(indicaMessage, sizeof(E2SM_KPM_IndicationMessage_v300_t));
-            DU_FREE(indicaMessageFormat2, sizeof(E2SM_KPM_IndicationMessage_Format2_v300_t));
-            return RFAILED;
-        }
-        indicaMessage->indicationMessage_formats.present = E2SM_KPM_IndicationMessage_v300__indicationMessage_formats_PR_indicationMessage_Format2;
-        indicaMessage->indicationMessage_formats.choice.indicationMessage_Format2 = indicaMessageFormat2;
-    }else{
-        DU_LOG("\nERROR   -->  E2SM-KPM : Invalid Indication Message Format, %d", __LINE__);
+    
+    // allocate memory for indicaMessageFormat1 by DU_ALLOC
+    DU_ALLOC(indicaMessageFormat1, sizeof(E2SM_KPM_IndicationMessage_Format1_v300_t));
+    if(indicaMessageFormat1 == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaMessageFormat1");
         return RFAILED;
     }
 
+    fillIndicationMessageFormat1V3(indicaMessageFormat1);  
+    indicaMessage->indicationMessage_formats.present = E2SM_KPM_IndicationMessage__indicationMessage_formats_PR_indicationMessage_Format1;
+    indicaMessage->indicationMessage_formats.choice.indicationMessage_Format1 = indicaMessageFormat1;
+    
     uint8_t e2smbuffer[8192] = {0, };
     size_t e2smbuffer_size = 8192;
     asn_codec_ctx_t *opt_cod = 0;
@@ -2509,55 +1674,29 @@ uint8_t kpmFillRicIndicationMessageV3(RICindicationMessage_t *ricIndicaMsg, int 
          indicaMessage, e2smbuffer, e2smbuffer_size);
 
     if(er.encoded == -1){
-        DU_LOG("\nERROR   -->  E2SM-KPM : Could not encode Indication Message, %d", __LINE__);
-        DU_LOG("Failed to encode element %s", er.failed_type ? er.failed_type->name : ""); 
-        if(format == INDICATION_FORMAT1){
-            kpmFreeRicIndicationMessageFmt1V3(indicaMessageFormat1);
-            DU_FREE(indicaMessageFormat1, sizeof(E2SM_KPM_IndicationMessage_Format1_v300_t));
-        }
-        else if(format == INDICATION_FORMAT2){
-            kpmFreeRicIndicationMessageFmt2V3(indicaMessageFormat2);
-            DU_FREE(indicaMessageFormat2, sizeof(E2SM_KPM_IndicationMessage_Format2_v300_t));
-        }
-        DU_FREE(indicaMessage, sizeof(E2SM_KPM_IndicationMessage_v300_t));
+        printf("\nERROR   -->  E2SM-KPM : Encode asn_DEF_E2SM_KPM_IndicationMessage 1 failed");
+        printf("Failed to encode element %s", er.failed_type ? er.failed_type->name : ""); 
+
         return RFAILED;
     }
     else{
+        // allocate memory for ricIndicaMsg->buf by DU_ALLOC
         DU_ALLOC(ricIndicaMsg->buf, er.encoded * sizeof(uint8_t));
-        if(ricIndicaMsg->buf == NULLP){
-            DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for RIC Indication Message failed, %d", __LINE__);
+        ricIndicaMsg->size = er.encoded;
+        if(ricIndicaMsg->buf == NULL){
+            DU_LOG("\nERROR   -->  E2SM-KPM : Allocate memory for ricIndicaMsg->buf failed");
             return RFAILED;
         }
         ricIndicaMsg->size = er.encoded;
         memcpy(ricIndicaMsg->buf,e2smbuffer,er.encoded);
     }
-    if(format == INDICATION_FORMAT1){
-        kpmFreeRicIndicationMessageFmt1V3(indicaMessageFormat1);
-        DU_FREE(indicaMessageFormat1, sizeof(E2SM_KPM_IndicationMessage_Format1_v300_t));
-    }
-    else if(format == INDICATION_FORMAT2){
-        kpmFreeRicIndicationMessageFmt2V3(indicaMessageFormat2);
-        DU_FREE(indicaMessageFormat2, sizeof(E2SM_KPM_IndicationMessage_Format2_v300_t));
-    }
-    DU_FREE(indicaMessage, sizeof(E2SM_KPM_IndicationMessage_v300_t));
-    return ROK; 
-}
 
-/*******************************************************************
- *
- * @brief Deallocate the memory allocated for MeasurementData_t 
- *
- * @details
- *
- *    Function : kpmFreeMeasData
- *
- *    Functionality: freeing the memory allocated for MeasurementData_t
- *
- * @param[in] measData, MeasurementData_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+    kpmFreeRicIndicationMessageFmt1V3(indicaMessageFormat1);
+    DU_FREE(indicaMessageFormat1, sizeof(E2SM_KPM_IndicationMessage_Format1_v300_t));
+    DU_FREE(indicaMessage, sizeof(E2SM_KPM_IndicationMessage_v300_t));
+
+    return 0; 
+}
 
 uint8_t kpmFreeMeasData(MeasurementData_t *measData){
     for(int i=0;i<measData->list.count;i++){
@@ -2573,24 +1712,9 @@ uint8_t kpmFreeMeasData(MeasurementData_t *measData){
             }
         }
     }
-    return ROK;
-}
 
-/*******************************************************************
- *
- * @brief Deallocate the memory allocated for MeasurementLabel_t 
- *
- * @details
- *
- *    Function : kpmFreeMeasLabel
- *
- *    Functionality: freeing the memory allocated for MeasurementLabel_t
- *
- * @param[in] measLabel, MeasurementLabel_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+    return 0;
+}
 
 uint8_t kpmFreeMeasLabel(MeasurementLabel_t *measLabel){
     if(measLabel->noLabel){
@@ -2655,24 +1779,8 @@ uint8_t kpmFreeMeasLabel(MeasurementLabel_t *measLabel){
     if(measLabel->avg){
         DU_FREE(measLabel->avg, sizeof(long));
     }
-    return ROK;
+    return 0;
 }
-
-/*******************************************************************
- *
- * @brief Deallocate the memory allocated for MeasurementLabel_v300_t of KPMv3
- *
- * @details
- *
- *    Function : kpmFreeMeasLabel
- *
- *    Functionality: freeing the memory allocated for MeasurementLabel_v300_t
- *
- * @param[in] measLabel, MeasurementLabel_v300_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
 
 uint8_t kpmFreeMeasLabelV3(MeasurementLabel_v300_t *measLabel){
     if(measLabel->noLabel){
@@ -2746,24 +1854,8 @@ uint8_t kpmFreeMeasLabelV3(MeasurementLabel_v300_t *measLabel){
     if(measLabel->ssbIndex){
         DU_FREE(measLabel->mIMO_mode_Index, sizeof(long));
     }
-    return ROK;
+    return 0;
 }
-
-/*******************************************************************
- *
- * @brief Deallocate the memory allocated for MeasurementCondUEidList_t
- *
- * @details
- *
- *    Function : kpmFreeCondUEidList
- *
- *    Functionality: freeing the memory allocated for MeasurementCondUEidList_t
- *
- * @param[in] measCondUEidList, MeasurementCondUEidList_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
 
 uint8_t kpmFreeCondUEidList(MeasurementCondUEidList_t *measCondUEidList){
     MeasurementLabel_t *measLabel;
@@ -2780,37 +1872,21 @@ uint8_t kpmFreeCondUEidList(MeasurementCondUEidList_t *measCondUEidList){
                             kpmFreeMeasLabel(measLabel);
                         break;
                         case MatchingCondItem_PR_testCondInfo:
-                            DU_LOG("\nERROR   -->  E2SM-KPM : Freeing testCondInfo is not supported");
+                            printf("\nERROR   -->  E2SM-KPM : Freeing testCondInfo is not supported");
                         default:
-                            DU_LOG("\nERROR   -->  E2SM-KPM : kpmFreeCondUEidList type is invalid");
+                            printf("\nERROR   -->  E2SM-KPM : kpmFreeCondUEidList type is invalid");
                         break;
                     }
                 }
             }
             if(measCondUEidList->list.array[i]->matchingUEidList){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Free matchingUEidList is not supported");
+                printf("\nERROR   -->  E2SM-KPM : Free matchingUEidList is not supported");
             }
 
         }
     }
-    return ROK;
+    return 0;
 }
-
-/*******************************************************************
- *
- * @brief Deallocate the memory allocated for MeasurementCondUEidList_v300_t of KPMv3
- *
- * @details
- *
- *    Function : kpmFreeCondUEidListV3
- *
- *    Functionality: freeing the memory allocated for MeasurementCondUEidList_v300_t
- *
- * @param[in] measCondUEidList, MeasurementCondUEidList_v300_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
 
 uint8_t kpmFreeCondUEidListV3(MeasurementCondUEidList_v300_t *measCondUEidList){
     MeasurementLabel_v300_t *measLabel;
@@ -2827,36 +1903,21 @@ uint8_t kpmFreeCondUEidListV3(MeasurementCondUEidList_v300_t *measCondUEidList){
                             kpmFreeMeasLabelV3(measLabel);
                         break;
                         case MatchingCondItem_Choice_PR_testCondInfo:
-                            DU_LOG("\nERROR   -->  E2SM-KPM : Freeing testCondInfo is not supported");
+                            printf("\nERROR   -->  E2SM-KPM : Freeing testCondInfo is not supported");
                         default:
-                            DU_LOG("\nERROR   -->  E2SM-KPM : kpmFreeCondUEidListV3 type is invalid");
+                            printf("\nERROR   -->  E2SM-KPM : kpmFreeCondUEidListV3 type is invalid");
                         break;
                     }
                 }
             }
             if(measCondUEidList->list.array[i]->matchingUEidList){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Free matchingUEidList is not supported");
+                printf("\nERROR   -->  E2SM-KPM : Free matchingUEidList is not supported");
             }
+
         }
     }
-    return ROK;
+    return 0;
 }
-
-/*******************************************************************
- *
- * @brief Deallocate the memory allocated for E2SM_KPM_IndicationMessage_Format2_t
- *
- * @details
- *
- *    Function : kpmFreeRicIndicationMessageFmt2
- *
- *    Functionality: freeing the memory allocated for E2SM_KPM_IndicationMessage_Format2_t
- *
- * @param[in] indicaMessageFormat2, E2SM_KPM_IndicationMessage_Format2_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
 
 uint8_t kpmFreeRicIndicationMessageFmt2(E2SM_KPM_IndicationMessage_Format2_t *indicaMessageFormat2){
     kpmFreeMeasData(&indicaMessageFormat2->measData);
@@ -2864,24 +1925,8 @@ uint8_t kpmFreeRicIndicationMessageFmt2(E2SM_KPM_IndicationMessage_Format2_t *in
     if(indicaMessageFormat2->granulPeriod){
         DU_FREE(indicaMessageFormat2->granulPeriod, sizeof(unsigned long));
     }
-    return ROK;
+    return 0;
 }
-
-/*******************************************************************
- *
- * @brief Deallocate the memory allocated for E2SM_KPM_IndicationMessage_Format2_v300_t
- *
- * @details
- *
- *    Function : kpmFreeRicIndicationMessageFmt2V3
- *
- *    Functionality: freeing the memory allocated for E2SM_KPM_IndicationMessage_Format2_v300_t
- *
- * @param[in] indicaMessageFormat2, E2SM_KPM_IndicationMessage_Format2_v300_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
 
 uint8_t kpmFreeRicIndicationMessageFmt2V3(E2SM_KPM_IndicationMessage_Format2_v300_t *indicaMessageFormat2){
     kpmFreeMeasData(&indicaMessageFormat2->measData);
@@ -2889,24 +1934,118 @@ uint8_t kpmFreeRicIndicationMessageFmt2V3(E2SM_KPM_IndicationMessage_Format2_v30
     if(indicaMessageFormat2->granulPeriod){
         DU_FREE(indicaMessageFormat2->granulPeriod, sizeof(unsigned long));
     }
-    return ROK;
+    return 0;
 }
 
-/*******************************************************************
- *
- * @brief Deallocate the memory allocated for OCTET_STRING_t
- *
- * @details
- *
- *    Function : kpmFreeOctetString
- *
- *    Functionality: freeing the memory allocated for OCTET_STRING_t
- *
- * @param[in] octetString, OCTET_STRING_t*
- * @return ROK     - success
- *         RFAILED - failure
- *
- ******************************************************************/
+uint8_t fillRicindicationMessageFmt2(RICindicationMessage_t *ricIndicaMsg){
+    E2SM_KPM_IndicationMessage_t *indicaMessage;
+    
+    // allocate memory for indicaMessage by DU_ALLOC
+    DU_ALLOC(indicaMessage, sizeof(E2SM_KPM_IndicationMessage_t));
+    if(indicaMessage == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaMessage");
+        return RFAILED;
+    }
+
+    E2SM_KPM_IndicationMessage_Format2_t *indicaMessageFormat2;
+    // allocate memory for indicaMessageFormat2 by DU_ALLOC
+    DU_ALLOC(indicaMessageFormat2, sizeof(E2SM_KPM_IndicationMessage_Format2_t));
+    if(indicaMessageFormat2 == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaMessageFormat2");
+        return RFAILED;
+    }
+    
+    fillIndicationMessageFormat2(indicaMessageFormat2);  
+    indicaMessage->indicationMessage_formats.present = E2SM_KPM_IndicationMessage__indicationMessage_formats_PR_indicationMessage_Format2;
+    indicaMessage->indicationMessage_formats.choice.indicationMessage_Format2 = indicaMessageFormat2;
+
+    uint8_t e2smbuffer[8192] = {0, };
+    size_t e2smbuffer_size = 8192;
+    asn_codec_ctx_t *opt_cod = 0;
+
+    asn_enc_rval_t er =
+    asn_encode_to_buffer(opt_cod,
+         ATS_ALIGNED_BASIC_PER,
+         &asn_DEF_E2SM_KPM_IndicationMessage,
+         indicaMessage, e2smbuffer, e2smbuffer_size);
+
+    if(er.encoded == -1){
+        printf("\nERROR   -->  E2SM-KPM : Encode asn_DEF_E2SM_KPM_IndicationMessage 2 failed");
+        return RFAILED;
+    }
+    else{
+        // allocate memory for ricIndicaMsg->buf by DU_ALLOC
+        DU_ALLOC(ricIndicaMsg->buf, er.encoded * sizeof(uint8_t));
+        ricIndicaMsg->size = er.encoded;
+        if(ricIndicaMsg->buf == NULL){
+            DU_LOG("\nERROR   -->  E2SM-KPM : Allocate memory for ricIndicaMsg->buf failed");
+            return RFAILED;
+        }
+        ricIndicaMsg->size = er.encoded;
+        memcpy(ricIndicaMsg->buf,e2smbuffer,er.encoded);
+    }
+
+    kpmFreeRicIndicationMessageFmt2(indicaMessageFormat2);
+    DU_FREE(indicaMessageFormat2, sizeof(E2SM_KPM_IndicationMessage_Format2_t));
+    DU_FREE(indicaMessage, sizeof(E2SM_KPM_IndicationMessage_t));
+
+    return 0; 
+}
+
+uint8_t fillRicindicationMessageFmt2V3(RICindicationMessage_t *ricIndicaMsg){
+    E2SM_KPM_IndicationMessage_v300_t *indicaMessage;
+    
+    // allocate memory for indicaMessage by DU_ALLOC
+    DU_ALLOC(indicaMessage, sizeof(E2SM_KPM_IndicationMessage_v300_t));
+    if(indicaMessage == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaMessage");
+        return RFAILED;
+    }
+
+    E2SM_KPM_IndicationMessage_Format2_v300_t *indicaMessageFormat2;
+    // allocate memory for indicaMessageFormat2 by DU_ALLOC
+    DU_ALLOC(indicaMessageFormat2, sizeof(E2SM_KPM_IndicationMessage_Format2_v300_t));
+    if(indicaMessageFormat2 == NULL){
+        printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for indicaMessageFormat2");
+        return RFAILED;
+    }
+    
+    fillIndicationMessageFormat2V3(indicaMessageFormat2);  
+    indicaMessage->indicationMessage_formats.present = E2SM_KPM_IndicationMessage__indicationMessage_formats_PR_indicationMessage_Format2;
+    indicaMessage->indicationMessage_formats.choice.indicationMessage_Format2 = indicaMessageFormat2;
+
+    uint8_t e2smbuffer[8192] = {0, };
+    size_t e2smbuffer_size = 8192;
+    asn_codec_ctx_t *opt_cod = 0;
+
+    asn_enc_rval_t er =
+    asn_encode_to_buffer(opt_cod,
+         ATS_ALIGNED_BASIC_PER,
+         &asn_DEF_E2SM_KPM_IndicationMessage_v300,
+         indicaMessage, e2smbuffer, e2smbuffer_size);
+
+    if(er.encoded == -1){
+        printf("\nERROR   -->  E2SM-KPM : Encode asn_DEF_E2SM_KPM_IndicationMessage_v300 failed");
+        return RFAILED;
+    }
+    else{
+        // allocate memory for ricIndicaMsg->buf by DU_ALLOC
+        DU_ALLOC(ricIndicaMsg->buf, er.encoded * sizeof(uint8_t));
+        ricIndicaMsg->size = er.encoded;
+        if(ricIndicaMsg->buf == NULL){
+            DU_LOG("\nERROR   -->  E2SM-KPM : Allocate memory for ricIndicaMsg->buf failed");
+            return RFAILED;
+        }
+        ricIndicaMsg->size = er.encoded;
+        memcpy(ricIndicaMsg->buf,e2smbuffer,er.encoded);
+    }
+
+    kpmFreeRicIndicationMessageFmt2V3(indicaMessageFormat2);
+    DU_FREE(indicaMessageFormat2, sizeof(E2SM_KPM_IndicationMessage_Format2_v300_t));
+    DU_FREE(indicaMessage, sizeof(E2SM_KPM_IndicationMessage_v300_t));
+
+    return 0; 
+}
 
 uint8_t kpmFreeOctetString(OCTET_STRING_t *octetString){
     if(octetString){
@@ -2925,62 +2064,33 @@ uint8_t kpmFreeOctetString(OCTET_STRING_t *octetString){
 
 }
 
-/*******************************************************************
- *
- * @brief Send the slice metrics to RIC with RIC Indication
- *
- * @details
- *
- *    Function : kpmSendSliceMetric
- *
- *    Functionality: Build the slice metrics and send RIC Indication to RIC
- *
- * @return void
- *
- ******************************************************************/
-
 void kpmSendSliceMetric(){
-    uint8_t ret;
     if(kpmSliceIndicationEnable){
         if(ricIndicationMessage == NULL){
+            // allocate memory for ricIndicationMessage by DU_ALLOC
             DU_ALLOC(ricIndicationMessage, sizeof(RICindicationMessage_t));
-            if(ricIndicationMessage == NULLP){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for RIC Indication Message failed, %d", __LINE__);
+            if(ricIndicationMessage == NULL){
+                printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ricIndicationMessage");
                 return;
             }
         }
 
         if(ricIndicationHeader == NULL){
+            // allocate memory for ricIndicationHeader by DU_ALLOC
             DU_ALLOC(ricIndicationHeader, sizeof(RICindicationHeader_t));
             if(ricIndicationHeader == NULL){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for RIC Indication Header failed, %d", __LINE__);
+                printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ricIndicationHeader");
                 return;
             }
         }
 
         kpmCalcSliceMetric();
         if(kpmIndicationV3Enable){
-            ret = kpmFillRicIndicationHeaderV3(ricIndicationHeader);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill RIC Indication Header, %d", __LINE__);
-                return;
-            }
-            ret = kpmFillRicIndicationMessageV3(ricIndicationMessage, INDICATION_FORMAT2);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill RIC Indication Message, %d", __LINE__);
-                return;
-            }
+            fillRicIndicationHeaderV3(ricIndicationHeader);
+            fillRicindicationMessageFmt2V3(ricIndicationMessage);
         }else{
-            ret = kpmFillRicIndicationHeader(ricIndicationHeader);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill RIC Indication Header, %d", __LINE__);
-                return;
-            }
-            ret = kpmFillRicIndicationMessage(ricIndicationMessage, INDICATION_FORMAT2);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill RIC Indication Message, %d", __LINE__);
-                return;
-            }
+            fillRicIndicationHeader(ricIndicationHeader);
+            fillRicindicationMessageFmt2(ricIndicationMessage);
         }
         BuildAndSendRicIndication();
         DU_FREE(ricIndicationMessage->buf, ricIndicationMessage->size);
@@ -2989,61 +2099,32 @@ void kpmSendSliceMetric(){
     }
 }
 
-/*******************************************************************
- *
- * @brief Send the cell metrics to RIC with RIC Indication
- *
- * @details
- *
- *    Function : kpmSendCellMetric
- *
- *    Functionality: Build the cell metrics and send RIC Indication to RIC
- *
- * @return void
- *
- ******************************************************************/
-
 void kpmSendCellMetric(){
-    uint8_t ret;
     if(kpmCellIndicationEnable){
         if(ricIndicationMessage == NULL){
+            // allocate memory for ricIndicationMessage by DU_ALLOC
             DU_ALLOC(ricIndicationMessage, sizeof(RICindicationMessage_t));
             if(ricIndicationMessage == NULL){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for RIC Indication Message failed, %d", __LINE__);
+                printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ricIndicationMessage");
                 return;
             }
         }
         if(ricIndicationHeader == NULL){
+            // allocate memory for ricIndicationHeader by DU_ALLOC
             DU_ALLOC(ricIndicationHeader, sizeof(RICindicationHeader_t));
             if(ricIndicationHeader == NULL){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Memory allocation for RIC Indication Header failed, %d", __LINE__);
+                printf("\nERROR   -->  E2SM-KPM : Memory allocation failed for ricIndicationHeader");
                 return;
             }
         }
 
         kpmCalcCellMetric();
         if(kpmIndicationV3Enable){
-            ret = kpmFillRicIndicationHeaderV3(ricIndicationHeader);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill RIC Indication Header, %d", __LINE__);
-                return;
-            }
-            ret = kpmFillRicIndicationMessageV3(ricIndicationMessage, INDICATION_FORMAT1);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill RIC Indication Message, %d", __LINE__);
-                return;
-            }
+            fillRicIndicationHeaderV3(ricIndicationHeader);
+            fillRicindicationMessageFmt1V3(ricIndicationMessage);
         }else{
-            ret = kpmFillRicIndicationHeader(ricIndicationHeader);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill RIC Indication Header, %d", __LINE__);
-                return;
-            }
-            ret = kpmFillRicIndicationMessage(ricIndicationMessage, INDICATION_FORMAT1);
-            if(ret != ROK){
-                DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill RIC Indication Message, %d", __LINE__);
-                return;
-            }
+            fillRicIndicationHeader(ricIndicationHeader);
+            fillRicindicationMessageFmt1(ricIndicationMessage);
         }
         BuildAndSendRicIndication();
         DU_FREE(ricIndicationMessage->buf, ricIndicationMessage->size);
@@ -3052,21 +2133,228 @@ void kpmSendCellMetric(){
     }
 }
 
-/*******************************************************************
- *
- * @brief Send the metrics to RIC with RIC Indication
- *
- * @details
- *
- *    Function : kpmSendMetrics
- *
- *    Functionality: Build and send RIC Indication to RIC
- *
- * @return void
- *
- ******************************************************************/
+uint8_t kpmCalcCellMetric(){
+    long rlcIndex = indexOfCellRlcPm - 1;
+    long macIndex = indexOfCellMacPm - 1;
+    uint64_t usedPrbSum = 0, totalPrbSum = 0, thpSum = 0;
 
-void kpmSendMetrics(){
+    for(int i=0;i<indicationMacCellCount;i++){
+        usedPrbSum += kpmCellPmDb.eachMacPm[macIndex].usedPrb;
+        totalPrbSum += kpmCellPmDb.eachMacPm[macIndex].totalPrb;
+        if(macIndex>0)
+            macIndex--;
+        else{
+            macIndex = SIZE_OF_MACDB - 1;
+        }
+    }
+
+    for(int i=0;i<indicationRlcCellCount;i++){
+        thpSum += kpmCellPmDb.eachRlcPm[rlcIndex].ThpDl;
+        if(rlcIndex>0)
+            rlcIndex--;
+        else{
+            rlcIndex = SIZE_OF_RLCDB - 1;
+        }
+    }
+
+
+    kpmCellPmDb.avgThpDl = indicationRlcCellCount ? thpSum / indicationRlcCellCount : 0;
+    kpmCellPmDb.avgUsedPrb = indicationMacCellCount ? usedPrbSum / indicationMacCellCount : 0;
+    kpmCellPmDb.avgTotalPrb = indicationMacCellCount ? totalPrbSum / indicationMacCellCount : 0;
+    kpmCellPmDb.avgUsagePrb = indicationMacCellCount ? (double)100.0 * kpmCellPmDb.avgUsedPrb / kpmCellPmDb.avgTotalPrb  : 0;
+
+    indicationMacCellCount = 0;
+    indicationRlcCellCount = 0;
+
+    return 0;    
+}
+
+uint8_t kpmCalcSliceMetric(){
+    long rlcIndex = indexOfSliceRlcPm;
+    long macIndex = indexOfSliceMacPm;
+    uint64_t usedPrbSum[MAX_SIZE_OF_SLICE] = {0, };
+    uint64_t thpSum[MAX_SIZE_OF_SLICE] = {0, };
+
+    for(int i=0;i<indicationMacSliceCount;i++){
+        for(int j=0;j<kpmSlicePmDb.numOfSlice;j++){
+            usedPrbSum[j] += kpmSlicePmDb.eachMacPm[macIndex].sliceRecord[j].usedPrb;
+        }
+        if(macIndex>0)
+            macIndex--;
+        else{
+            macIndex = SIZE_OF_MACDB - 1;
+        }
+    }
+
+    for(int i=0;i<indicationRlcSliceCount;i++){
+        for(int j=0;j<MAX_SIZE_OF_SLICE;j++){
+            thpSum[j] += kpmSlicePmDb.eachRlcPm[rlcIndex].sliceRecord[j].ThpDl;
+        }
+        if(rlcIndex>0)
+            rlcIndex--;
+        else{
+            rlcIndex = SIZE_OF_RLCDB - 1;
+        }
+    }
+
+    for(int i=0;i<MAX_SIZE_OF_SLICE;i++){
+        kpmSlicePmDb.avgUsedPrb[i] = indicationMacSliceCount ? usedPrbSum[i] / indicationMacSliceCount : 0;
+        kpmSlicePmDb.avgThpDl[i] = indicationRlcSliceCount ? thpSum[i] / indicationRlcSliceCount : 0;
+        DU_LOG("\nJacky --> KPM: SNSSAI(sst:%d,sd [%d, %d, %d]), DL PRBUsed : %d, DLtpt : %d", \
+            kpmSlicePmDb.snssai[i].sst, kpmSlicePmDb.snssai[i].sd[0], kpmSlicePmDb.snssai[i].sd[1], \
+            kpmSlicePmDb.snssai[i].sd[2], kpmSlicePmDb.avgUsedPrb[i], kpmSlicePmDb.avgThpDl[i]);
+    }
+    indicationMacSliceCount = 0;
+    indicationRlcSliceCount = 0;
+    return 0;
+}
+
+void calcSmoMetric(){
+    long rlcIndex = indexOfSliceRlcPm;
+    long macIndex = indexOfSliceMacPm;
+    uint64_t usedPrbSum[MAX_SIZE_OF_SLICE] = {0, };
+    uint64_t thpSum[MAX_SIZE_OF_SLICE] = {0, };
+
+    smoMacSliceCount++;
+
+    for(int i=0;i<smoMacSliceCount;i++){
+        for(int j=0;j<kpmSlicePmDb.numOfSlice;j++){
+            usedPrbSum[j] += kpmSlicePmDb.eachMacPm[macIndex].sliceRecord[j].usedPrb;   
+        }
+        // DU_LOG("\nJacky --> SMO: # %d tpt = %d, %d, %d", macIndex, kpmSlicePmDb.eachMacPm[macIndex].sliceRecord[0].usedPrb, kpmSlicePmDb.eachMacPm[macIndex].sliceRecord[1].usedPrb,  kpmSlicePmDb.eachMacPm[macIndex].sliceRecord[2].usedPrb);
+
+        if(macIndex>0)
+            macIndex--;
+        else{
+            macIndex = SIZE_OF_MACDB - 1;
+        }
+    }
+
+    for(int i=0;i<smoRlcSliceCount;i++){
+        for(int j=0;j<MAX_SIZE_OF_SLICE;j++){
+            thpSum[j] += kpmSlicePmDb.eachRlcPm[rlcIndex].sliceRecord[j].ThpDl;
+        }
+        // DU_LOG("\nJacky --> SMO: # %d tpt = %d, %d, %d", rlcIndex, kpmSlicePmDb.eachRlcPm[rlcIndex].sliceRecord[0].ThpDl, kpmSlicePmDb.eachRlcPm[rlcIndex].sliceRecord[1].ThpDl,  kpmSlicePmDb.eachRlcPm[rlcIndex].sliceRecord[2].ThpDl);
+        if(rlcIndex>0)
+            rlcIndex--;
+        else{
+            rlcIndex = SIZE_OF_RLCDB - 1;
+        }
+    }
+
+    for(int i=0;i<MAX_SIZE_OF_SLICE;i++){
+        kpmSlicePmDb.smo_avgUsedPrb[i] = smoMacSliceCount ? (uint64_t)usedPrbSum[i] / smoMacSliceCount : 0;
+        kpmSlicePmDb.smo_avgThpDl[i] = smoRlcSliceCount ? (uint64_t)thpSum[i] / smoRlcSliceCount : 0;
+        // DU_LOG("\nJacky --> SMO: SNSSAI(sst:%d,sd [%d, %d, %d]), DL PRBUsed : %d, DLtpt : %d", \
+            kpmSlicePmDb.snssai[i].sst, kpmSlicePmDb.snssai[i].sd[0], kpmSlicePmDb.snssai[i].sd[1], \
+            kpmSlicePmDb.snssai[i].sd[2], kpmSlicePmDb.smo_avgUsedPrb[i], kpmSlicePmDb.smo_avgThpDl[i]);
+    }
+    smoRlcSliceCount = 0;
+    smoMacSliceCount = 0;
+    return 0;
+}
+
+void kpmStoreCellRlcMetric(CellPmList* cellMetricList){
+    if(cellMetricList != NULL){
+        if(cellMetricList->numUe>0){
+            printf("\nINFO   -->  E2SM-KPM : Support sending UE Average Throughput to xApp");
+            if(indexOfCellRlcPm<SIZE_OF_RLCDB){
+                indexOfCellRlcPm++;
+            }
+            else{
+                indexOfCellRlcPm=0;
+            }
+            kpmCellPmDb.eachRlcPm[indexOfCellRlcPm].ThpDl = cellMetricList->ueRecord->ThpDl;
+        }
+    }
+    if(kpmCellIndicationEnable){
+        indicationRlcCellCount++;
+    }
+}
+
+void kpmStoreSliceRlcMetric(SlicePmList* sliceMetricList){
+    if(sliceMetricList){
+        indexOfSliceRlcPm++;
+        if(indexOfSliceRlcPm == SIZE_OF_RLCDB)
+            indexOfSliceRlcPm = 0;
+
+        for(int i=0;i<sliceMetricList->numSlice;i++){
+                kpmSlicePmDb.eachRlcPm[indexOfSliceRlcPm].sliceRecord[i].ThpDl = (int)sliceMetricList->sliceRecord[i].ThpDl;
+                kpmSlicePmDb.snssai[i].sst = (char)sliceMetricList->sliceRecord[i].networkSliceIdentifier.sst;
+                kpmSlicePmDb.snssai[i].sd[0] = (sliceMetricList->sliceRecord[i].networkSliceIdentifier.sd / 100 ) % 10;
+                kpmSlicePmDb.snssai[i].sd[1] = (sliceMetricList->sliceRecord[i].networkSliceIdentifier.sd / 10) % 10;
+                kpmSlicePmDb.snssai[i].sd[2] = (sliceMetricList->sliceRecord[i].networkSliceIdentifier.sd ) % 10; 
+        }
+        kpmSlicePmDb.eachRlcPm[indexOfSliceRlcPm].numOfSlice = sliceMetricList->numSlice;
+        // DU_LOG("\nJacky --> SMO: Store # %d tpt = %d, %d, %d", indexOfSliceRlcPm, kpmSlicePmDb.eachRlcPm[indexOfSliceRlcPm].sliceRecord[0].ThpDl, kpmSlicePmDb.eachRlcPm[indexOfSliceRlcPm].sliceRecord[1].ThpDl,  kpmSlicePmDb.eachRlcPm[indexOfSliceRlcPm].sliceRecord[2].ThpDl);
+
+    }
+
+    if(kpmSliceIndicationEnable){
+        indicationRlcSliceCount++;
+    }
+
+    if(smoRlcSliceCount<30)
+        smoRlcSliceCount++;
+    else{
+        calcSmoMetric();
+        #ifdef O1_ENABLE
+            SliceMetricList *sliceStatsList = (SliceMetricList*)calloc(1, sizeof(SliceMetricList));
+            sliceStatsList->nRecords = kpmSlicePmDb.numOfSlice;
+            sliceStatsList->sliceRecord = (SliceMetricRecord*)calloc(sliceStatsList->nRecords, sizeof(SliceMetricRecord));
+            for(int i = 0; i < kpmSlicePmDb.numOfSlice; i++)
+            {
+                sliceStatsList->sliceRecord[i].networkSliceIdentifier.sd = 10000 * kpmSlicePmDb.snssai[i].sd[0] + 100 * kpmSlicePmDb.snssai[i].sd[1] + (uint32_t)kpmSlicePmDb.snssai[i].sd[2];
+                sliceStatsList->sliceRecord[i].networkSliceIdentifier.sst = kpmSlicePmDb.snssai[i].sst;
+                sliceStatsList->sliceRecord[i].DRB_UEThpDl_SNSSAI = kpmSlicePmDb.smo_avgThpDl[i];
+                sliceStatsList->sliceRecord[i].DRB_PrbUsedDl_SNSSAI = kpmSlicePmDb.smo_avgUsedPrb[i];
+                printf("\nJacky   -->  SMO : slice %d, throughput = %.2f, PRB = %.2f ", i, kpmSlicePmDb.smo_avgThpDl[i], kpmSlicePmDb.smo_avgUsedPrb[i]);
+            }
+            sendSliceMetric(sliceStatsList);
+            free(sliceStatsList->sliceRecord);
+            free(sliceStatsList);
+        #endif
+    }
+    
+
     kpmSendCellMetric();
     kpmSendSliceMetric();
+}
+
+void kpmStoreMacMetric(MacPrbPm* macPrbPm){ // Enter this function per millisecond. 
+    if(macPrbPm != NULL){
+        if(indexOfCellMacPm<SIZE_OF_MACDB)
+            indexOfCellMacPm++;
+        else
+            indexOfCellMacPm = 0;
+        kpmCellPmDb.eachMacPm[indexOfCellMacPm].usedPrb = macPrbPm->usedPrb;
+        kpmCellPmDb.eachMacPm[indexOfCellMacPm].totalPrb = macPrbPm->totalPrb;
+        
+        // printf("\nINFO   -->  E2SM-KPM : kpmSlicePmDb.numOfSlice = %d", kpmSlicePmDb.numOfSlice);
+        if(indexOfSliceMacPm<SIZE_OF_MACDB)
+            indexOfSliceMacPm++;
+        else
+            indexOfSliceMacPm = 0;
+        kpmSlicePmDb.numOfSlice = macPrbPm->sliceNum;
+        for(int i=0;i<macPrbPm->sliceNum;i++){
+            kpmSlicePmDb.eachMacPm[indexOfSliceMacPm].numOfSlice = macPrbPm->sliceNum;
+            if(macPrbPm->listOfSlicePm){
+                kpmSlicePmDb.eachMacPm[indexOfSliceMacPm].sliceRecord[i].usedPrb = macPrbPm->listOfSlicePm[i].usedPrb;
+            }
+            // DU_LOG("\nJacky --> SMO: Store # %d prb = %d, %d, %d", indexOfSliceMacPm, kpmSlicePmDb.eachMacPm[indexOfSliceMacPm].sliceRecord[0].usedPrb, kpmSlicePmDb.eachMacPm[indexOfSliceMacPm].sliceRecord[1].usedPrb,  kpmSlicePmDb.eachMacPm[indexOfSliceMacPm].sliceRecord[2].usedPrb);
+        }
+    }
+    else{
+        printf("\nERROR   -->  E2SM-KPM : Empty macPrbPm");
+    }
+
+    if(kpmCellIndicationEnable){
+        indicationMacCellCount++;
+    }
+    if(kpmSliceIndicationEnable){
+        indicationMacSliceCount++;
+    }
+
+    smoMacSliceCount++;
+    return;
 }

@@ -717,76 +717,19 @@ uint16_t cuEgtpDatReq(uint32_t duId, uint8_t teId)
  * ****************************************************************/
 S16 BuildAppMsg(uint32_t duId, EgtpMsg  *egtpMsg)
 {
+   char data[1215] = "In telecommunications, 5G is the fifth generation technology standard for broadband cellular"
+   " networks, which cellular phone companies began deploying worldwide in 2019, and is the planned successor to the 4G "
+   " networks which provide connectivity to most current cellphones. 5G networks are predicted to have more than 1.7"
+   " billion subscribers worldwide by 2025, according to the GSM Association.Like its predecessors, 5G networks are"
+   " cellular networks,in which the service area is divided into small geographical areas called cells.All 5G wireless"
+   " devices in a cell are connected to the Internet and telephone network by radio waves through local antenna in the"
+   " cell. The main advantage of the new networks is that they will have greater bandwidth, giving higher download"
+   " speeds, eventually up to 10 gigabits per second(Gbit/s). Due to the increased bandwidth, it is expected the"
+   " networks will not exclusively serve cellphones like existing cellular networks, but also be used as general"
+   " internet service providers for laptops and desktop computers, competing with existing ISPs such as cable"
+   " internet, and also will make possible new applications in internet of things (IoT) and machine to machine areas.";
 
-   char data[30720] = {'X', };
-   // char data[7290] = "In telecommunications, 5G is the fifth generation technology standard for broadband cellular"
-   // " networks, which cellular phone companies began deploying worldwide in 2019, and is the planned successor to the 4G "
-   // " networks which provide connectivity to most current cellphones. 5G networks are predicted to have more than 1.7"
-   // " billion subscribers worldwide by 2025, according to the GSM Association.Like its predecessors, 5G networks are"
-   // " cellular networks,in which the service area is divided into small geographical areas called cells.All 5G wireless"
-   // " devices in a cell are connected to the Internet and telephone network by radio waves through local antenna in the"
-   // " cell. The main advantage of the new networks is that they will have greater bandwidth, giving higher download"
-   // " speeds, eventually up to 10 gigabits per second(Gbit/s). Due to the increased bandwidth, it is expected the"
-   // " networks will not exclusively serve cellphones like existing cellular networks, but also be used as general"
-   // " internet service providers for laptops and desktop computers, competing with existing ISPs such as cable"
-   // " internet, and also will make possible new applications in internet of things (IoT) and machine to machine areas."
-   // "In telecommunications, 6G is the fifth generation technology standard for broadband cellular"
-   // " networks, which cellular phone companies began deploying worldwide in 2019, and is the planned successor to the 4G "
-   // " networks which provide connectivity to most current cellphones. 5G networks are predicted to have more than 1.7"
-   // " billion subscribers worldwide by 2025, according to the GSM Association.Like its predecessors, 5G networks are"
-   // " cellular networks,in which the service area is divided into small geographical areas called cells.All 5G wireless"
-   // " devices in a cell are connected to the Internet and telephone network by radio waves through local antenna in the"
-   // " cell. The main advantage of the new networks is that they will have greater bandwidth, giving higher download"
-   // " speeds, eventually up to 10 gigabits per second(Gbit/s). Due to the increased bandwidth, it is expected the"
-   // " networks will not exclusively serve cellphones like existing cellular networks, but also be used as general"
-   // " internet service providers for laptops and desktop computers, competing with existing ISPs such as cable"
-   // " internet, and also will make possible new applications in internet of things (IoT) and machine to machine areas."
-   // "In telecommunications, 7G is the fifth generation technology standard for broadband cellular"
-   // " networks, which cellular phone companies began deploying worldwide in 2019, and is the planned successor to the 4G "
-   // " networks which provide connectivity to most current cellphones. 5G networks are predicted to have more than 1.7"
-   // " billion subscribers worldwide by 2025, according to the GSM Association.Like its predecessors, 5G networks are"
-   // " cellular networks,in which the service area is divided into small geographical areas called cells.All 5G wireless"
-   // " devices in a cell are connected to the Internet and telephone network by radio waves through local antenna in the"
-   // " cell. The main advantage of the new networks is that they will have greater bandwidth, giving higher download"
-   // " speeds, eventually up to 10 gigabits per second(Gbit/s). Due to the increased bandwidth, it is expected the"
-   // " networks will not exclusively serve cellphones like existing cellular networks, but also be used as general"
-   // " internet service providers for laptops and desktop computers, competing with existing ISPs such as cable"
-   // " internet, and also will make possible new applications in internet of things (IoT) and machine to machine areas."
-   // "In telecommunications, 8G is the fifth generation technology standard for broadband cellular"
-   // " networks, which cellular phone companies began deploying worldwide in 2019, and is the planned successor to the 4G "
-   // " networks which provide connectivity to most current cellphones. 5G networks are predicted to have more than 1.7"
-   // " billion subscribers worldwide by 2025, according to the GSM Association.Like its predecessors, 5G networks are"
-   // " cellular networks,in which the service area is divided into small geographical areas called cells.All 5G wireless"
-   // " devices in a cell are connected to the Internet and telephone network by radio waves through local antenna in the"
-   // " cell. The main advantage of the new networks is that they will have greater bandwidth, giving higher download"
-   // " speeds, eventually up to 10 gigabits per second(Gbit/s). Due to the increased bandwidth, it is expected the"
-   // " networks will not exclusively serve cellphones like existing cellular networks, but also be used as general"
-   // " internet service providers for laptops and desktop computers, competing with existing ISPs such as cable"
-   // " internet, and also will make possible new applications in internet of things (IoT) and machine to machine areas."
-   // "In telecommunications, 9G is the fifth generation technology standard for broadband cellular"
-   // " networks, which cellular phone companies began deploying worldwide in 2019, and is the planned successor to the 4G "
-   // " networks which provide connectivity to most current cellphones. 5G networks are predicted to have more than 1.7"
-   // " billion subscribers worldwide by 2025, according to the GSM Association.Like its predecessors, 5G networks are"
-   // " cellular networks,in which the service area is divided into small geographical areas called cells.All 5G wireless"
-   // " devices in a cell are connected to the Internet and telephone network by radio waves through local antenna in the"
-   // " cell. The main advantage of the new networks is that they will have greater bandwidth, giving higher download"
-   // " speeds, eventually up to 10 gigabits per second(Gbit/s). Due to the increased bandwidth, it is expected the"
-   // " networks will not exclusively serve cellphones like existing cellular networks, but also be used as general"
-   // " internet service providers for laptops and desktop computers, competing with existing ISPs such as cable"
-   // " internet, and also will make possible new applications in internet of things (IoT) and machine to machine areas."
-   // "In telecommunications, 10 is the fifth generation technology standard for broadband cellular"
-   // " networks, which cellular phone companies began deploying worldwide in 2019, and is the planned successor to the 4G "
-   // " networks which provide connectivity to most current cellphones. 5G networks are predicted to have more than 1.7"
-   // " billion subscribers worldwide by 2025, according to the GSM Association.Like its predecessors, 5G networks are"
-   // " cellular networks,in which the service area is divided into small geographical areas called cells.All 5G wireless"
-   // " devices in a cell are connected to the Internet and telephone network by radio waves through local antenna in the"
-   // " cell. The main advantage of the new networks is that they will have greater bandwidth, giving higher download"
-   // " speeds, eventually up to 10 gigabits per second(Gbit/s). Due to the increased bandwidth, it is expected the"
-   // " networks will not exclusively serve cellphones like existing cellular networks, but also be used as general"
-   // " internet service providers for laptops and desktop computers, competing with existing ISPs such as cable"
-   // " internet, and also will make possible new applications in internet of things (IoT) and machine to machine areas.";
-
-   int datSize = 30720;
+   int datSize = 1215;
  
    Buffer   *mBuf;
  
@@ -877,7 +820,7 @@ S16 BuildAppMsg(uint32_t duId, EgtpMsg  *egtpMsg)
    egtpMsg->msgHdr.msgType = EGTPU_MSG_GPDU;
    egtpMsg->msgHdr.nPdu.pres = TRUE;
 
-   if(egtpCb.gCntPdu[egtpMsg->msgHdr.teId] != NUM_DL_PACKETS + 5)
+   if(egtpCb.gCntPdu[egtpMsg->msgHdr.teId] != NUM_DL_PACKETS)
      egtpCb.gCntPdu[egtpMsg->msgHdr.teId]++;
    else
      egtpCb.gCntPdu[egtpMsg->msgHdr.teId] = 1;

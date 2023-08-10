@@ -367,8 +367,7 @@ uint8_t duHandleCellUpInd(Pst *pst, OduCellId *cellId)
       raiseCellAlrm(CELL_UP_ALARM_ID, cellId->cellId);
       setCellOpState(cellId->cellId, ENABLED, ACTIVE);
 #endif
-       duCfgParam.macCellCfg.cellCfg.opState = OP_ENABLED;
-       duCfgParam.macCellCfg.cellCfg.cellState = CELL_ACTIVE;
+
    }
 
    if((pst->selector == ODU_SELECTOR_LWLC) || (pst->selector == ODU_SELECTOR_TC))
@@ -400,7 +399,7 @@ uint8_t DuProcMacCellDeleteRsp(Pst *pst, MacCellDeleteRsp *deleteRsp)
 
    if(deleteRsp)
    {
-      if(deleteRsp->status == SUCCESSFUL)
+      if(deleteRsp->result == SUCCESSFUL_RSP)
       {
          GET_CELL_IDX(deleteRsp->cellId, cellIdx);
          DU_LOG("\nINFO   -->  DU APP : MAC CELL Delete Response : SUCCESS [CELL IDX : %d]", deleteRsp->cellId);

@@ -116,12 +116,6 @@ DuRlcUeDeleteReq packRlcUeDeleteReqOpts[] =
    packDuRlcUeDeleteReq        /* Light weight-loose coupling */
 };
 
-DuMacUeResetReq packMacUeResetReqOpts[] =
-{
-   packDuMacUeResetReq,       /* Loose coupling */
-   MacProcUeResetReq,         /* TIght coupling */
-   packDuMacUeResetReq        /* Light weight-loose coupling */
-};
 /******************************************************************
  *
  * @brief Function to return Drb LcId
@@ -278,7 +272,7 @@ uint8_t duHdlEgtpDlData(EgtpMsg  *egtpMsg)
     DU_LOG("\nCall Flow: ENTEGTP -> ENTDUAPP : EVENT_HDL_RECV_DL_DATA\n");
 #endif
 
-   DU_LOG("\nDEBUG  -->  DU_APP : Processing DL data in duHdlEgtpDlData()");
+   DU_LOG("\nDEBUG  --> DU_APP : Processing DL data in duHdlEgtpDlData()");
    
    if(!egtpMsg->msg)
    {
@@ -437,7 +431,7 @@ uint8_t duBuildAndSendDlRrcMsgToRlc(uint16_t cellId, DuRlcUeCfg ueCfg, F1DlRrcMs
 
    /* Filling post structure and sending msg */ 
    FILL_PST_DUAPP_TO_RLC(pst, RLC_DL_INST, EVENT_DL_RRC_MSG_TRANS_TO_RLC);
-   DU_LOG("\nDEBUG  -->  DU_APP: Sending Dl RRC Msg to RLC \n");
+   DU_LOG("\nDEBUG   -->  DU_APP: Sending Dl RRC Msg to RLC \n");
    ret = (*duSendDlRrcMsgToRlcOpts[pst.selector])(&pst, dlRrcMsgInfo);
    if(ret != ROK)
    {
@@ -1001,9 +995,7 @@ void fillDefaultMacCellGrpInfo(DuMacUeCfg *macUeCfg)
 void fillDefaultModulation(DuMacUeCfg *ueCfg)
 {
    ueCfg->dlModInfo.modOrder = MOD_ORDER_QPSK;
-   // ueCfg->dlModInfo.mcsIndex = 8;
    ueCfg->dlModInfo.mcsIndex = DEFAULT_MCS;
-   // ueCfg->dlModInfo.mcsIndex = DEFAULT_MCS + (ueCfg->ueId - 1) * 4;
    ueCfg->dlModInfo.mcsTable = MCS_TABLE_QAM64; /* Spec 38.214-Table 5.1.3.1-1 */
 
    ueCfg->ulModInfo.modOrder = MOD_ORDER_QPSK;
@@ -3682,7 +3674,7 @@ uint8_t DuProcMacUeDeleteRsp(Pst *pst, MacUeDeleteRsp *deleteRsp)
    
    if(deleteRsp)
    {
-      if(deleteRsp->status == SUCCESSFUL)
+      if(deleteRsp->result == DEL_SUCCESSFUL)
       {
          DU_LOG("\nINFO   -->  DU APP : MAC UE Delete Response : SUCCESS [UE IDX : %d]", deleteRsp->ueId);
          GET_CELL_IDX(deleteRsp->cellId, cellIdx);
@@ -3747,7 +3739,7 @@ uint8_t DuProcRlcUeDeleteRsp(Pst *pst, RlcUeDeleteRsp *delRsp)
       ueId = delRsp->ueId;
       GET_CELL_IDX(delRsp->cellId, cellIdx);
 
-      if(delRsp->status == SUCCESSFUL)
+      if(delRsp->result == SUCCESSFUL)
       {
          DU_LOG("\nINFO   -->  DU_APP: RLC UE Delete Response : SUCCESS [UE IDX:%d]", ueId);
          if(duCb.actvCellLst[cellIdx]!=NULLP)
@@ -4027,218 +4019,6 @@ uint8_t duProcUeContextReleaseCommand(uint16_t cellId, DuUeCb *duUeCb)
    return ret;
 }
 
-/*******************************************************************
- *
- * @brief Sending UE Reset Req To Mac
-*
-* @details
-*
-*    Function : sendUeResetReqToMac
-*
-*    Functionality:
-*     sending UE Reset Req To Mac
-*
-*  @params[in]    cellId, ueId, crnti 
-*  @return ROK     - success
-*          RFAILED - failure
-*
-*****************************************************************/
-
-uint8_t sendUeResetReqToMac(uint16_t cellId, uint8_t ueId)
-{
-   Pst pst;
-   uint8_t ret=ROK;
-   MacUeResetReq *ueReset = NULLP;
-
-   DU_ALLOC_SHRABL_BUF(ueReset, sizeof(MacUeResetReq));
-   if(ueReset)
-   {
-      ueReset->cellId = cellId;
-      ueReset->ueId   = ueId;
-      FILL_PST_DUAPP_TO_MAC(pst, EVENT_MAC_UE_RESET_REQ);
-
-      DU_LOG("\nDEBUG  -->  DU_APP: Sending UE Reset Request to MAC ");
-      ret = (*packMacUeResetReqOpts[pst.selector])(&pst, ueReset);
-      if(ret == RFAILED)
-      {
-         DU_LOG("\nERROR  -->  DU_APP: sendUeResetReqToMac(): Failed to send UE Reset Req to MAC");
-         DU_FREE_SHRABL_BUF(DU_APP_MEM_REGION, DU_POOL, ueReset, sizeof(MacUeResetReq));
-      }
-   }
-   else
-   {
-      DU_LOG("\nERROR  -->   DU_APP: sendUeResetReqToMac(): Failed to allocate memory"); 
-      ret = RFAILED;
-   }
-   return ret;
-}
-
-/*******************************************************************
- *
- * @brief DU processes UE reset req  and send it to MAC
- *
- * @details
- *
- *    Function : duBuildAndSendUeResetReq
- *
- *    Functionality: DU processes UE reset req and send to MAC
- *                   
- *
- * @params[in] cellId, crnti 
- * @return ROK     - success
- *         RFAILED - failure
- *
- * ****************************************************************/
-
-uint8_t duBuildAndSendUeResetReq(uint16_t cellId, uint16_t crnti)
-{
-   uint8_t  ueId =0;
-   uint16_t cellIdx = 0;
-
-   DU_LOG("\nDEBUG  -->  DU_APP : Building UE reset request");
-   GET_CELL_IDX(cellId, cellIdx);
-   GET_UE_ID(crnti, ueId);
-
-   if(duCb.actvCellLst[cellIdx] != NULLP)
-   {
-      if(crnti != duCb.actvCellLst[cellIdx]->ueCb[ueId - 1].crnti)
-      {
-         DU_LOG("\nERROR  -->  DU APP : duBuildAndSendUeResetReq(): CRNTI [%d] not found", crnti);
-         return RFAILED;
-      }
-
-      duCb.actvCellLst[cellIdx]->ueCb[ueId - 1].ueState = UE_RESET_IN_PROGRESS; 
-      if(sendUeResetReqToMac(cellId, ueId) == RFAILED)
-      {
-         DU_LOG("\nERROR  -->  DU APP : DuProcMacUeResetRsp(): Failed to build UE reset req for MAC ");
-         return RFAILED;
-      }
-   }
-   else
-   {
-      DU_LOG("\nERROR  -->  DU APP : duBuildAndSendUeResetReq(): Cell Id %d not found", cellId);
-      return RFAILED;
-   }
-
-   return ROK;
-}
-
-/*******************************************************************
-*
-* @brief Handle UE reset response from MAC
-*
-* @details
-*
-*    Function : DuProcMacUeResetRsp
-*
-*    Functionality: Handle UE reset response from MAC
-*
-* @params[in] Pointer to MacUeResetRsp and Pst
-* @return ROK     - success
-*         RFAILED - failure
-*
-* ****************************************************************/
-
-uint8_t DuProcMacUeResetRsp(Pst *pst, MacUeResetRsp *resetRsp)
-{
-   uint8_t  ret =ROK;
-   uint16_t cellIdx=0;
-   
-   if(resetRsp)
-   {
-      if(resetRsp->status == SUCCESSFUL)
-      {
-         DU_LOG("\nINFO   -->  DU APP : MAC UE Reset Response : SUCCESS [UE IDX : %d]", resetRsp->ueId);
-         GET_CELL_IDX(resetRsp->cellId, cellIdx);
-         if(duCb.actvCellLst[cellIdx])
-         {
-            duCb.actvCellLst[cellIdx]->ueCb[resetRsp->ueId -1].duMacUeCfg.macUeCfgState = UE_RESET_COMPLETE;
-            /*TODO - Complete the processing after receiving successfully reset rsp*/
-         }
-      }
-      else
-      {
-         DU_LOG("\nERROR  -->  DU APP : DuProcMacUeResetRsp(): MAC UE Reset Response : FAILURE [UE IDX : %d]",resetRsp->ueId);
-         ret =  RFAILED;
-      }
-      DU_FREE_SHRABL_BUF(pst->region, pst->pool, resetRsp, sizeof(MacUeResetRsp));
-   }
-   else
-   {
-      DU_LOG("\nERROR  -->  DU APP : DuProcMacUeResetRsp(): MAC UE Reset Response is null");
-      ret = RFAILED;
-   }
-   return ret;
-}
-
-/*******************************************************************
-*
-* @brief Handle UE sync status indication from MAC
-*
-* @details
-*
-*    Function : DuProcMacUeSyncStatusInd
-*
-*    Functionality: Handle UE sync status indication from MAC
-*
-* @params[in] Pointer to MacUeSyncStatusInd and Pst
-* @return ROK     - success
-*         RFAILED - failure
-*
-* ****************************************************************/
-
-uint8_t DuProcMacUeSyncStatusInd(Pst *pst, MacUeSyncStatusInd *ueSyncStatusInd)
-{
-   uint8_t  ret =RFAILED;
-   uint16_t cellIdx=0, crnti = 0;
-   char *status;
-
-   if(ueSyncStatusInd)
-   {
-      GET_CELL_IDX(ueSyncStatusInd->cellId, cellIdx);
-      if(duCb.actvCellLst[cellIdx])
-      {
-         GET_CRNTI(crnti, ueSyncStatusInd->ueId);
-         if(duCb.actvCellLst[cellIdx]->ueCb[ueSyncStatusInd->ueId-1].crnti == crnti)
-         {
-            switch(ueSyncStatusInd->status)
-            {
-               case IN_SYNC:
-                  status = "IN_SYNC";
-                  break;
-
-               case OUT_OF_SYNC:
-                  status = "OUT_OF_SYNC";
-                  break;
-
-               case OUT_OF_SUNC_MAX_RETRIES:
-                  status = "OUT_OF_SUNC_MAX_RETRIES";
-                  break;
-
-               default:
-                  status = "INVALID";
-                  break;
-                  
-            }
-            DU_LOG("\nINFO  -->   DU APP : MAC UE sync status for received UeId %d is %s", ueSyncStatusInd->ueId,status);
-         }
-         else
-         {
-            DU_LOG("\nERROR  -->  DU APP : DuProcMacUeSyncStatusInd(): MAC UE sync status indication : Ue Id [%d] not found",ueSyncStatusInd->cellId);
-         }
-      }
-      else
-      {
-         DU_LOG("\nERROR  -->  DU APP : DuProcMacUeSyncStatusInd(): MAC UE sync status indication : Cell Id [%d] not found",ueSyncStatusInd->cellId);
-      }
-      DU_FREE_SHRABL_BUF(pst->region, pst->pool, ueSyncStatusInd, sizeof(MacUeSyncStatusInd));
-   }
-   else
-   {
-      DU_LOG("\nERROR  -->  DU APP : DuProcMacUeSyncStatusInd(): MAC UE sync status indication is null");
-   }
-   return ret;
-}
 /**********************************************************************
   End of file
 ***********************************************************************/

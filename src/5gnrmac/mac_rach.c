@@ -465,26 +465,17 @@ uint8_t UnrestrictedSetNcsTable[MAX_ZERO_CORR_CFG_IDX] =
 uint8_t MacProcUlSchInfo(Pst *pst, UlSchedInfo *ulSchedInfo)
 {
    uint16_t  cellIdx;
-   MacUlSlot *currUlSlot = NULLP; /*JOJO: Declare UL slot data structure here.*/
 
 #ifdef CALL_FLOW_DEBUG_LOG
    DU_LOG("\nCall Flow: ENTSCH -> ENTMAC : EVENT_UL_SCH_INFO\n");
 #endif
 
-   // GET_CELL_IDX(ulSchedInfo->cellId, cellIdx);
-   /* JOJO: Loop over each UE to handle multiple UL scheduling info. for DL HARQ.*/
+   GET_CELL_IDX(ulSchedInfo->cellId, cellIdx);
    if(ulSchedInfo != NULLP)
    {
-      for(int ueIdx=0; ueIdx<MAX_NUM_UE; ueIdx++)
-      {
-         if(&ulSchedInfo[ueIdx] != NULLP)
-         {
-            GET_CELL_IDX(ulSchedInfo[ueIdx].cellId, cellIdx);
-            currUlSlot = 
-         &macCb.macCell[cellIdx]->ulSlot[ulSchedInfo[ueIdx].slotIndInfo.slot % macCb.macCell[cellIdx]->numOfSlots];
-            memcpy(&currUlSlot->ulInfo[ueIdx], &ulSchedInfo[ueIdx], sizeof(UlSchedInfo)); // modified by JOJO
-         }
-      }
+      MacUlSlot *currUlSlot = 
+	 &macCb.macCell[cellIdx]->ulSlot[ulSchedInfo->slotIndInfo.slot % macCb.macCell[cellIdx]->numOfSlots];
+      memcpy(&currUlSlot->ulInfo, ulSchedInfo, sizeof(UlSchedInfo)); 
    }
    return ROK;
 }

@@ -831,30 +831,6 @@ uint8_t RlcProcDlUserDataTransfer(Pst *pst, RlcDlUserDataInfo *dlDataMsgInfo)
    datReqInfo->lcType       = LCH_DTCH;
    datReqInfo->sduId        = ++(rlcCb[pst->dstInst]->dlSduId);
    mBuf = dlDataMsgInfo->dlMsg;
-
-   /* Avoid RLC BO overflow*/
-   DU_LOG("\nINFO  -->  Jacky: Enter RlcProcDlUserDataTransfer");
-
-   RlcDlRbCb     *rbCb;       /* RB Control Block */
-   RlcCb         *tRlcCb;
-   tRlcCb = RLC_GET_RLCCB(pst->dstInst);
-   rlcDbmFetchDlRbCbByRbId(tRlcCb, &datReqInfo->rlcId, &rbCb);
-
-   if(rbCb){
-      DU_LOG("\nINFO  -->  Jacky: The BO size is: %d", rbCb->m.umDl.bo);
-      if(rbCb->m.umDl.bo>80000){
-         DU_LOG("\nINFO  -->  Jacky: Skip this tranmission");
-         RLC_SHRABL_STATIC_BUF_FREE(RLC_MEM_REGION_DL, RLC_POOL, datReqInfo, sizeof(RlcDatReqInfo));
-         // RLC_SHRABL_STATIC_BUF_FREE(pst->region, pst->pool, dlDataMsgInfo->dlMsg, dlDataMsgInfo->msgLen * sizeof(Buffer));
-         ODU_PUT_MSG_BUF(dlDataMsgInfo->dlMsg);
-         RLC_SHRABL_STATIC_BUF_FREE(pst->region, pst->pool, dlDataMsgInfo, sizeof(RlcDlUserDataInfo));
-         --rlcCb[pst->dstInst]->dlSduId;
-         return ROK;
-      }
-   }else{
-      DU_LOG("\nINFO  -->  Jacky: Empty allocate for rbCb->m.umDl.bo");
-   }
-
    if(rlcProcDlData(pst, datReqInfo, mBuf) != ROK)
    {
       return RFAILED;
@@ -877,13 +853,13 @@ uint8_t RlcProcDlUserDataTransfer(Pst *pst, RlcDlUserDataInfo *dlDataMsgInfo)
  *    Functionality:
  *      sending UE delete response to DU 
  *
- * @params[in] uint8_t cellId, uint8_t ueId, CauseOfResult  status 
+ * @params[in] uint8_t cellId, uint8_t ueId, UeDeleteResult result 
  *
  * @return ROK     - success
  *         RFAILED - failure
  *
  * ****************************************************************/
-uint8_t sendRlcUeDeleteRspToDu(uint16_t cellId,uint8_t ueId, CauseOfResult  status)
+uint8_t sendRlcUeDeleteRspToDu(uint16_t cellId,uint8_t ueId, UeDeleteResult result)
 {
    Pst pst;  
    RlcUeDeleteRsp *ueDeleteRsp = NULLP;
@@ -900,7 +876,7 @@ uint8_t sendRlcUeDeleteRspToDu(uint16_t cellId,uint8_t ueId, CauseOfResult  stat
    {
       ueDeleteRsp->cellId = cellId;
       ueDeleteRsp->ueId = ueId;
-      ueDeleteRsp->status = status;
+      ueDeleteRsp->result = result;
   
       if(rlcSendUeDeleteRspToDu(&pst, ueDeleteRsp) == ROK)
       {
@@ -939,7 +915,7 @@ uint8_t RlcProcUeDeleteReq(Pst *pst, RlcUeDelete *ueDelete)
    uint8_t ret = ROK;
    RlcCb *gRlcCb = NULLP;
    RlcUlUeCb *ueCb = NULLP;
-   CauseOfResult  status =SUCCESSFUL;
+   UeDeleteResult result=SUCCESSFUL;
 
    DU_LOG("\nDEBUG  -->  RLC: UE Delete request received. CellID[%d] UEID[%d]",ueDelete->cellId, ueDelete->ueId);
 
@@ -959,17 +935,17 @@ uint8_t RlcProcUeDeleteReq(Pst *pst, RlcUeDelete *ueDelete)
          }
          else
          {
-            status = CELLID_INVALID;
+            result = INVALID_CELLID;
          }
       }
       else
       {
-         status = UEID_INVALID;
+         result = INVALID_UEID;
       }
 
-      if(status != SUCCESSFUL)
+      if(result != SUCCESSFUL)
       {
-         ret = sendRlcUeDeleteRspToDu(ueDelete->cellId, ueDelete->ueId, status);
+         ret = sendRlcUeDeleteRspToDu(ueDelete->cellId, ueDelete->ueId, result);
          if(ret != ROK)
          {
             DU_LOG("\nERROR  -->  RLC: RlcProcUeDeleteReq():Failed to send UE Delete response to DU");
@@ -1024,51 +1000,6 @@ uint8_t sendSlicePmToDu(SlicePmList *sliceStats)
       {
          DU_LOG("\nERROR  -->  RLC: sendSlicePmToDu():Failed to send Slice PM to DU");
          RLC_FREE_SHRABL_BUF(pst.region, pst.pool, sliceStats, sizeof(SlicePmList));
-         return RFAILED;
-      }
-   }
-   return ROK;
-}
-
-/*******************************************************************
-*
-* @brief Send the Cell Metrics to  DU APP
-*
-* @details
-*
-*    Function : sendCellPmToDu
-*
-*    Functionality:
-*      Handles the sending of Cell Metrics to  DU APP
-*
-* @params[in] Post structure pointer
-*             CellPmList *cellStats pointer
-*
-* @return ROK     - success
-*         RFAILED - failure
-*
-* ****************************************************************/
-uint8_t sendCellPmToDu(CellPmList *cellStats)
-{
-   Pst pst;  
-   
-   FILL_PST_RLC_TO_DUAPP(pst, RLC_UL_INST, EVENT_RLC_UE_PM_TO_DU);
-
-   if(!cellStats)
-   {
-      DU_LOG("\nERROR  -->  RLC: sendSlicePmToDu(): Memory allocation failed ");
-      return RFAILED;
-   }
-   else
-   {
-      if(rlcSendCellPmToDu(&pst, cellStats) == ROK)
-      {
-         DU_LOG("\nDEBUG  -->  RLC: Cell PM send successfully");
-      }
-      else
-      {
-         DU_LOG("\nERROR  -->  RLC: sendCellPmToDu():Failed to send Slice PM to DU");
-         RLC_FREE_SHRABL_BUF(pst.region, pst.pool, cellStats, sizeof(CellPmList));
          return RFAILED;
       }
    }
@@ -1160,6 +1091,8 @@ uint8_t BuildSliceReportToDu(SlicePmList *slicePm, uint8_t snssaiCnt)
    sendSlicePmToDu(sliceStats);
    return ROK;
 }
+<<<<<<< Updated upstream
+=======
 
 
 /*******************************************************************
@@ -1179,11 +1112,13 @@ uint8_t BuildSliceReportToDu(SlicePmList *slicePm, uint8_t snssaiCnt)
 *         RFAILED - failure
 *
 * ****************************************************************/
-uint8_t BuildCellReportToDu(uint8_t ueCnt, int aveTpt, uint16_t ueId[], double ueTpt[])
+uint8_t BuildCellReportToDu(uint8_t ueCnt, int aveTpt)
 {
    CmLList  *node = NULLP;
    RlcTptPerSnssai *snssaiNode = NULLP;
+   Direction dir = DIR_UL;
    CellPmList *cellStats = NULLP;   /*Slice metric */
+   SliceIdentifier snssaiVal ;
    long double tpt;
    uint8_t recordIdx = 0;
 
@@ -1201,7 +1136,7 @@ uint8_t BuildCellReportToDu(uint8_t ueCnt, int aveTpt, uint16_t ueId[], double u
    }
 
    cellStats->numUe = ueCnt;
-   RLC_ALLOC_SHRABL_BUF(RLC_MEM_REGION_UL, RLC_POOL, cellStats->ueRecord, ueCnt * (sizeof(CellPm)));
+   RLC_ALLOC_SHRABL_BUF(RLC_MEM_REGION_UL, RLC_POOL, cellStats->ueRecord, 1 * (sizeof(CellPm)));
 
    if(cellStats->ueRecord == NULLP)
    {
@@ -1209,15 +1144,13 @@ uint8_t BuildCellReportToDu(uint8_t ueCnt, int aveTpt, uint16_t ueId[], double u
       RLC_FREE_SHRABL_BUF(RLC_MEM_REGION_UL, RLC_POOL, cellStats, sizeof(CellPmList));
       return RFAILED;
    }
-   for(int i=0;i<ueCnt;i++){
-      cellStats->ueRecord->ueId = ueId[i];
-      cellStats->ueRecord->ThpDl = ueTpt[i];
-   }
-   cellStats->cellRecord.ThpDl = aveTpt;
+
+   cellStats->ueRecord->ThpDl = aveTpt / ueCnt;
 
    sendCellPmToDu(cellStats);
    return ROK;
 }
+>>>>>>> Stashed changes
 /**********************************************************************
          End of file
 **********************************************************************/

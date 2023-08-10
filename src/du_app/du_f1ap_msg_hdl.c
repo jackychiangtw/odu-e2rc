@@ -1214,7 +1214,7 @@ void freeFddNrFreqInfo(FDD_Info_t *fDD)
  * ****************************************************************/
 void FreeServedCellList( GNB_DU_Served_Cells_List_t *duServedCell)
 {
-   uint8_t   plmnCnt= 1;
+   uint8_t   plmnCnt=MAX_PLMN;
    uint8_t  extensionCnt=IE_EXTENSION_LIST_COUNT;
    uint8_t  plmnIdx=0, sliceIdx=0;
    GNB_DU_Served_Cells_Item_t *srvCellItem;
@@ -2606,7 +2606,7 @@ uint8_t BuildAndSendULRRCMessageTransfer(DuUeCb  *ueCb, uint8_t lcId, \
 
    while(true)
    {
-      DU_LOG("\nINFO   -->  F1AP : Building UL RRC Message Transfer Message\n");
+      DU_LOG("\n INFO   -->  F1AP : Building UL RRC Message Transfer Message\n");
 
       DU_ALLOC(f1apMsg, sizeof(F1AP_PDU_t));
       if(f1apMsg == NULLP)
@@ -2707,7 +2707,7 @@ uint8_t BuildAndSendULRRCMessageTransfer(DuUeCb  *ueCb, uint8_t lcId, \
       }
       else
       {
-	 DU_LOG("\nDEBUG  -->  F1AP : Created APER encoded buffer for ULRRCMessageTransfer\n");
+	 DU_LOG("\nDEBUG   -->  F1AP : Created APER encoded buffer for ULRRCMessageTransfer\n");
 #ifdef DEBUG_ASN_PRINT
 	 for(int i=0; i< encBufSize; i++)
 	 {
@@ -6717,7 +6717,7 @@ uint8_t BuildSpCellConfigCommon(ServingCellConfigCommon_t *spCellConfigCommon)
       convertSsbPeriodicityValueToEnum(duCfgParam.sib1Params.srvCellCfgCommSib.ssbPrdServingCell);
 
    /* DMRS Type A position */
-   spCellConfigCommon->dmrs_TypeA_Position = convertDmrsTypeAPosValueToEnum(duCfgParam.macCellCfg.ssbCfg.dmrsTypeAPos);
+   spCellConfigCommon->dmrs_TypeA_Position = convertDmrsTypeAPosValueToEnum(duCfgParam.macCellCfg.dmrsTypeAPos);
 
    /* SSB subcarrier spacing */
    DU_ALLOC(spCellConfigCommon->ssbSubcarrierSpacing, sizeof(SubcarrierSpacing_t));

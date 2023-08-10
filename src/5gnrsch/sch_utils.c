@@ -88,9 +88,6 @@ int8_t coresetIdxTable[MAX_CORESET_INDEX][4] = {
 };
 #endif
 
-/* JOJO: Cyclic shift set for PUCCH based on Table 9.2.1-1 spec 38.213 */ 
-uint8_t defaultPucchCsset[MAX_PUCCH_RES_SET_IDX] = {2, 3, 3, 2, 4, 4, 4, 2, 4, 4, 4, 2, 4, 4, 4, 4};
-
 /* spec-38.213 Table 13-11 */
 /* m value is scaled to 2, when using it in formula, divide by 2 */
 /* firstSymbol will vary depends on i, hence not filled */
@@ -932,12 +929,8 @@ CmLList* isPrbAvailable(CmLListCp *freePrbBlockList, uint16_t startPrb, uint16_t
 
       /* Check if requested number of blocks can be allocated from the current block */
       if(freeBlock->numFreePrb < numPrb)
-      {
-         DU_LOG("\nINFO   --> SCH: In isPrbAvailable, numFreePrb:%d is less than reqPrb:%d", freeBlock->numFreePrb, numPrb);
-         node = node->next;
          continue;
-      }
-      
+
       /* Check if requested PRBs belong within the range of current free block */
       if(((startPrb >= freeBlock->startPrb) && (startPrb <= freeBlock->endPrb)) && \
          ((endPrb >= freeBlock->startPrb) && (endPrb <= freeBlock->endPrb)))

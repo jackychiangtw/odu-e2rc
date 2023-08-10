@@ -141,7 +141,6 @@ void fillSchDlLcCtxt(SchDlLcCtxt *ueCbLcCfg, SchLcCfg *lcCfg)
 
    if(lcCfg->snssai)
    {
-     //DU_LOG("\nDennis --> Dedicated LC ID: %d", lcCfg->lcId);
      if(ueCbLcCfg->snssai == NULLP)/*In CONFIG_MOD case, no need to allocate SNSSAI memory*/
      {
         SCH_ALLOC(ueCbLcCfg->snssai, sizeof(Snssai));
@@ -215,27 +214,27 @@ void fillSchUlLcCtxt(SchUlLcCtxt *ueCbLcCfg, SchLcCfg *lcCfg)
 
 uint8_t updateDedLcInfo(Inst inst, Snssai *snssai, uint16_t *rsvdDedicatedPRB, bool *isDedicated)
 {
-   CmLList *sliceCfg = schCb[inst].sliceCfg.first;
-   SchRrmPolicyOfSlice *rrmPolicyOfSlices;
+   uint8_t sliceCfgIdx =0;
+   SchSliceCfg sliceCfg = schCb[inst].sliceCfg;
 
-   while(sliceCfg)
+   if(sliceCfg.numOfSliceConfigured)
    {
-      rrmPolicyOfSlices = (SchRrmPolicyOfSlice*)sliceCfg->node;
-      if(rrmPolicyOfSlices && (memcmp(snssai, &(rrmPolicyOfSlices->snssai), sizeof(Snssai)) == 0))
+      for(sliceCfgIdx = 0; sliceCfgIdx<sliceCfg.numOfSliceConfigured; sliceCfgIdx++)
       {
-         /*Updating latest RrmPolicy*/
-         *rsvdDedicatedPRB = \
-                             (uint16_t)(((rrmPolicyOfSlices->rrmPolicyRatioInfo.dedicatedRatio)*(MAX_NUM_RB))/100);
-         *isDedicated = TRUE;
-         DU_LOG("\nINFO  -->  SCH : Updated RRM policy, reservedPOOL:%d",*rsvdDedicatedPRB);
-         break;
+         if(memcmp(snssai, &(sliceCfg.listOfSlices[sliceCfgIdx]->snssai), sizeof(Snssai)) == 0)
+         {
+            /*Updating latest RrmPolicy*/
+            *rsvdDedicatedPRB = \
+                                (uint16_t)(((sliceCfg.listOfSlices[sliceCfgIdx]->rrmPolicyRatioInfo.dedicatedRatio)*(MAX_NUM_RB))/100);
+            *isDedicated = TRUE;
+            DU_LOG("\nINFO  -->  SCH : Updated RRM policy, reservedPOOL:%d",*rsvdDedicatedPRB);
+         }
       }
-      sliceCfg = sliceCfg->next;
-   }
-   /*case: This LcCtxt  is either a Default LC or this LC is part of someother RRM_MemberList*/
-   if(*isDedicated != TRUE) 
-   {
-      DU_LOG("\nINFO  -->  SCH : This SNSSAI is not a part of this RRMPolicy");
+      /*case: This LcCtxt  is either a Default LC or this LC is part of someother RRM_MemberList*/
+      if(*isDedicated != TRUE) 
+      {
+         DU_LOG("\nINFO  -->  SCH : This SNSSAI is not a part of this RRMPolicy");
+      }
    }
    return ROK;	 
 }
@@ -389,14 +388,14 @@ uint8_t fillSchUeCbFrmCfgReq(Inst inst, SchUeCb *ueCb, SchUeCfgReq *ueCfg)
       {
          if(dlDataToUlAck)
          {
-            BuildK0K1Table(ueCb->cellCb, &ueCb->k0K1InfoTbl, false, pdschCfg,\
+            BuildK0K1Table(ueCb->cellCb, &ueCb->ueCfg.spCellCfg.servCellRecfg.initDlBwp.k0K1InfoTbl, false, pdschCfg,\
                   ueCfg->spCellCfg.servCellCfg.initDlBwp.pdschCfg, dlDataToUlAck->dlDataToUlAckListCount,\
                   dlDataToUlAck->dlDataToUlAckList);
-            ueCb->k0K1TblPrsnt = true;
+            ueCb->ueCfg.spCellCfg.servCellRecfg.initDlBwp.k0K1TblPrsnt = true;
             BuildK2InfoTable(ueCb->cellCb, ueCfg->spCellCfg.servCellCfg.initUlBwp.puschCfg.timeDomRsrcAllocList,\
                   ueCfg->spCellCfg.servCellCfg.initUlBwp.puschCfg.numTimeDomRsrcAlloc,\
-                  NULLP, &ueCb->k2InfoTbl);
-            ueCb->k2TblPrsnt = true;
+                  NULLP, &ueCb->ueCfg.spCellCfg.servCellRecfg.initUlBwp.k2InfoTbl);
+            ueCb->ueCfg.spCellCfg.servCellRecfg.initUlBwp.k2TblPrsnt = true;
          }
       }
    }
@@ -567,14 +566,14 @@ uint8_t fillSchUeCbFrmRecfgReq(Inst inst, SchUeCb *ueCb, SchUeRecfgReq *ueRecfg)
       {
          if(dlDataToUlAck)
          {
-            BuildK0K1Table(ueCb->cellCb, &ueCb->k0K1InfoTbl, false, pdschCfg,\
+            BuildK0K1Table(ueCb->cellCb, &ueCb->ueCfg.spCellCfg.servCellRecfg.initDlBwp.k0K1InfoTbl, false, pdschCfg,\
                   ueRecfg->spCellRecfg.servCellRecfg.initDlBwp.pdschCfg, dlDataToUlAck->dlDataToUlAckListCount,\
                   dlDataToUlAck->dlDataToUlAckList);
-            ueCb->k0K1TblPrsnt = true;
+            ueCb->ueCfg.spCellCfg.servCellRecfg.initDlBwp.k0K1TblPrsnt = true;
             BuildK2InfoTable(ueCb->cellCb, ueRecfg->spCellRecfg.servCellRecfg.initUlBwp.puschCfg.timeDomRsrcAllocList,\
                   ueRecfg->spCellRecfg.servCellRecfg.initUlBwp.puschCfg.numTimeDomRsrcAlloc,\
-                  NULLP, &ueCb->k2InfoTbl);
-            ueCb->k2TblPrsnt = true;
+                  NULLP, &ueCb->ueCfg.spCellCfg.servCellRecfg.initUlBwp.k2InfoTbl);
+            ueCb->ueCfg.spCellCfg.servCellRecfg.initUlBwp.k2TblPrsnt = true;
          }
       }
    }
@@ -978,7 +977,7 @@ uint8_t schFillPuschAlloc(SchUeCb *ueCb, SlotTimingInfo puschTime, uint32_t tbSi
 uint8_t schFillUlDciForMsg3Retx(SchRaCb *raCb, SchPuschInfo *puschInfo, DciInfo *dciInfo)
 {
    SchCellCb         *cellCb  = raCb->cell;
-   
+   dciInfo->cellId = cellCb->cellId;
    dciInfo->crnti  = raCb->tcrnti;
    SchUlHqProcCb *msg3HqProc = &raCb->msg3HqProc;
    if (msg3HqProc == NULLP)
@@ -987,10 +986,10 @@ uint8_t schFillUlDciForMsg3Retx(SchRaCb *raCb, SchPuschInfo *puschInfo, DciInfo 
    }
 
    /* fill bwp cfg */
-   dciInfo->bwpCfg.subcarrierSpacing  = cellCb->sib1SchCfg.bwp.subcarrierSpacing;
-   dciInfo->bwpCfg.cyclicPrefix       = cellCb->sib1SchCfg.bwp.cyclicPrefix;
-   dciInfo->bwpCfg.freqAlloc.startPrb = cellCb->cellCfg.dlCfgCommon.schInitialDlBwp.bwp.freqAlloc.startPrb;
-   dciInfo->bwpCfg.freqAlloc.numPrb   = cellCb->cellCfg.dlCfgCommon.schInitialDlBwp.bwp.freqAlloc.numPrb; 
+   dciInfo->bwpCfg.subcarrierSpacing  = cellCb->cellCfg.sib1SchCfg.bwp.subcarrierSpacing;
+   dciInfo->bwpCfg.cyclicPrefix       = cellCb->cellCfg.sib1SchCfg.bwp.cyclicPrefix;
+   dciInfo->bwpCfg.freqAlloc.startPrb = cellCb->cellCfg.schInitialDlBwp.bwp.freqAlloc.startPrb;
+   dciInfo->bwpCfg.freqAlloc.numPrb   = cellCb->cellCfg.schInitialDlBwp.bwp.freqAlloc.numPrb; 
 
    /*fill coreset cfg */
    //Considering number of RBs in coreset1 is same as coreset0
@@ -998,7 +997,7 @@ uint8_t schFillUlDciForMsg3Retx(SchRaCb *raCb, SchPuschInfo *puschInfo, DciInfo 
    //Considering coreset1 also starts from same symbol as coreset0
    dciInfo->coresetCfg.startSymbolIndex = searchSpaceIdxTable[0][3];
    dciInfo->coresetCfg.durationSymbols  = coresetIdxTable[0][2];
-   memcpy(dciInfo->coresetCfg.freqDomainResource, cellCb->cellCfg.dlCfgCommon.schInitialDlBwp.pdcchCommon.commonSearchSpace.freqDomainRsrc, FREQ_DOM_RSRC_SIZE);
+   memcpy(dciInfo->coresetCfg.freqDomainResource, cellCb->cellCfg.schInitialDlBwp.pdcchCommon.commonSearchSpace.freqDomainRsrc, FREQ_DOM_RSRC_SIZE);
    
    dciInfo->coresetCfg.cceRegMappingType   = 1; /* coreset0 is always interleaved */
    dciInfo->coresetCfg.regBundleSize       = 6; /* spec-38.211 sec 7.3.2.2 */
@@ -1010,24 +1009,24 @@ uint8_t schFillUlDciForMsg3Retx(SchRaCb *raCb, SchPuschInfo *puschInfo, DciInfo 
    dciInfo->coresetCfg.cceIndex            = 0; /* 0-3 for UL and 4-7 for DL */
    dciInfo->coresetCfg.aggregationLevel    = 4; /* same as for sib1 */
    
-   dciInfo->dciFormatInfo.formatType = FORMAT0_0;
+   dciInfo->formatType = FORMAT0_0;
    msg3HqProc->tbInfo.rvIdx++;
    msg3HqProc->tbInfo.rv = schCmnDlRvTbl[msg3HqProc->tbInfo.rvIdx & 0x03];
    /* fill UL grant */
-   dciInfo->dciFormatInfo.format.format0_0.resourceAllocType                  = msg3HqProc->puschResType;
-   dciInfo->dciFormatInfo.format.format0_0.freqAlloc.resAllocType             = msg3HqProc->puschResType;
-   dciInfo->dciFormatInfo.format.format0_0.freqAlloc.resAlloc.type1.startPrb  = msg3HqProc->puschStartPrb;
-   dciInfo->dciFormatInfo.format.format0_0.freqAlloc.resAlloc.type1.numPrb    = msg3HqProc->puschNumPrb;
-   dciInfo->dciFormatInfo.format.format0_0.timeAlloc.startSymb = msg3HqProc->strtSymbl;
-   dciInfo->dciFormatInfo.format.format0_0.timeAlloc.numSymb   = msg3HqProc->numSymbl;
-   dciInfo->dciFormatInfo.format.format0_0.rowIndex            = 0; /* row Index */
-   dciInfo->dciFormatInfo.format.format0_0.mcs                 = msg3HqProc->tbInfo.iMcs;
-   dciInfo->dciFormatInfo.format.format0_0.harqProcId          = msg3HqProc->procId;
-   dciInfo->dciFormatInfo.format.format0_0.freqHopFlag         = FALSE; /* disabled */
-   dciInfo->dciFormatInfo.format.format0_0.ndi                 = msg3HqProc->tbInfo.ndi; /* new transmission */
-   dciInfo->dciFormatInfo.format.format0_0.rvIndex             = msg3HqProc->tbInfo.rv;
-   dciInfo->dciFormatInfo.format.format0_0.tpcCmd              = 0; //Sphoorthi TODO: check
-   dciInfo->dciFormatInfo.format.format0_0.sulIndicator             = FALSE; /* SUL not configured */
+   dciInfo->format.format0_0.resourceAllocType   = msg3HqProc->puschResType;
+   dciInfo->format.format0_0.freqAlloc.startPrb  = msg3HqProc->puschStartPrb;
+   dciInfo->format.format0_0.freqAlloc.numPrb    = msg3HqProc->puschNumPrb;
+   dciInfo->format.format0_0.timeAlloc.startSymb = msg3HqProc->strtSymbl;
+   dciInfo->format.format0_0.timeAlloc.numSymb   = msg3HqProc->numSymbl;
+   dciInfo->format.format0_0.rowIndex            = 0; /* row Index */
+   dciInfo->format.format0_0.mcs                 = msg3HqProc->tbInfo.iMcs;
+   dciInfo->format.format0_0.harqProcId          = msg3HqProc->procId;
+   dciInfo->format.format0_0.puschHopFlag        = FALSE; /* disabled */
+   dciInfo->format.format0_0.freqHopFlag         = FALSE; /* disabled */
+   dciInfo->format.format0_0.ndi                 = msg3HqProc->tbInfo.ndi; /* new transmission */
+   dciInfo->format.format0_0.rv                  = msg3HqProc->tbInfo.rv;
+   dciInfo->format.format0_0.tpcCmd              = 0; //Sphoorthi TODO: check
+   dciInfo->format.format0_0.sUlCfgd             = FALSE; /* SUL not configured */
    
    /* Fill DCI Structure */
    dciInfo->dciInfo.rnti                              = raCb->tcrnti;
@@ -1040,9 +1039,9 @@ uint8_t schFillUlDciForMsg3Retx(SchRaCb *raCb, SchPuschInfo *puschInfo, DciInfo 
    dciInfo->dciInfo.beamPdcchInfo.digBfInterfaces     = 0;
    dciInfo->dciInfo.beamPdcchInfo.prg[0].pmIdx        = 0;
    dciInfo->dciInfo.beamPdcchInfo.prg[0].beamIdx[0]   = 0;
-   dciInfo->dciInfo.txPdcchPower.beta_pdcch_1_0       = 0;
+   dciInfo->dciInfo.txPdcchPower.powerValue           = 0;
    dciInfo->dciInfo.txPdcchPower.powerControlOffsetSS = 0;
-   memset(&dciInfo->dciInfo.pdschCfg, 0, sizeof(PdschCfg));
+   dciInfo->dciInfo.pdschCfg                          = NULL; /* No DL data being sent */
    msg3HqProc->tbInfo.txCntr++;
 
   puschInfo->harqProcId                       = msg3HqProc->procId;
@@ -1092,13 +1091,14 @@ uint8_t schFillUlDci(SchUeCb *ueCb, SchPuschInfo *puschInfo, DciInfo *dciInfo, b
      coreset1 = ueCb->ueCfg.spCellCfg.servCellRecfg.initDlBwp.pdcchCfg.cRSetToAddModList[0];
    }
    
+   dciInfo->cellId = cellCb->cellId;
    dciInfo->crnti  = ueCb->crnti;
 
    /* fill bwp cfg */
-   dciInfo->bwpCfg.subcarrierSpacing  = cellCb->sib1SchCfg.bwp.subcarrierSpacing;
-   dciInfo->bwpCfg.cyclicPrefix       = cellCb->sib1SchCfg.bwp.cyclicPrefix;
-   dciInfo->bwpCfg.freqAlloc.startPrb = cellCb->cellCfg.dlCfgCommon.schInitialDlBwp.bwp.freqAlloc.startPrb;
-   dciInfo->bwpCfg.freqAlloc.numPrb   = cellCb->cellCfg.dlCfgCommon.schInitialDlBwp.bwp.freqAlloc.numPrb; 
+   dciInfo->bwpCfg.subcarrierSpacing  = cellCb->cellCfg.sib1SchCfg.bwp.subcarrierSpacing;
+   dciInfo->bwpCfg.cyclicPrefix       = cellCb->cellCfg.sib1SchCfg.bwp.cyclicPrefix;
+   dciInfo->bwpCfg.freqAlloc.startPrb = cellCb->cellCfg.schInitialDlBwp.bwp.freqAlloc.startPrb;
+   dciInfo->bwpCfg.freqAlloc.numPrb   = cellCb->cellCfg.schInitialDlBwp.bwp.freqAlloc.numPrb; 
 
    /*fill coreset cfg */
    //Considering number of RBs in coreset1 is same as coreset0
@@ -1117,25 +1117,23 @@ uint8_t schFillUlDci(SchUeCb *ueCb, SchPuschInfo *puschInfo, DciInfo *dciInfo, b
    dciInfo->coresetCfg.cceIndex            = 0; /* 0-3 for UL and 4-7 for DL */
    dciInfo->coresetCfg.aggregationLevel    = 4; /* same as for sib1 */
    
-   dciInfo->dciFormatInfo.formatType = FORMAT0_0;
+   dciInfo->formatType = FORMAT0_0;
    
    /* fill UL grant */
-   dciInfo->dciFormatInfo.format.format0_0.resourceAllocType   = puschInfo->fdAlloc.resAllocType;
-   dciInfo->dciFormatInfo.format.format0_0.freqAlloc.resAllocType = puschInfo->fdAlloc.resAllocType;
-   dciInfo->dciFormatInfo.format.format0_0.freqAlloc.resAlloc.type1.startPrb  = \
-   puschInfo->fdAlloc.resAlloc.type1.startPrb;
-   dciInfo->dciFormatInfo.format.format0_0.freqAlloc.resAlloc.type1.numPrb    = \
-   puschInfo->fdAlloc.resAlloc.type1.numPrb;
-   dciInfo->dciFormatInfo.format.format0_0.timeAlloc.startSymb = puschInfo->tdAlloc.startSymb;
-   dciInfo->dciFormatInfo.format.format0_0.timeAlloc.numSymb   = puschInfo->tdAlloc.numSymb;
-   dciInfo->dciFormatInfo.format.format0_0.rowIndex            = 0; /* row Index */
-   dciInfo->dciFormatInfo.format.format0_0.mcs                 = puschInfo->tbInfo.mcs;
-   dciInfo->dciFormatInfo.format.format0_0.harqProcId          = puschInfo->harqProcId;
-   dciInfo->dciFormatInfo.format.format0_0.freqHopFlag         = FALSE; /* disabled */
-   dciInfo->dciFormatInfo.format.format0_0.ndi                 = puschInfo->tbInfo.ndi; /* new transmission */
-   dciInfo->dciFormatInfo.format.format0_0.rvIndex             = puschInfo->tbInfo.rv;
-   dciInfo->dciFormatInfo.format.format0_0.tpcCmd              = 0; //Sphoorthi TODO: check
-   dciInfo->dciFormatInfo.format.format0_0.sulIndicator             = FALSE; /* SUL not configured */
+   dciInfo->format.format0_0.resourceAllocType   = puschInfo->fdAlloc.resAllocType;
+   dciInfo->format.format0_0.freqAlloc.startPrb  = puschInfo->fdAlloc.resAlloc.type1.startPrb;
+   dciInfo->format.format0_0.freqAlloc.numPrb    = puschInfo->fdAlloc.resAlloc.type1.numPrb;
+   dciInfo->format.format0_0.timeAlloc.startSymb = puschInfo->tdAlloc.startSymb;
+   dciInfo->format.format0_0.timeAlloc.numSymb   = puschInfo->tdAlloc.numSymb;
+   dciInfo->format.format0_0.rowIndex            = 0; /* row Index */
+   dciInfo->format.format0_0.mcs                 = puschInfo->tbInfo.mcs;
+   dciInfo->format.format0_0.harqProcId          = puschInfo->harqProcId;
+   dciInfo->format.format0_0.puschHopFlag        = FALSE; /* disabled */
+   dciInfo->format.format0_0.freqHopFlag         = FALSE; /* disabled */
+   dciInfo->format.format0_0.ndi                 = puschInfo->tbInfo.ndi; /* new transmission */
+   dciInfo->format.format0_0.rv                  = puschInfo->tbInfo.rv;
+   dciInfo->format.format0_0.tpcCmd              = 0; //Sphoorthi TODO: check
+   dciInfo->format.format0_0.sUlCfgd             = FALSE; /* SUL not configured */
    
    /* Fill DCI Structure */
    dciInfo->dciInfo.rnti                              = ueCb->crnti;
@@ -1148,9 +1146,9 @@ uint8_t schFillUlDci(SchUeCb *ueCb, SchPuschInfo *puschInfo, DciInfo *dciInfo, b
    dciInfo->dciInfo.beamPdcchInfo.digBfInterfaces     = 0;
    dciInfo->dciInfo.beamPdcchInfo.prg[0].pmIdx        = 0;
    dciInfo->dciInfo.beamPdcchInfo.prg[0].beamIdx[0]   = 0;
-   dciInfo->dciInfo.txPdcchPower.beta_pdcch_1_0       = 0;
+   dciInfo->dciInfo.txPdcchPower.powerValue           = 0;
    dciInfo->dciInfo.txPdcchPower.powerControlOffsetSS = 0;
-   memset(&dciInfo->dciInfo.pdschCfg, 0, sizeof(PdschCfg));
+   dciInfo->dciInfo.pdschCfg                          = NULL; /* No DL data being sent */
 
    return ROK;
 }
@@ -1218,7 +1216,6 @@ uint8_t SchModUeConfigReq(Pst *pst, SchUeRecfgReq *ueRecfg)
          SchSendUeRecfgRspToMac(ueRecfg, inst, RSP_OK, &recfgRsp);
       }
    }
-   cellCb->api->SchModUeConfigReq(ueCb);
    return ret;
 }
 
@@ -1415,12 +1412,12 @@ void deleteSchUeCb(SchUeCb *ueCb)
 *    Functionality: Fill and send UE delete response to MAC
 *
 * @params[in] Inst inst, SchUeDelete  *ueDelete, SchMacRsp result, 
-*              CauseOfResult  cause
+*              ErrorCause cause
 * @return ROK     - success
 *         RFAILED - failure
 *
 * ****************************************************************/
-void SchSendUeDeleteRspToMac(Inst inst, SchUeDelete  *ueDelete, SchMacRsp result, CauseOfResult  cause)
+void SchSendUeDeleteRspToMac(Inst inst, SchUeDelete  *ueDelete, SchMacRsp result, ErrorCause cause)
 {
     Pst rspPst;
     SchUeDeleteRsp  delRsp;
@@ -1455,9 +1452,9 @@ void SchSendUeDeleteRspToMac(Inst inst, SchUeDelete  *ueDelete, SchMacRsp result
 * ****************************************************************/
 uint8_t SchProcUeDeleteReq(Pst *pst, SchUeDelete  *ueDelete)
 {
-    uint8_t idx=0, ueId=0, ret=ROK;
-    CauseOfResult  cause;
-    SchCellCb *cellCb = NULLP;
+    uint8_t      idx=0, ueId=0, ret=ROK;
+    ErrorCause   result;
+    SchCellCb    *cellCb = NULLP;
     Inst         inst = pst->dstInst - SCH_INST_START;
    
     if(!ueDelete)
@@ -1472,7 +1469,7 @@ uint8_t SchProcUeDeleteReq(Pst *pst, SchUeDelete  *ueDelete)
     if(cellCb->cellId != ueDelete->cellId)
     {
        DU_LOG("\nERROR  -->  SCH : SchProcUeDeleteReq(): cell Id is not available");
-       cause =  CELLID_INVALID;
+       result =  INVALID_CELLID;
     }
     else
     {
@@ -1483,22 +1480,22 @@ uint8_t SchProcUeDeleteReq(Pst *pst, SchUeDelete  *ueDelete)
           cellCb->api->SchUeDeleteReq(&cellCb->ueCb[ueId-1]);
           deleteSchUeCb(&cellCb->ueCb[ueId-1]);
           cellCb->numActvUe--;
-          cause = SUCCESSFUL;
+          result = NOT_APPLICABLE;
        }
        else
        {
           DU_LOG("\nERROR  -->  SCH : SchProcUeDeleteReq(): SchUeCb not found");
-          cause =  UEID_INVALID;
+          result =  INVALID_UEID;
        }
     }
     
-    if(cause == SUCCESSFUL)
+    if(result == NOT_APPLICABLE)
     {
-       SchSendUeDeleteRspToMac(inst, ueDelete, RSP_OK, cause);
+       SchSendUeDeleteRspToMac(inst, ueDelete, RSP_OK, result);
     }
     else
     {
-       SchSendUeDeleteRspToMac(inst, ueDelete, RSP_NOK, cause);
+       SchSendUeDeleteRspToMac(inst, ueDelete, RSP_NOK, result);
        ret = RFAILED;
     }
     return ret;

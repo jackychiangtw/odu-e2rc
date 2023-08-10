@@ -177,7 +177,7 @@ S16 SendF1APMsg(Region region, Pool pool, uint32_t duId)
       {
          ODU_PRINT_MSG(mBuf, 0,0);
 
-         if(sctpSend(F1_INTERFACE, duId, mBuf) != ROK)
+         if(sctpSend(duId, mBuf) != ROK)
          {
             DU_LOG("\nERROR  -->  F1AP : SCTP Send failed");
             ODU_PUT_MSG_BUF(mBuf);
@@ -2557,8 +2557,8 @@ uint8_t BuildQOSInfo(QosInfo *qosInfo, QoSFlowLevelQoSParameters_t *drbQos, uint
 {
    uint8_t elementCnt = 0, qosCntIdx = 0;
    ProtocolExtensionContainer_4624P74_t *qosIeExt = NULLP;
-   static uint8_t dummyFiveQI = 0;
-
+   int randomFiveQI;
+   randomFiveQI = (rand() % 9) + 1;
    /* NonDynamic5QIDescriptor */
    drbQos->qoS_Characteristics.present = QoS_Characteristics_PR_non_Dynamic_5QI;
    CU_ALLOC(drbQos->qoS_Characteristics.choice.non_Dynamic_5QI,sizeof(NonDynamic5QIDescriptor_t));
@@ -2575,8 +2575,7 @@ uint8_t BuildQOSInfo(QosInfo *qosInfo, QoSFlowLevelQoSParameters_t *drbQos, uint
       if(actionType == ProtocolIE_ID_id_DRBs_ToBeModified_Item)
          drbQos->qoS_Characteristics.choice.non_Dynamic_5QI->fiveQI = FIVE_QI_VALUE8;
       else
-         dummyFiveQI += 1;
-         drbQos->qoS_Characteristics.choice.non_Dynamic_5QI->fiveQI = dummyFiveQI;
+         drbQos->qoS_Characteristics.choice.non_Dynamic_5QI->fiveQI = randomFiveQI;
 
       qosInfo->nonDynFiveQI = drbQos->qoS_Characteristics.choice.non_Dynamic_5QI->fiveQI;
    }
@@ -9318,7 +9317,7 @@ uint8_t BuildAndSendUeContextSetupReq(uint32_t duId, CuUeCb *ueCb)
       if(ueCb->state == UE_HANDOVER_IN_PROGRESS)
       {
          /* Spec 38.473 Sec 9.2.2.1 : For handover case, this IE shall be considered as target cell. */
-         SEARCH_DU_DB(duIdx, ueCb->hoInfo.targetId, targetDuDb);
+         SEARCH_DU_DB(duIdx, ueCb->hoInfo.targetDuId, targetDuDb);
          /* Since we are supporting only one cell per DU, accessing 0th index to
           * get target cell info */
          spCellId = targetDuDb->cellCb[0].nrCellId;
@@ -9656,7 +9655,7 @@ uint8_t procUeContextSetupResponse(uint32_t duId, F1AP_PDU_t *f1apMsg)
                    ueCb->gnbDuUeF1apId = duUeF1apId;
                    ueCb->gnbCuUeF1apId = cuUeF1apId;
                    ueCb->state = UE_HANDOVER_IN_PROGRESS;
-                   ueCb->hoInfo.targetId = duId; 
+                   ueCb->hoInfo.targetDuId = duId; 
                    (duDb->numUe)++;
 
                    ueCb->cellCb->ueCb[ueCb->cellCb->numUe] = ueCb;
@@ -9722,7 +9721,7 @@ uint8_t procUeContextSetupResponse(uint32_t duId, F1AP_PDU_t *f1apMsg)
 
                   /* Store source DU info in the new UE context created in
                    * tareget DU */
-                  ueCb->hoInfo.sourceId = srcDuDb->duId;
+                  ueCb->hoInfo.sourceDuId = srcDuDb->duId;
 
                   /* Copy the received container to UeCb */
                   memcpy(&ueCbInSrcDu->f1apMsgDb.duToCuContainer, duToCuRrcContainer, sizeof(OCTET_STRING_t));
@@ -9818,7 +9817,7 @@ uint8_t procUlRrcMsg(uint32_t duId, F1AP_PDU_t *f1apMsg)
                if(duDb->ueCb[duUeF1apId-1].state == UE_HANDOVER_IN_PROGRESS)
                {
                   uint8_t ueIdx = 0;
-                  uint8_t srcDuId = duDb->ueCb[duUeF1apId-1].hoInfo.sourceId;
+                  uint8_t srcDuId = duDb->ueCb[duUeF1apId-1].hoInfo.sourceDuId;
                   DuDb *srcDuDb = NULLP;
 
                   /* In target DU DB, mark UE as active and delete HO info */
@@ -11900,7 +11899,7 @@ uint8_t procServedCellPlmnList(ServedPLMNs_List_t *srvPlmn)
  *         RFAILED - failure
  *
  * ****************************************************************/
-uint8_t procUeContextModificationResponse(uint32_t duId, F1AP_PDU_t *f1apMsg, char *recvBuf, MsgLen recvBufLen)
+uint8_t procUeContextModificationResponse(uint32_t duId, F1AP_PDU_t *f1apMsg)
 {
    uint8_t idx=0, duIdx=0;
    uint8_t duUeF1apId = 0, cuUeF1apId = 0;
@@ -11924,11 +11923,6 @@ uint8_t procUeContextModificationResponse(uint32_t duId, F1AP_PDU_t *f1apMsg, ch
              {
                 duUeF1apId = ueCtxtModRsp->protocolIEs.list.array[idx]->value.choice.GNB_DU_UE_F1AP_ID;
                 ueCb = &duDb->ueCb[duUeF1apId-1];
-
-                if((ueCb->state == UE_HANDOVER_IN_PROGRESS) && (ueCb->hoInfo.HOType == Xn_Based_Inter_CU_HO))
-                {
-                   BuildAndSendHOReq(ueCb, HO_REQ, recvBuf, recvBufLen);
-                }
                 break;
              }
           case ProtocolIE_ID_id_DRBs_SetupMod_List:
@@ -11967,43 +11961,40 @@ uint8_t procUeContextModificationResponse(uint32_t duId, F1AP_PDU_t *f1apMsg, ch
     * UE context setup request to target DU */
    if(ueCb->state == UE_HANDOVER_IN_PROGRESS)
    {
-      if(ueCb->hoInfo.HOType == Inter_DU_HO)
+      uint8_t ueIdx = 0;
+      DuDb *tgtDuDb = NULLP;
+      CuUeCb *ueCbInTgtDu = NULLP;
+
+      SEARCH_DU_DB(duIdx, ueCb->hoInfo.targetDuId, tgtDuDb);
+      if(tgtDuDb)
       {
-         uint8_t ueIdx = 0;
-         DuDb *tgtDuDb = NULLP;
-         CuUeCb *ueCbInTgtDu = NULLP;
-
-         SEARCH_DU_DB(duIdx, ueCb->hoInfo.targetId, tgtDuDb);
-         if(tgtDuDb)
+         /* Since DU UE F1AP ID assigned by target DU to this UE in handover is
+          * not known here, using CU UE F1AP ID to search for UE Cb in target DU
+          * DB */
+         for(ueIdx = 0; ueIdx < MAX_NUM_UE; ueIdx++)
          {
-            /* Since DU UE F1AP ID assigned by target DU to this UE in handover is
-             * not known here, using CU UE F1AP ID to search for UE Cb in target DU
-             * DB */
-            for(ueIdx = 0; ueIdx < MAX_NUM_UE; ueIdx++)
+            if(tgtDuDb->ueCb[ueIdx].gnbCuUeF1apId == cuUeF1apId)
             {
-               if(tgtDuDb->ueCb[ueIdx].gnbCuUeF1apId == cuUeF1apId)
-               {
-                  ueCbInTgtDu = &tgtDuDb->ueCb[ueIdx];
-                  break;
-               }
+               ueCbInTgtDu = &tgtDuDb->ueCb[ueIdx];
+               break;
             }
+         }
 
-            /* If UE context is not found in Target DU DU, send UE context setup
-             * request */
-            if(ueCbInTgtDu == NULLP)
+         /* If UE context is not found in Target DU DU, send UE context setup
+          * request */
+         if(ueCbInTgtDu == NULLP)
+         {
+            if((BuildAndSendUeContextSetupReq(ueCb->hoInfo.targetDuId, ueCb)) != ROK)
             {
-               if((BuildAndSendUeContextSetupReq(ueCb->hoInfo.targetId, ueCb)) != ROK)
-               {
-                  DU_LOG("\nERROR  ->  F1AP : Failed at BuildAndSendUeContextSetupReq");
-                  return RFAILED;
-               }
+               DU_LOG("\nERROR  ->  F1AP : Failed at BuildAndSendUeContextSetupReq");
+               return RFAILED;
             }
          }
       }
    }
    
 #ifdef START_DL_UL_DATA
-   //startDlDataForExperiment1();
+   startDlData();
 #endif
 
    return ROK;
@@ -12037,10 +12028,13 @@ void procF1SetupReq(uint32_t *destDuId, F1AP_PDU_t *f1apMsg)
    GNB_DU_Served_Cells_Item_t *srvCellItem = NULLP; 
    GNB_DU_Served_Cells_List_t *duServedCell = NULLP;
 
+<<<<<<< Updated upstream
+=======
    /* Triggering XN setup request before F1 setup establishment */
    // if(LOCAL_NODE_TYPE == CLIENT)
    //    BuildAndSendXnSetupReq();
 
+>>>>>>> Stashed changes
    f1SetupReq = &f1apMsg->choice.initiatingMessage->value.choice.F1SetupRequest;
    for(ieIdx=0; ieIdx < f1SetupReq->protocolIEs.list.count; ieIdx++)
    {
@@ -12690,7 +12684,7 @@ void F1APMsgHdlr(uint32_t *duId, Buffer *mBuf)
                case SuccessfulOutcome__value_PR_UEContextModificationResponse:
                   {
                      DU_LOG("\nINFO  -->  F1AP : UE Context Modification Response received");
-                     procUeContextModificationResponse(*duId, f1apMsg, recvBuf, recvBufLen);
+                     procUeContextModificationResponse(*duId, f1apMsg);
                      break;
                   }
                case SuccessfulOutcome__value_PR_UEContextReleaseComplete:
