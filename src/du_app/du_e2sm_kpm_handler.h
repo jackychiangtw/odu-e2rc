@@ -114,12 +114,15 @@ void kpmSendSliceMetric();
 void kpmSendCellMetric();
 void kpmSendMetrics();
 
-extern RICindicationMessage_t *ricIndicationMessage;
-
-uint32_t reportingPeriodFmt1, reportingPeriodFmt3, reportingPeriod;
-uint8_t indicationMeasNameFmt1[SIZE_OF_MAX_INDICATION_INFO][MAX_OF_MEAS_NAME], indicationMeasNameFmt3[SIZE_OF_MAX_INDICATION_INFO][MAX_OF_MEAS_NAME];
-uint8_t cellMetricName[SUPPORTED_CELL_MEAS_ITEM][MAX_OF_MEAS_NAME], sliceMetricName[SUPPORTED_SLICE_MEAS_ITEM][MAX_OF_MEAS_NAME];
-int sizeOfMeasNameFmt1, sizeOfMeasNameFmt3;
+uint32_t reportingPeriodFmt1; // For RIC Indication format 1 (Cell)
+uint32_t reportingPeriodFmt2; // For RIC Indication format 2 (Slice)
+uint32_t reportingPeriod; // Store the reporting period of Event Trigger Definition
+uint8_t indicationMeasNameFmt1[SIZE_OF_MAX_INDICATION_INFO][MAX_OF_MEAS_NAME]; // Subscribed Measurement name for indication format 1
+uint8_t indicationMeasNameFmt2[SIZE_OF_MAX_INDICATION_INFO][MAX_OF_MEAS_NAME]; // Subscribed Measurement name for indication format 2
+uint8_t cellMetricName[SUPPORTED_CELL_MEAS_ITEM][MAX_OF_MEAS_NAME]; // Support cell metric in O-DU
+uint8_t sliceMetricName[SUPPORTED_SLICE_MEAS_ITEM][MAX_OF_MEAS_NAME]; // Support slice metric in O-DU
+int sizeOfMeasNameFmt1; // Size of Subscribed measurement for indication format 1
+int sizeOfMeasNameFmt3; // Size of Subscribed measurement for indication format 2
 
 
 #endif

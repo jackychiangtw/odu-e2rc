@@ -25,7 +25,7 @@ uint8_t kpmInit(){
     kpmCellIndicationEnable = false;
     kpmSliceIndicationEnable = false;
     reportingPeriodFmt1 = 0;
-    reportingPeriodFmt3 = 0;
+    reportingPeriodFmt2 = 0;
     reportingPeriod = 0;
     kpiModuleInit();
     
@@ -577,7 +577,7 @@ uint8_t kpmFillRanFuncDescription(RANfunctionDefinition_t  *ranFunDefinition){
  *
  *    Function : kpmFillMeasInfoItem
  *
- *    Functionality: Fills the MeasurementInfoItem_t for indication message
+ *    Functionality: Fills the measurement name of measurement info item for indication message
  *
  * @param[in] measInfoItem, MeasurementInfoItem_t*, destination
  * @param[in] measName, measInfoItem*, the source of measurement name
@@ -794,7 +794,7 @@ uint8_t kpmProcActionDefinitionFmt3(E2SM_KPM_ActionDefinition_Format3_t *actionD
             index = kpmSliceMeasNameIsSupport(actionDefinFormat3->measCondList.list.array[i]->measType.choice.measName.buf);
             if(index != -1){
                 DU_LOG("\nINFO  -->  E2SM-KPM : Measurement name \"%s\" of Slice metric is valid", actionDefinFormat3->measCondList.list.array[i]->measType.choice.measName.buf);
-                memcpy(indicationMeasNameFmt3[sizeOfMeasNameFmt3], sliceMetricName[index], strlen((const char*)sliceMetricName[index])+1);
+                memcpy(indicationMeasNameFmt2[sizeOfMeasNameFmt3], sliceMetricName[index], strlen((const char*)sliceMetricName[index])+1);
                 sizeOfMeasNameFmt3++;
             }else{
                 /*If any measurement name is invalid, return failed*/
@@ -807,7 +807,7 @@ uint8_t kpmProcActionDefinitionFmt3(E2SM_KPM_ActionDefinition_Format3_t *actionD
         }
     }
     for(int i=0;i<sizeOfMeasNameFmt3;i++){
-        DU_LOG("\nINFO  -->  E2SM-KPM : # %d Measurement name is \"%s\"", i, indicationMeasNameFmt3[i]);
+        DU_LOG("\nINFO  -->  E2SM-KPM : # %d Measurement name is \"%s\"", i, indicationMeasNameFmt2[i]);
     }
     if(sizeOfMeasNameFmt3>0)
         return ROK;
@@ -869,8 +869,8 @@ uint8_t kpmProcActionDefinition(RICactionDefinition_t *ricdifin){
                 return RFAILED;
             }
             kpmEnableIndication(&kpmSliceIndicationEnable);
-            reportingPeriodFmt3 = reportingPeriod; 
-            DU_LOG("\nINFO   -->  E2SM-KPM: Reporting Period format 3 = %d", reportingPeriodFmt3);
+            reportingPeriodFmt2 = reportingPeriod; 
+            DU_LOG("\nINFO   -->  E2SM-KPM: Reporting Period format 2 = %d", reportingPeriodFmt2);
         break;
         default:
             DU_LOG("\nINFO   -->  E2SM-KPM: Invaild Action Definition format %d, %d", actionDefin->actionDefinition_formats.present, __LINE__);
@@ -1364,14 +1364,14 @@ uint8_t kpmFillIndicationMessageFormat2(E2SM_KPM_IndicationMessage_Format2_t *in
 
     for(int i=0;i<kpmSlicePmDb.numOfSlice;i++){
         for(int j=0;j<sizeOfMeasNameFmt3;j++){
-            index = kpmSliceMeasNameIsSupport(indicationMeasNameFmt3[j]);
+            index = kpmSliceMeasNameIsSupport(indicationMeasNameFmt2[j]);
             if(index == 0){ // avgThpDl
                 ret = kpmFillSliceMeasDataItem(measDataItem + cnt, kpmSlicePmDb.avgThpDl[i]);
                 if(ret != ROK){
                     DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Data Item, %d", __LINE__);
                     return RFAILED;
                 }
-                DU_LOG("\nINFO   -->  E2SM-KPM : # %d Slice Measurement \"%s\" in slice {%d-%d%d%d} : %d", j, indicationMeasNameFmt3[index],
+                DU_LOG("\nINFO   -->  E2SM-KPM : # %d Slice Measurement \"%s\" in slice {%d-%d%d%d} : %d", j, indicationMeasNameFmt2[index],
                 kpmSlicePmDb.snssai[i].sst, kpmSlicePmDb.snssai[i].sd[0], kpmSlicePmDb.snssai[i].sd[1],
                 kpmSlicePmDb.snssai[i].sd[2], kpmSlicePmDb.avgThpDl[i]);
             }
@@ -1381,7 +1381,7 @@ uint8_t kpmFillIndicationMessageFormat2(E2SM_KPM_IndicationMessage_Format2_t *in
                     DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Data Item, %d", __LINE__);
                     return RFAILED;
                 }
-                DU_LOG("\nINFO   -->  E2SM-KPM : # %d Slice Measurement \"%s\" in slice {%d-%d%d%d} : %d", j, indicationMeasNameFmt3[index],
+                DU_LOG("\nINFO   -->  E2SM-KPM : # %d Slice Measurement \"%s\" in slice {%d-%d%d%d} : %d", j, indicationMeasNameFmt2[index],
                 kpmSlicePmDb.snssai[i].sst, kpmSlicePmDb.snssai[i].sd[0], kpmSlicePmDb.snssai[i].sd[1],
                 kpmSlicePmDb.snssai[i].sd[2], kpmSlicePmDb.avgUsedPrb[i]);
             }
@@ -1390,7 +1390,7 @@ uint8_t kpmFillIndicationMessageFormat2(E2SM_KPM_IndicationMessage_Format2_t *in
                 return RFAILED;
             }
 
-            ret = kpmFillSliceMeasCondItem(measCondItem+cnt, indicationMeasNameFmt3[index], kpmSlicePmDb.snssai[i]);
+            ret = kpmFillSliceMeasCondItem(measCondItem+cnt, indicationMeasNameFmt2[index], kpmSlicePmDb.snssai[i]);
             if(ret != ROK){
                 DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill Measurement Conditional item for slice, %d", __LINE__);
                 return RFAILED;
