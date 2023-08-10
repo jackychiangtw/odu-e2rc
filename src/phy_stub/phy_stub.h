@@ -40,6 +40,10 @@
 #define UE_IDX_0     0
 #define UE_IDX_1     1
 #define UE_IDX_2     2
+#define UE_IDX_3     3
+#define UE_IDX_4     4
+#define UE_IDX_5     5
+#define UE_IDX_6     6
 
 /* Default RA Preamble index to be used when Rach Indication is triggered from
  * PHY stub */

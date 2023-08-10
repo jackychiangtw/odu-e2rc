@@ -111,6 +111,7 @@ uint16_t numRbForPrachTable[MAX_RACH_NUM_RB_IDX][5];
 uint8_t schCmnDlRvTbl[4];
 uint16_t fiveQiIdxTable[MAX_5QI_TABLE_IDX];
 uint16_t fiveQiTable[MAX_5QI_TABLE_IDX][2];
+uint8_t defaultPucchCsset[MAX_PUCCH_RES_SET_IDX]; /*JOJO: Create a data structure to store number of members for cyclic shift set.*/
 
 /* Functions declarations : Linked list handler */
 uint8_t addNodeToLList(CmLListCp *llist, void *blockToAdd, CmLList *currNode);

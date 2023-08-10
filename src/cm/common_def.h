@@ -56,8 +56,8 @@
 #define RADIO_FRAME_DURATION 10 /* Time duration of a radio frame in ms */
 /* MAX values */
 #define MAX_NUM_CELL 2 /* Changed to 2 to support cell Id 2 even if there is only one cell in DU */
-#define MAX_NUM_MU   4
-#define MAX_NUM_UE   3
+#define MAX_NUM_MU   7
+#define MAX_NUM_UE   7
 #define MAX_NUM_UE_PER_TTI 1
 #define MAX_NUM_LC   MAX_DRB_LCID + 1   /*Spec 38.331: Sec 6.4: maxLC-ID Keyword*/
 #define MAX_NUM_SRB  3    /* Max. no of Srbs */
@@ -105,6 +105,7 @@
 
 /* PRB allocation as per 38.101, Section 5.3.2 */
 #define TOTAL_PRB_20MHZ_MU0 106
+#define TOTAL_PRB_50MHZ_MU0 270
 #define TOTAL_PRB_100MHZ_MU1 273
 #ifdef NR_TDD
 #define MAX_NUM_RB TOTAL_PRB_100MHZ_MU1  /* value for numerology 1, 100 MHz */
@@ -112,8 +113,9 @@
 #define MAX_NUM_RB TOTAL_PRB_20MHZ_MU0 /* value for numerology 0, 20 MHz */
 #endif
 
-#define ODU_UE_THROUGHPUT_PRINT_TIME_INTERVAL      5     /* in milliseconds */
-#define ODU_SNSSAI_THROUGHPUT_PRINT_TIME_INTERVAL  60000 /* in milliseconds */
+#define ODU_UE_THROUGHPUT_PRINT_TIME_INTERVAL      500     /* in milliseconds */
+#define ODU_SNSSAI_THROUGHPUT_PRINT_TIME_INTERVAL  500 /* in milliseconds */
+#define ODU_DRB_THROUGHPUT_PRINT_TIME_INTERVAL     500 /* in milliseconds */
 
 /*Spec 38.331 Sec 6.4: Maximum number of paging occasion per paging frame*/
 #define MAX_PO_PER_PF 4
@@ -224,11 +226,21 @@
 
 typedef enum
 {
+   SUCCESSFUL, 
+   CELLID_INVALID, 
+   UEID_INVALID, 
+   RESOURCE_UNAVAILABLE,  
+   SLICE_NOT_FOUND,
+}CauseOfResult ;
+
+typedef enum
+{
    UE_CFG_INACTIVE,
    UE_CFG_INPROGRESS,
    UE_CREATE_COMPLETE,
    UE_DELETE_COMPLETE,
-   UE_RECFG_COMPLETE
+   UE_RECFG_COMPLETE,
+   UE_RESET_COMPLETE
 }UeCfgState;
 
 typedef enum
@@ -240,13 +252,6 @@ typedef enum
 }ConfigType;
 
 #ifdef NR_TDD
-typedef enum
-{
-   DL_SLOT,
-   UL_SLOT,
-   FLEXI_SLOT
-}SlotConfig;
-
 typedef enum
 {
    TX_PRDCTY_MS_0P5,
@@ -330,9 +335,11 @@ typedef struct oduCellId
 #ifdef NR_TDD
 typedef struct tddCfg
 {
-   bool               pres;
-   DlUlTxPeriodicity  tddPeriod;      /* DL UL Transmission periodicity */
-   SlotConfig         slotCfg[MAX_TDD_PERIODICITY_SLOTS][MAX_SYMB_PER_SLOT]; 
+   DlUlTxPeriodicity  tddPeriod;     /*DL UL Transmission periodicity */
+   uint8_t            nrOfDlSlots;   /*No. of consecultive full DL slots at beginning of DL-UL pattern*/
+   uint8_t            nrOfDlSymbols; /*No. of consecultive DL symbol at beginning of slot after last full DL slot*/ 
+   uint8_t            nrOfUlSlots;   /*No. of consecutive full UL slots at the end of each DL-UL pattern*/
+   uint8_t            nrOfUlSymbols; /*No. of consecutive UL symbols in the end of the slot before the first full UL slot*/
 }TDDCfg;
 #endif
 
@@ -354,7 +361,7 @@ Region region, Pool pool, Data **ptr, Size size, uint8_t memType);
 uint8_t SPutStaticBufNewForDebug(char *file, const char *func, int line, \
 Region region, Pool pool, Data *ptr, Size size, uint8_t memType);
 uint8_t countSetBits(uint32_t num);
-
+uint32_t convertArfcnToFreqKhz(uint32_t arfcn);
 #endif
 
 /**********************************************************************
