@@ -24,23 +24,10 @@
 #define MAX_RETRY 5
 #define MAX_IPV6_LEN 16
 #define MAX_DU_SUPPORTED 2
-#define MAX_REMOTE_CU_SUPPORTED 1
-#define MAX_ASSOC_SUPPORTED (MAX_DU_SUPPORTED + MAX_REMOTE_CU_SUPPORTED)
+#define MAX_ASSOC_SUPPORTED MAX_DU_SUPPORTED
 
 /* Global variable declaration */
 uint8_t   socket_type;      /* Socket type */
-
-typedef enum
-{
-   F1_INTERFACE,
-   XN_INTERFACE
-}InterfaceType;
-
-typedef enum
-{
-   SERVER,
-   CLIENT
-}NodeType;
 
 typedef struct
 {
@@ -57,14 +44,13 @@ typedef struct
 
 typedef struct
 {
-   InterfaceType    intf;             /* F1 or Xn Interface */
-   uint32_t         destId;           /* For F1 interface, this is DU ID. For Xn, this is remote CU ID */
+   uint32_t         duId;
    uint16_t         destPort;         /* DU PORTS */
    Bool             bReadFdSet;
    CmInetFd         sockFd;           /* Socket file descriptor */
    CmInetAddr       peerAddr;
-   CmInetNetAddrLst destAddrLst;      /* Remote IP address list */
-   CmInetNetAddr    destIpNetAddr;    /* Remote IP network address */ 
+   CmInetNetAddrLst destAddrLst;      /* DU Ip address */
+   CmInetNetAddr    destIpNetAddr;    /* DU Ip address */ 
    Bool             connUp;           /* Is connection up */
 }CuSctpAssocCb;
 
@@ -82,19 +68,12 @@ typedef struct sctpDestInfo
    uint16_t    destPort;
 }SctpDestInfo;
 
-typedef struct sctpCfgPerIntf
-{
-   uint16_t       port;
-   NodeType       localNodeType; /* Local node acts as Server or client while establishing SCTP assoc */
-   uint8_t        numDestNode; 
-   SctpDestInfo   destCb[MAX_ASSOC_SUPPORTED];
-}SctpCfgPerIntf;
-
 typedef struct cuSctpParams
 {
    SctpIpAddr     localIpAddr;
-   SctpCfgPerIntf f1SctpInfo;
-   SctpCfgPerIntf xnSctpInfo;
+   uint16_t       f1SctpPort;
+   uint8_t        numDestNode;
+   SctpDestInfo   destCb[MAX_DU_SUPPORTED];
 }CuSctpParams;
 
 typedef struct
@@ -102,8 +81,6 @@ typedef struct
    CuSctpParams     sctpCfg;
    CmInetNetAddrLst localAddrLst;
    CmInetFd         f1LstnSockFd;       /* Listening Socket file descriptor for F1 association */
-   CmInetFd         xnLstnSockFd;       /* Listening Socket file descriptor for Xn association */
-   NodeType         localXnNodeType;    /* Local node acts as Server or client while establishing SCTP assoc at Xn interface */
    uint8_t          numAssoc;
    CuSctpAssocCb    assocCb[MAX_ASSOC_SUPPORTED];
 }SctpGlobalCb;
@@ -112,14 +89,14 @@ SctpGlobalCb sctpCb;
 
 uint8_t sctpActvInit();
 uint8_t sctpStartReq();
-uint8_t sctpSend(InterfaceType intf, uint32_t destId, Buffer *mBuf);
+uint8_t sctpSend(uint32_t duId, Buffer *mBuf);
 uint8_t sctpCfgReq();
 
 uint8_t fillAddrLst(CmInetNetAddrLst *addrLstPtr, SctpIpAddr *ipAddr);
 uint8_t fillDestNetAddr(CmInetNetAddr *destAddrPtr, SctpIpAddr *dstIpPtr);
 uint8_t sctpSetSockOpts(CmInetFd *sock_Fd);
 uint8_t sctpSockPoll();
-uint8_t sctpAccept(CmInetFd *lstnSockFd, CuSctpAssocCb *assocCb);
+uint8_t sctpAccept(CuSctpAssocCb *assocCb);
 uint8_t processPolling(sctpSockPollParams *pollParams, CuSctpAssocCb *assocCb, uint32_t *timeoutPtr, CmInetMemInfo *memInfo);
 #endif
 

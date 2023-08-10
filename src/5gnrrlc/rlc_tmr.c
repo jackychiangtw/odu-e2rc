@@ -202,19 +202,10 @@ void rlcStartTmr(RlcCb *gCb, PTR cb, int16_t tmrEvnt)
          arg.max = RLC_MAX_THPT_TMR; 
          break;
       }
-      case EVENT_RLC_DRB_THROUGHPUT_TMR:
-      {
-         RlcThpt *thptCb = (RlcThpt *)cb;
-         RLC_TMR_CALCUATE_WAIT(arg.wait, ODU_DRB_THROUGHPUT_PRINT_TIME_INTERVAL, gCb->genCfg.timeRes);
-         arg.timers = &thptCb->drbTputInfo.drbThptTmr;
-         arg.max = RLC_MAX_THPT_TMR; 
-         break;
-      }
       default:
       {
          DU_LOG("\nERROR  -->  RLC : rlcStartTmr: Invalid tmr Evnt [%d]", tmrEvnt);
       }
-      
    } 
 
    if(arg.wait != 0)
@@ -311,12 +302,6 @@ void rlcStopTmr(RlcCb *gCb, PTR cb, uint8_t tmrType)
          arg.max  = RLC_MAX_THPT_TMR;
          break;
       }
-      case EVENT_RLC_DRB_THROUGHPUT_TMR:
-      {
-         arg.timers   = &((RlcThpt *)cb)->drbTputInfo.drbThptTmr;
-         arg.max = RLC_MAX_THPT_TMR; 
-         break;
-      }
       default:
       {
          DU_LOG("\nERROR  -->  RLC : rlcStopTmr: Invalid tmr Evnt[%d]", tmrType);
@@ -406,11 +391,6 @@ Void rlcTmrExpiry(PTR cb,S16 tmrEvnt)
          rlcSnssaiThptTmrExpiry(cb);
          break;
       }
-      case EVENT_RLC_DRB_THROUGHPUT_TMR:
-      {
-         rlcDrbThptTmrExpiry(cb);
-         break;
-      }
       default:
       {
          break;
@@ -471,10 +451,6 @@ bool rlcChkTmr(RlcCb *gCb, PTR cb, int16_t tmrEvnt)
       case EVENT_RLC_SNSSAI_THROUGHPUT_TMR:
       {
          return (((RlcThpt *)cb)->snssaiTputInfo.snssaiThptTmr.tmrEvnt == EVENT_RLC_SNSSAI_THROUGHPUT_TMR);
-      }
-      case EVENT_RLC_DRB_THROUGHPUT_TMR:
-      {
-         return (((RlcThpt *)cb)->drbTputInfo.drbThptTmr.tmrEvnt == EVENT_RLC_DRB_THROUGHPUT_TMR);
       }
       default:
       {
@@ -557,12 +533,9 @@ static Void rlcBndTmrExpiry(PTR cb)
 void rlcUeThptTmrExpiry(PTR cb)
 {
    uint16_t  ueIdx;
-   uint16_t  ueId[MAX_NUM_UE];
-   double    ueTpt[MAX_NUM_UE];
-   int actvUeIndex = 0;
-   double tpt;
+   long double tpt;
    RlcThpt *rlcThptCb = (RlcThpt*)cb; 
-   int aveTpt = 0;
+   
    /* If cell is not up, throughput details cannot be printed */
    if(gCellStatus != CELL_UP)
    {
@@ -586,16 +559,12 @@ void rlcUeThptTmrExpiry(PTR cb)
              * Since our dataVol is in bytes, multiplying 0.008 to covert into kilobits i.e. 
              * Throughput[kbits/sec] = (dataVol * 0.008 * 1000)/time in ms
              */
-             tpt = (double)(rlcThptCb->ueTputInfo.thptPerUe[ueIdx].dataVol * 8)/(double)(ODU_UE_THROUGHPUT_PRINT_TIME_INTERVAL * 0.001);
-             aveTpt += tpt; 
+             tpt = (double)(rlcThptCb->ueTputInfo.thptPerUe[ueIdx].dataVol * 8)/(double)ODU_UE_THROUGHPUT_PRINT_TIME_INTERVAL;
+      
              DU_LOG("\nUE Id : %d   DL Tpt : %.2Lf", rlcThptCb->ueTputInfo.thptPerUe[ueIdx].ueId, tpt);
-             ueId[actvUeIndex] = rlcThptCb->ueTputInfo.thptPerUe[ueIdx].ueId;
-             ueTpt[actvUeIndex] = tpt;
-             actvUeIndex++;
              rlcThptCb->ueTputInfo.thptPerUe[ueIdx].dataVol = 0;
          }
       }
-      BuildCellReportToDu(rlcThptCb->ueTputInfo.numActvUe, aveTpt, ueId, ueTpt);
    }
    DU_LOG("\n==================================================================");
 
@@ -646,50 +615,13 @@ void rlcSnssaiThptTmrExpiry(PTR cb)
    if(snssaiTputBitmap == DIR_BOTH)
    {
       //call the function
-      BuildSliceReportToDu(MAX(snssaiCntUl, snssaiCntDl));
+      // BuildSliceReportToDu(rlcThptCb->snssaiTputInfo.dlTputPerSnssaiList, MAX(snssaiCntUl, snssaiCntDl));
       snssaiTputBitmap = DIR_NONE;
    }
    /* Restart timer */
    rlcStartTmr(RLC_GET_RLCCB(rlcThptCb->inst), (PTR)rlcThptCb, EVENT_RLC_SNSSAI_THROUGHPUT_TMR);
    return;
 }
-
-/**
- * @brief Handler to do processing on expiry of the DRB throughput timer
- *
- * @details
- *    This function processes the RLC DRB throughput timer expiry.
- *
- * @param[in] cb  Pointer to the RLC throughput struct
- *
- * @return  Void
- */
-void rlcDrbThptTmrExpiry(PTR cb)
-{
-   RlcThpt *rlcThptCb = (RlcThpt*)cb; 
-   uint16_t  ueIdx;
-
-   /* If cell is not up, throughput details cannot be printed */
-   if(gCellStatus != CELL_UP)
-   {
-      /* Restart timer */
-      rlcStartTmr(RLC_GET_RLCCB(rlcThptCb->inst), (PTR)(rlcThptCb), EVENT_RLC_DRB_THROUGHPUT_TMR);
-      return;
-   }
-   
-   for(ueIdx = 0; ueIdx < MAX_NUM_UE; ueIdx++)
-   {
-      if(rlcThptCb->drbTputInfo.dlTputPerDrbList[ueIdx] != NULLP)
-      {
-         rlcCalculateTputPerDrb(rlcThptCb->drbTputInfo.dlTputPerDrbList[ueIdx], DIR_DL);
-      }
-   }
-
-   /* Restart timer */
-   rlcStartTmr(RLC_GET_RLCCB(rlcThptCb->inst), (PTR)rlcThptCb, EVENT_RLC_DRB_THROUGHPUT_TMR);
-   return;
-}
-
 /**
 *
 * @brief filling RLC UE delete configuration
@@ -751,7 +683,7 @@ uint8_t rlcUeDeleteTmrExpiry(PTR cb)
    if(RlcProcCfgReq(&ueCb->ueDeleteInfo.pst, rlcUeCfg) != ROK)
    {
       DU_LOG("\nERROR  -->  RLC: rlcUeDeleteTmrExpiry(): Failed to delete UE");
-      if(sendRlcUeDeleteRspToDu(rlcUeCfg->cellId, rlcUeCfg->ueId, UEID_INVALID) != ROK)
+      if(sendRlcUeDeleteRspToDu(rlcUeCfg->cellId, rlcUeCfg->ueId, INVALID_UEID) != ROK)
       {
          DU_LOG("ERROR  --> RLC: rlcUeDeleteTmrExpiry(): Failed to send UE delete response ");
          return RFAILED;

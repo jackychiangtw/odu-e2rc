@@ -112,9 +112,8 @@
 #define MAX_NUM_RB TOTAL_PRB_20MHZ_MU0 /* value for numerology 0, 20 MHz */
 #endif
 
-#define ODU_UE_THROUGHPUT_PRINT_TIME_INTERVAL      500     /* in milliseconds */
-#define ODU_SNSSAI_THROUGHPUT_PRINT_TIME_INTERVAL  500     /* in milliseconds */
-#define ODU_DRB_THROUGHPUT_PRINT_TIME_INTERVAL     500      /* in milliseconds */
+#define ODU_UE_THROUGHPUT_PRINT_TIME_INTERVAL      5     /* in milliseconds */
+#define ODU_SNSSAI_THROUGHPUT_PRINT_TIME_INTERVAL  60000 /* in milliseconds */
 
 /*Spec 38.331 Sec 6.4: Maximum number of paging occasion per paging frame*/
 #define MAX_PO_PER_PF 4
@@ -146,7 +145,6 @@
 #define ODU_PRINT_MSG SPrntMsg
 #define ODU_REM_PRE_MSG SRemPreMsg
 #define ODU_REM_PRE_MSG_MULT SRemPreMsgMult
-#define ODU_REM_POST_MSG_MULT SRemPstMsgMult
 #define ODU_REG_TMR_MT SRegTmrMt
 #define ODU_SEGMENT_MSG SSegMsg
 #define ODU_CAT_MSG SCatMsg
@@ -226,21 +224,11 @@
 
 typedef enum
 {
-   SUCCESSFUL, 
-   CELLID_INVALID, 
-   UEID_INVALID, 
-   RESOURCE_UNAVAILABLE,  
-   SLICE_NOT_FOUND,
-}CauseOfResult ;
-
-typedef enum
-{
    UE_CFG_INACTIVE,
    UE_CFG_INPROGRESS,
    UE_CREATE_COMPLETE,
    UE_DELETE_COMPLETE,
-   UE_RECFG_COMPLETE,
-   UE_RESET_COMPLETE
+   UE_RECFG_COMPLETE
 }UeCfgState;
 
 typedef enum
@@ -248,11 +236,17 @@ typedef enum
    CONFIG_UNKNOWN,
    CONFIG_ADD,
    CONFIG_MOD,
-   CONFIG_DEL,
-   CONFIG_REESTABLISH
+   CONFIG_DEL
 }ConfigType;
 
 #ifdef NR_TDD
+typedef enum
+{
+   DL_SLOT,
+   UL_SLOT,
+   FLEXI_SLOT
+}SlotConfig;
+
 typedef enum
 {
    TX_PRDCTY_MS_0P5,
@@ -277,13 +271,13 @@ typedef enum
 
 typedef enum
 {
-   SSB_5MS,
-   SSB_10MS,
-   SSB_20MS,
-   SSB_40MS,
-   SSB_80MS,
-   SSB_160MS
-}SSBPeriodicity;
+   SCS_5MS,
+   SCS_10MS,
+   SCS_20MS,
+   SCS_40MS,
+   SCS_80MS,
+   SCS_160MS
+}ScsPeriodicity;
 
 typedef enum
 {
@@ -336,11 +330,9 @@ typedef struct oduCellId
 #ifdef NR_TDD
 typedef struct tddCfg
 {
-   DlUlTxPeriodicity  tddPeriod;     /*DL UL Transmission periodicity */
-   uint8_t            nrOfDlSlots;   /*No. of consecultive full DL slots at beginning of DL-UL pattern*/
-   uint8_t            nrOfDlSymbols; /*No. of consecultive DL symbol at beginning of slot after last full DL slot*/ 
-   uint8_t            nrOfUlSlots;   /*No. of consecutive full UL slots at the end of each DL-UL pattern*/
-   uint8_t            nrOfUlSymbols; /*No. of consecutive UL symbols in the end of the slot before the first full UL slot*/
+   bool               pres;
+   DlUlTxPeriodicity  tddPeriod;      /* DL UL Transmission periodicity */
+   SlotConfig         slotCfg[MAX_TDD_PERIODICITY_SLOTS][MAX_SYMB_PER_SLOT]; 
 }TDDCfg;
 #endif
 
@@ -353,7 +345,7 @@ void oduCpyFixBufToMsg(uint8_t *fixBuf, Buffer *mBuf, uint16_t len);
 uint8_t buildPlmnId(Plmn plmn, uint8_t *buf);
 uint16_t convertScsEnumValToScsVal(uint8_t scsEnumValue);
 uint8_t convertScsValToScsEnum(uint32_t num);
-uint8_t convertSSBPeriodicityToEnum(uint32_t num);
+uint8_t convertScsPeriodicityToEnum(uint32_t num);
 
 uint8_t SGetSBufNewForDebug(char *file, const char *func, int line, Region region, Pool pool, Data **ptr, Size size);
 uint8_t SPutSBufNewForDebug(char *file, const char *func, int line, Region region, Pool pool, Data *ptr, Size size);
@@ -362,7 +354,7 @@ Region region, Pool pool, Data **ptr, Size size, uint8_t memType);
 uint8_t SPutStaticBufNewForDebug(char *file, const char *func, int line, \
 Region region, Pool pool, Data *ptr, Size size, uint8_t memType);
 uint8_t countSetBits(uint32_t num);
-uint32_t convertArfcnToFreqKhz(uint32_t arfcn);
+
 #endif
 
 /**********************************************************************

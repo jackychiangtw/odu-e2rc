@@ -18,7 +18,6 @@
 /* File : du_mgr_msg_router.c */
 /* This file contains message handling functionality for DU APP */
 #include "common_def.h"
-#include "du_tmr.h"
 #include "lrg.h"
 #include "legtp.h"
 #include "lsctp.h"
@@ -30,14 +29,13 @@
 #include "kwu.x"
 #include "du_app_mac_inf.h"
 #include "du_app_rlc_inf.h"
-#include "du_e2ap_mgr.h"
-#include "du_e2ap_msg_hdl.h"
 #include "du_cfg.h"
 #include "du_mgr.h"
 #include "E2AP-PDU.h"
 #include "du_sctp.h"
 #include "F1AP-PDU.h"
 #include "du_f1ap_msg_hdl.h"
+#include "du_e2ap_msg_hdl.h"
 #include "du_app_mac_inf.h"
 #include "du_ue_mgr.h"
 #include "du_utils.h"
@@ -434,12 +432,12 @@ uint8_t duActvTsk(Pst *pst, Buffer *mBuf)
                   }
                case EVENT_RLC_UE_CREATE_RSP:
                   {
-                     ret = unpackRlcUeCreateRsp(DuProcRlcUeCreateRsp, pst, mBuf);
+                     ret = unpackRlcUeCfgRsp(DuProcRlcUeCfgRsp, pst, mBuf);
                      break;
                   }
                case EVENT_RLC_UE_RECONFIG_RSP:
                   {
-                     ret = unpackRlcUeReconfigRsp(DuProcRlcUeReconfigRsp, pst, mBuf);
+                     ret = unpackRlcUeCfgRsp(DuProcRlcUeCfgRsp, pst, mBuf);
                      break;
                   }
                case EVENT_RLC_UE_DELETE_RSP:
@@ -462,11 +460,6 @@ uint8_t duActvTsk(Pst *pst, Buffer *mBuf)
                      ret = unpackRlcDlRrcMsgRspToDu(DuProcRlcDlRrcMsgRsp, pst, mBuf);
                      break;
                   }
-               case EVENT_RLC_MAX_RETRANSMISSION:
-                  {
-                     ret = unpackRlcMaxRetransInd(DuProcRlcMaxRetransInd, pst, mBuf);
-                     break;
-                  }
                case EVENT_UL_USER_DATA_TRANS_TO_DU:
                   {
                      ret = unpackRlcUlUserDataToDu(DuProcRlcUlUserDataTrans, pst, mBuf);
@@ -477,16 +470,6 @@ uint8_t duActvTsk(Pst *pst, Buffer *mBuf)
                      ret = unpackRlcSlicePm(DuProcRlcSliceMetrics, pst, mBuf);
                      break;
                   }
-               case EVENT_RLC_UE_REESTABLISH_RSP:
-                  {
-                     ret = unpackRlcUeReestablishRsp(DuProcRlcUeReestablishRsp, pst, mBuf);
-                     break;
-                  }
-               case EVENT_RLC_UE_PM_TO_DU:
-                  {
-                     ret = unpackRlcCellPm(DuProcRlcCellMetrics, pst, mBuf);
-                     break;
-                  } 
                default:
                   {
                      DU_LOG("\nERROR  -->  DU_APP : Invalid event %d received at duActvTsk from ENTRLC", \
@@ -544,7 +527,7 @@ uint8_t duActvTsk(Pst *pst, Buffer *mBuf)
                   }
                case EVENT_MAC_UE_CREATE_RSP:
                   {
-                     ret = unpackDuMacUeCreateRsp(DuProcMacUeCreateRsp, pst, mBuf); 
+                     ret = unpackDuMacUeCfgRsp(DuProcMacUeCfgRsp, pst, mBuf); 
                      break;
                   }
                case EVENT_MAC_UE_RECONFIG_RSP:
@@ -567,11 +550,6 @@ uint8_t duActvTsk(Pst *pst, Buffer *mBuf)
                      ret = unpackDuMacSliceCfgRsp(DuProcMacSliceCfgRsp, pst, mBuf);
                      break;
                   }
-               case EVENT_MAC_UE_SYNC_STATUS_IND:
-                  {
-                     ret = unpackDuMacUeSyncStatusInd(DuProcMacUeSyncStatusInd, pst, mBuf);
-                     break;
-                                                                                                }
                case EVENT_MAC_SLICE_RECFG_RSP:
                   {
                      ret = unpackDuMacSliceRecfgRsp(DuProcMacSliceRecfgRsp, pst, mBuf);
@@ -580,16 +558,6 @@ uint8_t duActvTsk(Pst *pst, Buffer *mBuf)
                case EVENT_MAC_RACH_RESOURCE_RSP:
                   {
                      ret = unpackDuMacRachRsrcRsp(DuProcMacRachRsrcRsp, pst, mBuf);
-                     break;
-                  }
-               case EVENT_MAC_UE_RESET_RSP:
-                  {
-                     ret = unpackDuMacUeResetRsp(DuProcMacUeResetRsp, pst, mBuf);
-                     break;
-                  }
-               case EVENT_MAC_PRB_METRIC_TO_DU:
-                  {
-                     ret = unpackDuMacPrbPm(DuProcMacPrbPm, pst, mBuf);
                      break;
                   }
                default:
