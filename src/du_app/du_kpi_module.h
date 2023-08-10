@@ -92,8 +92,8 @@ typedef struct kpmSlicePmDb
   int smo_avgThpDl[MAX_SIZE_OF_SLICE];
 }KpmSlicePmDb;
 
-KpmCellPmDb  kpmCellPmDb;
-KpmSlicePmDb kpmSlicePmDb;
+KpmCellPmDb  kpmCellPmDb; // Store cell performance metrics
+KpmSlicePmDb kpmSlicePmDb; // Store slice performance metrics
 
 int32_t indicationRlcCellCount, indicationRlcSliceCount, indicationMacCellCount, indicationMacSliceCount;
 int indexOfSliceRlcPm, indexOfSliceMacPm, indexOfCellRlcPm, indexOfCellMacPm;

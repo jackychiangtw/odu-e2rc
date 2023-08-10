@@ -52,11 +52,6 @@
 #define POLICY_MAX_PRB_RATIO 12
 #define POLICY_DED_PRB_RATIO 13
 
-typedef struct paraIdList_linkList {
-    int data;
-    struct paraIdList_linkList* next;
-}paraIdList;
-
 #ifndef O1_ENABLE
 uint8_t setRrmPolicy(RrmPolicyList rrmPolicy[],uint8_t policyNum);
 #endif
