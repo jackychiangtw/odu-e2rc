@@ -18,7 +18,6 @@ void kpiModuleInit(){
     kpmSlicePmDb.numOfSlice = MAX_SIZE_OF_SLICE;
     indexOfSliceMacPm = 0;
     indexOfSliceRlcPm = 0;
-
     indexOfCellMacPm = 0;
     indexOfCellRlcPm = 0;
     indicationRlcCellCount = 0;
@@ -40,7 +39,7 @@ void kpiModuleInit(){
  *
  *    Functionality: Store the Cell Metrics by RLC
  *
- * @param[in] cellMetricList, CellPmList* cell metrics
+ * @param[in] cellMetricList, CellPmList* cell RLC metrics
  * @return void
  *
  ******************************************************************/
@@ -49,16 +48,11 @@ void kpmStoreCellRlcMetric(CellPmList* cellMetricList){
     if(cellMetricList != NULL){
         if(cellMetricList->numUe>0){
             printf("\nINFO   -->  E2SM-KPM : Support sending UE Average Throughput to xApp");
-            if(indexOfCellRlcPm<SIZE_OF_RLCDB){
-                indexOfCellRlcPm++;
-            }
-            else{
-                indexOfCellRlcPm=0;
-            }
-            kpmCellPmDb.eachRlcPm[indexOfCellRlcPm].ThpDl = cellMetricList->ueRecord->ThpDl;
+            indexOfCellRlcPm = (indexOfCellRlcPm + 1 ) % SIZE_OF_RLCDB; // Counting the index, prevent out of DB size
+            kpmCellPmDb.eachRlcPm[indexOfCellRlcPm].ThpDl = cellMetricList->ueRecord->ThpDl; // Fills the Cell throughput in DB
         }
     }
-    if(kpmCellIndicationEnable){
+    if(kpmCellIndicationEnable){ // Counting the number of performace metrics in this interval of sending Indication for cell metrics
         indicationRlcCellCount++;
     }
 }
@@ -73,35 +67,34 @@ void kpmStoreCellRlcMetric(CellPmList* cellMetricList){
  *
  *    Functionality: Store the Slice Metrics by RLC
  *
- * @param[in] sliceMetricList, SlicePmList* slice metrics
+ * @param[in] sliceMetricList, SlicePmList* slice RLC metrics
  * @return void
  *
  ******************************************************************/
 
 void kpmStoreSliceRlcMetric(SlicePmList* sliceMetricList){
     if(sliceMetricList){
-        indexOfSliceRlcPm++;
-        if(indexOfSliceRlcPm == SIZE_OF_RLCDB)
-            indexOfSliceRlcPm = 0;
+        indexOfCellRlcPm = (indexOfCellRlcPm + 1 ) % SIZE_OF_RLCDB; // Counting the index, prevent out of DB size
 
-        for(int i=0;i<sliceMetricList->numSlice;i++){
-                kpmSlicePmDb.eachRlcPm[indexOfSliceRlcPm].sliceRecord[i].ThpDl = (int)sliceMetricList->sliceRecord[i].ThpDl;
-                kpmSlicePmDb.snssai[i].sst = (char)sliceMetricList->sliceRecord[i].networkSliceIdentifier.sst;
-                kpmSlicePmDb.snssai[i].sd[0] = (sliceMetricList->sliceRecord[i].networkSliceIdentifier.sd / 100 ) % 10;
-                kpmSlicePmDb.snssai[i].sd[1] = (sliceMetricList->sliceRecord[i].networkSliceIdentifier.sd / 10) % 10;
-                kpmSlicePmDb.snssai[i].sd[2] = (sliceMetricList->sliceRecord[i].networkSliceIdentifier.sd ) % 10; 
+        for(int i=0;i<sliceMetricList->numSlice;i++){ // Fills the Slice ID info
+            kpmSlicePmDb.eachRlcPm[indexOfSliceRlcPm].sliceRecord[i].ThpDl = (int)sliceMetricList->sliceRecord[i].ThpDl;
+            kpmSlicePmDb.snssai[i].sst = (char)sliceMetricList->sliceRecord[i].networkSliceIdentifier.sst;
+            kpmSlicePmDb.snssai[i].sd[0] = (sliceMetricList->sliceRecord[i].networkSliceIdentifier.sd / 100 ) % 10;
+            kpmSlicePmDb.snssai[i].sd[1] = (sliceMetricList->sliceRecord[i].networkSliceIdentifier.sd / 10) % 10;
+            kpmSlicePmDb.snssai[i].sd[2] = (sliceMetricList->sliceRecord[i].networkSliceIdentifier.sd ) % 10; 
         }
         kpmSlicePmDb.eachRlcPm[indexOfSliceRlcPm].numOfSlice = sliceMetricList->numSlice;
         kpmSlicePmDb.numOfSlice = sliceMetricList->numSlice;
     }   
 
-    if(kpmSliceIndicationEnable){
+    if(kpmSliceIndicationEnable){ // Counting the number of performace metrics in this interval of sending Indication for slices metrics
         indicationRlcSliceCount++;
     }
 
-    if(smoRlcSliceCount<2 * SMO_REPORT_PERIOD)
+    if(smoRlcSliceCount < PHY_STUB_RATIO * SMO_REPORT_PERIOD)  // Send the slice PM to SMO through O1
         smoRlcSliceCount++;
     else{
+        smoRlcSliceCount++;
         calcSmoMetric();
         #ifdef O1_ENABLE
             SliceMetricList *sliceStatsList = (SliceMetricList*)calloc(1, sizeof(SliceMetricList));
@@ -132,25 +125,19 @@ void kpmStoreSliceRlcMetric(SlicePmList* sliceMetricList){
  *
  *    Functionality: Store the Metrics by MAC
  *
- * @param[in] macPrbPm, MacPrbPm* metrics
+ * @param[in] macPrbPm, MacPrbPm* PRB metrics
  * @return void
  *
  ******************************************************************/
 
-void kpmStoreMacMetric(MacPrbPm* macPrbPm){ // Enter this function per millisecond. 
+void kpmStoreMacMetric(MacPrbPm* macPrbPm){ // Enter this function per TTI. 
     if(macPrbPm != NULL){
-        if(indexOfCellMacPm<SIZE_OF_MACDB)
-            indexOfCellMacPm++;
-        else
-            indexOfCellMacPm = 0;
-        kpmCellPmDb.eachMacPm[indexOfCellMacPm].usedPrb = macPrbPm->usedPrb;
+        indexOfCellMacPm = (indexOfCellMacPm + 1 ) % SIZE_OF_MACDB; // Counting the index, prevent out of DB size
+        indexOfSliceMacPm = (indexOfSliceMacPm + 1 ) % SIZE_OF_MACDB;
+        kpmCellPmDb.eachMacPm[indexOfCellMacPm].usedPrb = macPrbPm->usedPrb; // Fills the PRB infos in Cell DB
         kpmCellPmDb.eachMacPm[indexOfCellMacPm].totalPrb = macPrbPm->totalPrb;
-        if(indexOfSliceMacPm<SIZE_OF_MACDB)
-            indexOfSliceMacPm++;
-        else
-            indexOfSliceMacPm = 0;
         
-        for(int i=0;i<macPrbPm->sliceNum;i++){
+        for(int i=0;i<macPrbPm->sliceNum;i++){ // Fills the PRB infos in Slice DB
             kpmSlicePmDb.eachMacPm[indexOfSliceMacPm].numOfSlice = macPrbPm->sliceNum;
             if(macPrbPm->listOfSlicePm){
                 kpmSlicePmDb.eachMacPm[indexOfSliceMacPm].sliceRecord[i].usedPrb = macPrbPm->listOfSlicePm[i].usedPrb;
@@ -161,10 +148,10 @@ void kpmStoreMacMetric(MacPrbPm* macPrbPm){ // Enter this function per milliseco
         printf("\nERROR   -->  E2SM-KPM : Empty Input");
     }
 
-    if(kpmCellIndicationEnable){
+    if(kpmCellIndicationEnable){ // Counting the number of performace metrics in this interval of sending Indication for cell metrics
         indicationMacCellCount++;
     }
-    if(kpmSliceIndicationEnable){
+    if(kpmSliceIndicationEnable){ // Counting the number of performace metrics in this interval of sending Indication for cell metrics
         indicationMacSliceCount++;
     }
     smoMacSliceCount++;
@@ -187,30 +174,22 @@ void kpmStoreMacMetric(MacPrbPm* macPrbPm){ // Enter this function per milliseco
  ******************************************************************/
 
 uint8_t kpmCalcCellMetric(){
-    long rlcIndex = indexOfCellRlcPm - 1;
-    long macIndex = indexOfCellMacPm - 1;
+    long rlcIndex = (indexOfCellRlcPm - 1) % SIZE_OF_RLCDB; // The index of first item in this internal
+    long macIndex = (indexOfCellMacPm - 1) % SIZE_OF_MACDB; 
     uint64_t usedPrbSum = 0, totalPrbSum = 0, thpSum = 0;
 
-    for(int i=0;i<indicationMacCellCount;i++){
+    for(int i=0;i<indicationMacCellCount;i++){ // Query the data in Cell MAC DB
         usedPrbSum += kpmCellPmDb.eachMacPm[macIndex].usedPrb;
         totalPrbSum += kpmCellPmDb.eachMacPm[macIndex].totalPrb;
-        if(macIndex>0)
-            macIndex--;
-        else{
-            macIndex = SIZE_OF_MACDB - 1;
-        }
+        macIndex = (macIndex - 1) % SIZE_OF_MACDB;
     }
 
-    for(int i=0;i<indicationRlcCellCount;i++){
+    for(int i=0;i<indicationRlcCellCount;i++){ // Query the data in Slice RLC DB
         thpSum += kpmCellPmDb.eachRlcPm[rlcIndex].ThpDl;
-        if(rlcIndex>0)
-            rlcIndex--;
-        else{
-            rlcIndex = SIZE_OF_RLCDB - 1;
-        }
+        rlcIndex = (rlcIndex - 1) % SIZE_OF_RLCDB;
     }
 
-    kpmCellPmDb.avgThpDl = indicationRlcCellCount ? thpSum / indicationRlcCellCount : 0;
+    kpmCellPmDb.avgThpDl = indicationRlcCellCount ? thpSum / indicationRlcCellCount : 0; // Get avg value
     kpmCellPmDb.avgUsedPrb = indicationMacCellCount ? usedPrbSum / indicationMacCellCount : 0;
     kpmCellPmDb.avgTotalPrb = indicationMacCellCount ? totalPrbSum / indicationMacCellCount : 0;
     kpmCellPmDb.avgUsagePrb = indicationMacCellCount ? (double)100.0 * kpmCellPmDb.avgUsedPrb / kpmCellPmDb.avgTotalPrb  : 0;
@@ -237,34 +216,26 @@ uint8_t kpmCalcCellMetric(){
  ******************************************************************/
 
 uint8_t kpmCalcSliceMetric(){
-    long rlcIndex = indexOfSliceRlcPm;
-    long macIndex = indexOfSliceMacPm;
+    long rlcIndex = (indexOfSliceRlcPm - 1) % SIZE_OF_RLCDB; // The index of first item in this internal
+    long macIndex = (indexOfSliceMacPm - 1) % SIZE_OF_MACDB;
     uint64_t usedPrbSum[MAX_SIZE_OF_SLICE] = {0, };
     uint64_t thpSum[MAX_SIZE_OF_SLICE] = {0, };
 
-    for(int i=0;i<indicationMacSliceCount;i++){
+    for(int i=0;i<indicationMacSliceCount;i++){  // Query the data in Slice MAC DB
         for(int j=0;j<kpmSlicePmDb.numOfSlice;j++){
             usedPrbSum[j] += kpmSlicePmDb.eachMacPm[macIndex].sliceRecord[j].usedPrb;
         }
-        if(macIndex>0)
-            macIndex--;
-        else{
-            macIndex = SIZE_OF_MACDB - 1;
-        }
+        macIndex = (macIndex - 1) % SIZE_OF_MACDB;
     }
 
-    for(int i=0;i<indicationRlcSliceCount;i++){
+    for(int i=0;i<indicationRlcSliceCount;i++){  // Query the data in Slice RLC DB
         for(int j=0;j<MAX_SIZE_OF_SLICE;j++){
             thpSum[j] += kpmSlicePmDb.eachRlcPm[rlcIndex].sliceRecord[j].ThpDl;
         }
-        if(rlcIndex>0)
-            rlcIndex--;
-        else{
-            rlcIndex = SIZE_OF_RLCDB - 1;
-        }
+        rlcIndex = (rlcIndex - 1) % SIZE_OF_RLCDB;
     }
 
-    for(int i=0;i<MAX_SIZE_OF_SLICE;i++){
+    for(int i=0;i<MAX_SIZE_OF_SLICE;i++){ // Get avg value
         kpmSlicePmDb.avgUsedPrb[i] = indicationMacSliceCount ? usedPrbSum[i] / indicationMacSliceCount : 0;
         kpmSlicePmDb.avgThpDl[i] = indicationRlcSliceCount ? thpSum[i] / indicationRlcSliceCount : 0;
         DU_LOG("\nJacky --> KPM: SNSSAI(sst:%d,sd [%d, %d, %d]), DL PRBUsed : %d, DLtpt : %d", \
@@ -292,44 +263,30 @@ uint8_t kpmCalcSliceMetric(){
  ******************************************************************/
 
 uint8_t calcSmoMetric(){
-    long rlcIndex = indexOfSliceRlcPm;
-    long macIndex = indexOfSliceMacPm;
+    long rlcIndex = (indexOfSliceRlcPm - 1) % SIZE_OF_RLCDB; // The index of first item in this internal
+    long macIndex = (indexOfSliceMacPm - 1) % SIZE_OF_MACDB;
     uint64_t usedPrbSum[MAX_SIZE_OF_SLICE] = {0, };
     uint64_t thpSum[MAX_SIZE_OF_SLICE] = {0, };
 
     smoMacSliceCount++;
 
-    for(int i=0;i<smoMacSliceCount;i++){
+    for(int i=0;i<smoMacSliceCount;i++){ // Query the data in Slice MAC DB
         for(int j=0;j<kpmSlicePmDb.numOfSlice;j++){
             usedPrbSum[j] += kpmSlicePmDb.eachMacPm[macIndex].sliceRecord[j].usedPrb;   
         }
-        // DU_LOG("\nJacky --> SMO: # %d tpt = %d, %d, %d", macIndex, kpmSlicePmDb.eachMacPm[macIndex].sliceRecord[0].usedPrb, kpmSlicePmDb.eachMacPm[macIndex].sliceRecord[1].usedPrb,  kpmSlicePmDb.eachMacPm[macIndex].sliceRecord[2].usedPrb);
-
-        if(macIndex>0)
-            macIndex--;
-        else{
-            macIndex = SIZE_OF_MACDB - 1;
-        }
+        macIndex = (macIndex - 1) % SIZE_OF_MACDB;
     }
 
-    for(int i=0;i<smoRlcSliceCount;i++){
+    for(int i=0;i<smoRlcSliceCount;i++){ // Query the data in Slice RLC DB
         for(int j=0;j<MAX_SIZE_OF_SLICE;j++){
             thpSum[j] += kpmSlicePmDb.eachRlcPm[rlcIndex].sliceRecord[j].ThpDl;
         }
-        // DU_LOG("\nJacky --> SMO: # %d tpt = %d, %d, %d", rlcIndex, kpmSlicePmDb.eachRlcPm[rlcIndex].sliceRecord[0].ThpDl, kpmSlicePmDb.eachRlcPm[rlcIndex].sliceRecord[1].ThpDl,  kpmSlicePmDb.eachRlcPm[rlcIndex].sliceRecord[2].ThpDl);
-        if(rlcIndex>0)
-            rlcIndex--;
-        else{
-            rlcIndex = SIZE_OF_RLCDB - 1;
-        }
+        rlcIndex = (rlcIndex - 1) % SIZE_OF_RLCDB;
     }
 
-    for(int i=0;i<MAX_SIZE_OF_SLICE;i++){
+    for(int i=0;i<MAX_SIZE_OF_SLICE;i++){ // Get avg value
         kpmSlicePmDb.smo_avgUsedPrb[i] = smoMacSliceCount ? (uint64_t)usedPrbSum[i] / smoMacSliceCount : 0;
         kpmSlicePmDb.smo_avgThpDl[i] = smoRlcSliceCount ? (uint64_t)thpSum[i] / smoRlcSliceCount : 0;
-        // DU_LOG("\nJacky --> SMO: SNSSAI(sst:%d,sd [%d, %d, %d]), DL PRBUsed : %d, DLtpt : %d", \
-            kpmSlicePmDb.snssai[i].sst, kpmSlicePmDb.snssai[i].sd[0], kpmSlicePmDb.snssai[i].sd[1], \
-            kpmSlicePmDb.snssai[i].sd[2], kpmSlicePmDb.smo_avgUsedPrb[i], kpmSlicePmDb.smo_avgThpDl[i]);
     }
     smoRlcSliceCount = 0;
     smoMacSliceCount = 0;

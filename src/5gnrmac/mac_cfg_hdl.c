@@ -34,6 +34,7 @@
 uint8_t ssbPeriodicity[6] = {5, 10, 20, 40, 80, 160};
 
 uint8_t MacSchCellCfgReq(Pst *pst, MacCellCfg  *macCellCfg);
+uint8_t MacSendPrbPmToDu(MacPrbPm *macPrbPm);
 
 packMacCellCfgConfirm packMacCellCfmOpts[] =
 {
