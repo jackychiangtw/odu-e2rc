@@ -438,7 +438,9 @@ uint16_t l1BuildAndSendRxDataInd(uint16_t slot, uint16_t sfn, fapi_ul_pusch_pdu_
          phyDb.ueDb.ueCb[ueId-1].crnti = puschPdu.rnti;
          phyDb.ueDb.ueCb[ueId-1].msg3Sent = true;
          type = MSG_TYPE_MSG3;
-         sleep(2);
+         // sleep(2);
+         sleep(3);
+         usleep(500000);
       }
       else if(!phyDb.ueDb.ueCb[ueId-1].msg5ShortBsrSent)
       {
@@ -449,6 +451,7 @@ uint16_t l1BuildAndSendRxDataInd(uint16_t slot, uint16_t sfn, fapi_ul_pusch_pdu_
       {
          phyDb.ueDb.ueCb[ueId-1].msg5Sent = true;
          type = MSG_TYPE_MSG5;
+         DU_LOG("\nJOJO  -->  Msg5 sent.");
       }
       else if(!phyDb.ueDb.ueCb[ueId-1].msgNasAuthenticationComp)
       {
@@ -474,6 +477,7 @@ uint16_t l1BuildAndSendRxDataInd(uint16_t slot, uint16_t sfn, fapi_ul_pusch_pdu_
       {
          phyDb.ueDb.ueCb[ueId-1].msgRrcReconfigComp = true;
          type = MSG_TYPE_RRC_RECONFIG_COMPLETE;
+         DU_LOG("\nJOJO  -->  RRC reconfiguration completed.");
       }
       else
          return ROK;
@@ -1238,11 +1242,11 @@ S16 l1HdlUlTtiReq(uint16_t msgLen, void *msg)
             l1BuildAndSendRachInd(ulTtiReq->slot, ulTtiReq->sfn, CB_RA_PREAMBLE_IDX);
             phyDb.ueDb.numActvUe++;
          }
-#if 0
+#if 1
          /* Send RACH Ind to L2 for second UE */
          if(phyDb.ueDb.ueCb[UE_IDX_1].rachIndSent == false && phyDb.ueDb.ueCb[UE_IDX_0].msgRrcReconfigComp == true)
          {
-            phyDb.ueDb.ueCb[UE_IDX_0].isCFRA = false;
+            phyDb.ueDb.ueCb[UE_IDX_1].isCFRA = false;
             phyDb.ueDb.ueCb[UE_IDX_1].rachIndSent = true;
             l1BuildAndSendRachInd(ulTtiReq->slot, ulTtiReq->sfn, CB_RA_PREAMBLE_IDX);
             phyDb.ueDb.numActvUe++;
@@ -1251,11 +1255,47 @@ S16 l1HdlUlTtiReq(uint16_t msgLen, void *msg)
          /* Send RACH Ind to L2 for third UE */
          if(phyDb.ueDb.ueCb[UE_IDX_2].rachIndSent == false && phyDb.ueDb.ueCb[UE_IDX_1].msgRrcReconfigComp == true)
          {
-            phyDb.ueDb.ueCb[UE_IDX_0].isCFRA = false;
+            phyDb.ueDb.ueCb[UE_IDX_2].isCFRA = false;
             phyDb.ueDb.ueCb[UE_IDX_2].rachIndSent = true;
             l1BuildAndSendRachInd(ulTtiReq->slot, ulTtiReq->sfn, CB_RA_PREAMBLE_IDX);
             phyDb.ueDb.numActvUe++;
          }
+         
+         /* Send RACH Ind to L2 for fourth UE */
+         if(phyDb.ueDb.ueCb[UE_IDX_3].rachIndSent == false && phyDb.ueDb.ueCb[UE_IDX_2].msgRrcReconfigComp == true)
+         {
+            phyDb.ueDb.ueCb[UE_IDX_3].isCFRA = false;
+            phyDb.ueDb.ueCb[UE_IDX_3].rachIndSent = true;
+            l1BuildAndSendRachInd(ulTtiReq->slot, ulTtiReq->sfn, CB_RA_PREAMBLE_IDX);
+            phyDb.ueDb.numActvUe++;
+         }
+
+         /* Send RACH Ind to L2 for fifth UE */
+         if(phyDb.ueDb.ueCb[UE_IDX_4].rachIndSent == false && phyDb.ueDb.ueCb[UE_IDX_3].msgRrcReconfigComp == true)
+         {
+            phyDb.ueDb.ueCb[UE_IDX_4].isCFRA = false;
+            phyDb.ueDb.ueCb[UE_IDX_4].rachIndSent = true;
+            l1BuildAndSendRachInd(ulTtiReq->slot, ulTtiReq->sfn, CB_RA_PREAMBLE_IDX);
+            phyDb.ueDb.numActvUe++;
+         }
+
+         /* Send RACH Ind to L2 for fifth UE */
+         if(phyDb.ueDb.ueCb[UE_IDX_5].rachIndSent == false && phyDb.ueDb.ueCb[UE_IDX_4].msgRrcReconfigComp == true)
+         {
+            phyDb.ueDb.ueCb[UE_IDX_5].isCFRA = false;
+            phyDb.ueDb.ueCb[UE_IDX_5].rachIndSent = true;
+            l1BuildAndSendRachInd(ulTtiReq->slot, ulTtiReq->sfn, CB_RA_PREAMBLE_IDX);
+            phyDb.ueDb.numActvUe++;
+         }
+
+         /* Send RACH Ind to L2 for fifth UE */
+         // if(phyDb.ueDb.ueCb[UE_IDX_6].rachIndSent == false && phyDb.ueDb.ueCb[UE_IDX_5].msgRrcReconfigComp == true)
+         // {
+         //    phyDb.ueDb.ueCb[UE_IDX_6].isCFRA = false;
+         //    phyDb.ueDb.ueCb[UE_IDX_6].rachIndSent = true;
+         //    l1BuildAndSendRachInd(ulTtiReq->slot, ulTtiReq->sfn, CB_RA_PREAMBLE_IDX);
+         //    phyDb.ueDb.numActvUe++;
+         // }
 #endif       
       }
       if(ulTtiReq->pdus[numPdus-1].pduType == 1)

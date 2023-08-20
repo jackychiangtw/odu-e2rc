@@ -169,6 +169,44 @@ void SchFcfsModUeConfigReq(SchUeCb *ueCb)
 
 /*******************************************************************
  *
+ * @brief Handles Slice configuration request
+ *
+ * @details
+ *
+ *    Function : SchFcfsSliceCfgReq
+ *
+ *    Functionality: 
+ *
+ * @params[in] Pointer to Cell control block
+ * @return void
+ *
+ * ****************************************************************/
+void SchFcfsSliceCfgReq(SchCellCb *cellCb)
+{
+   return;
+}
+
+/*******************************************************************
+ *
+ * @brief Handles Slice Reconfiguration request
+ *
+ * @details
+ *
+ *    Function : SchFcfsSliceRecfgReq
+ *
+ *    Functionality: 
+ *
+ * @params[in] Pointer to Cell control block
+ * @return void
+ *
+ * ****************************************************************/
+void SchFcfsSliceRecfgReq(SchCellCb *cellCb)
+{
+   return;
+}
+
+/*******************************************************************
+ *
  * @brief Handles UE Delete Request
  *
  * @details
@@ -748,7 +786,7 @@ void schFcfsRemoveUeFrmScheduleLst(SchCellCb *cell, CmLList *node)
  *
  * @details
  *
- *    Function :  schCalculateUlTbs
+ *    Function :  schFcfsCalculateUlTbs
  *
  *    Functionality: Function will note the required TBS for each LCGIDX and use
  *    the Priority LCG List and RRM policy to allocate the TBS size
@@ -766,7 +804,7 @@ void schFcfsRemoveUeFrmScheduleLst(SchCellCb *cell, CmLList *node)
  *                   RFAILED > vice versa
  *
  * ****************************************************************/
-uint8_t schCalculateUlTbs(SchUeCb *ueCb, SlotTimingInfo puschTime, uint8_t symbLen,\
+uint8_t schFcfsCalculateUlTbs(SchUeCb *ueCb, SlotTimingInfo puschTime, uint8_t symbLen,\
                           uint16_t *startPrb, uint32_t *totTBS, bool isRetx, SchUlHqProcCb *hqP, SchFcfsHqProcCb *fcfsHqP)
 {
    uint16_t mcsIdx = 0;
@@ -912,7 +950,7 @@ uint8_t schFcfsScheduleUlLc(SlotTimingInfo dciTime, SlotTimingInfo puschTime, ui
    cell = (*hqP)->hqEnt->cell;
    ueCb = (*hqP)->hqEnt->ue;
    fcfsHqProcCb = (SchFcfsHqProcCb *)(*hqP)->schSpcUlHqProcCb;
-   ret = schCalculateUlTbs(ueCb, puschTime, symbLen, &startPrb, &totDataReq, isRetx, *hqP, fcfsHqProcCb);
+   ret = schFcfsCalculateUlTbs(ueCb, puschTime, symbLen, &startPrb, &totDataReq, isRetx, *hqP, fcfsHqProcCb);
 
    if(totDataReq > 0 && ret == ROK)
    {
@@ -942,7 +980,6 @@ uint8_t schFcfsScheduleUlLc(SlotTimingInfo dciTime, SlotTimingInfo puschTime, ui
             {
                /* Fill DCI for UL grant */
                schFillUlDci(ueCb, puschInfo, dciInfo, isRetx, *hqP);
-               memcpy(&dciInfo->slotIndInfo, &dciTime, sizeof(SlotTimingInfo));
                ueCb->srRcvd = false;
                ueCb->bsrRcvd = false;
                cell->schUlSlotInfo[puschTime.slot]->puschUe = ueCb->ueId;
@@ -977,17 +1014,18 @@ uint8_t schFcfsScheduleUlLc(SlotTimingInfo dciTime, SlotTimingInfo puschTime, ui
  *         RFAILED
  *
  * ****************************************************************/
-uint32_t schFcfsScheduleDlLc(SlotTimingInfo pdcchTime, SlotTimingInfo pdschTime, uint8_t pdschNumSymbols, bool isRetx, SchDlHqProcCb **hqP)
+uint32_t schFcfsScheduleDlLc(SlotTimingInfo pdcchTime, SlotTimingInfo pdschTime, uint8_t pdschNumSymbols, \
+                               uint16_t *startPrb, bool isRetx, SchDlHqProcCb **hqP)
 {
    SchFcfsHqProcCb *fcfsHqProcCb;
    SchUeCb *ueCb;
    uint8_t lcIdx = 0;
-   uint16_t startPrb = 0, maxFreePRB = 0;
+   uint16_t maxFreePRB = 0;
    uint16_t mcsIdx = 0;
    uint32_t accumalatedSize = 0;
    CmLListCp *lcLL = NULLP;
    uint16_t rsvdDedicatedPRB = 0;
-   DlMsgAlloc *dciSlotAlloc;
+   DlMsgSchInfo *dciSlotAlloc;
 
    /* TX_PAYLOAD_HDR_LEN: Overhead which is to be Added once for any UE while estimating Accumulated TB Size
     * Following flag added to keep the record whether TX_PAYLOAD_HDR_LEN is added to the first Node getting allocated.
@@ -1003,7 +1041,7 @@ uint32_t schFcfsScheduleDlLc(SlotTimingInfo pdcchTime, SlotTimingInfo pdschTime,
    {
       /*Re-Initalization per UE*/
       /* scheduled LC data fill */
-      dciSlotAlloc->dlMsgSchedInfo[dciSlotAlloc->numSchedInfo].numLc = 0;
+      dciSlotAlloc->transportBlock[0].numLc = 0;
       isTxPayloadLenAdded = FALSE; /*Re-initlaize the flag for every UE*/
       accumalatedSize = 0;
 
@@ -1029,17 +1067,14 @@ uint32_t schFcfsScheduleDlLc(SlotTimingInfo pdcchTime, SlotTimingInfo pdschTime,
             {
                DU_LOG("\nERROR  --> SCH : Updation in LC List Failed");
                /* Free the dl ded msg info allocated in macSchDlRlcBoInfo */
-               if(dciSlotAlloc->numSchedInfo == 0)
+               if(!dciSlotAlloc->dlMsgPdschCfg)
                {
-                  SCH_FREE(dciSlotAlloc, sizeof(DlMsgAlloc));
+                  SCH_FREE(dciSlotAlloc, sizeof(DlMsgSchInfo));
                   (*hqP)->hqEnt->cell->schDlSlotInfo[pdcchTime.slot]->dlMsgAlloc[ueCb->ueId -1] = NULL;
                }
-               else
-                  memset(&dciSlotAlloc->dlMsgSchedInfo[dciSlotAlloc->numSchedInfo], 0, sizeof(DlMsgSchInfo));
-               return false;
+               return accumalatedSize;
             }
          }
-         ueCb->dlInfo.dlLcCtxt[lcIdx].bo = 0;
       }//End of for loop
 
       if ((fcfsHqProcCb->lcCb.defLcList.count == 0) && (fcfsHqProcCb->lcCb.dedLcList.count == 0))
@@ -1048,21 +1083,18 @@ uint32_t schFcfsScheduleDlLc(SlotTimingInfo pdcchTime, SlotTimingInfo pdschTime,
          UNSET_ONE_BIT((*hqP)->hqEnt->ue->ueId, (*hqP)->hqEnt->cell->boIndBitMap);
 
          /* Free the dl ded msg info allocated in macSchDlRlcBoInfo */
-         if(dciSlotAlloc->numSchedInfo == 0)
+         if(!dciSlotAlloc->dlMsgPdschCfg)
          {
-            SCH_FREE(dciSlotAlloc, sizeof(DlMsgAlloc));
+            SCH_FREE(dciSlotAlloc, sizeof(DlMsgSchInfo));
             (*hqP)->hqEnt->cell->schDlSlotInfo[pdcchTime.slot]->dlMsgAlloc[ueCb->ueId -1] = NULL;
          }
-         else
-            memset(&dciSlotAlloc->dlMsgSchedInfo[dciSlotAlloc->numSchedInfo], 0, sizeof(DlMsgSchInfo));
-
          /*TRUE because this UE has nothing to be scheduled*/
-         return true;
+         return accumalatedSize;
       }
    }
 
    /*[Step3]: Calculate Best FREE BLOCK with MAX PRB count*/
-   maxFreePRB = searchLargestFreeBlock((*hqP)->hqEnt->cell, pdschTime, &startPrb, DIR_DL);
+   maxFreePRB = searchLargestFreeBlock((*hqP)->hqEnt->cell, pdschTime, startPrb, DIR_DL);
 
    /*[Step4]: Estimation of PRB and BO which can be allocated to each LC in
     * the list based on RRM policy*/
@@ -1078,7 +1110,7 @@ uint32_t schFcfsScheduleDlLc(SlotTimingInfo pdcchTime, SlotTimingInfo pdschTime,
          if((fcfsHqProcCb->lcCb.dedLcList.count == NULLP) || ((maxFreePRB < rsvdDedicatedPRB)))
          { 
             fcfsHqProcCb->lcCb.sharedNumPrb = maxFreePRB;
-            DU_LOG("\nDEBUG  --> SCH : DL Only Default Slice is scheduled, sharedPRB Count:%d",\
+            DU_LOG("\nDEBUG  -->  SCH : DL Only Default Slice is scheduled, sharedPRB Count:%d",\
                   fcfsHqProcCb->lcCb.sharedNumPrb);
 
             /*PRB Alloc for Default LCs*/
@@ -1362,6 +1394,8 @@ void schFcfsAllApisInit(SchAllApis *allFcfsApi)
     allFcfsApi->SchDlRlcBoInfo = schFcfsDlRlcBoInfo;
     allFcfsApi->SchSrUciInd = schFcfsSrUciInd;
     allFcfsApi->SchBsr = schFcfsBsr;
+    allFcfsApi->SchSliceCfgReq = SchFcfsSliceCfgReq;
+    allFcfsApi->SchSliceRecfgReq = SchFcfsSliceRecfgReq;
 
     /* Internal API function pointers */
     allFcfsApi->SchAddToDlHqRetxList = schFcfsAddToDlHqRetxList;

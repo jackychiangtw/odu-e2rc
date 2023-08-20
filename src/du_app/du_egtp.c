@@ -442,7 +442,7 @@ uint8_t egtpSrvOpenPrc(uint8_t sockType)
    ret = cmInetBind(&(egtpCb.sockFd), &(egtpCb.localAddr));  
    if(ret != ROK)
    {  
-      DU_LOG("\nERROR  -->  EGTP : Failed to bind socket");
+      DU_LOG("\nERROR  -->  EGTP : Failed to bind socket1234");
       return ret;
    }
    

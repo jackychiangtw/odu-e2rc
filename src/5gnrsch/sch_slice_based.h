@@ -17,8 +17,9 @@
 *******************************************************************************/
 
 // #define SCH_MULTI_THREAD /* Enable the multi-thread intra-slice scheduling feature */
-#define SLICE_BASED_DEBUG_LOG /* Enable the debug log */
- 
+#define NUM_SLICE 3
+// #define SLICE_BASED_DEBUG_LOG /* Enable the debug log */
+#define BILLION_NUM  1000000000.0
 
 typedef enum
 {
@@ -31,18 +32,6 @@ typedef enum
    RR, /* Round Robin */
    WFQ /* Weight Fair Queue */
 }SchAlgorithm;
-
-typedef struct schSliceBasedCellCb
-{
-   CmLListCp     ueToBeScheduled;                   /*!< Linked list to store UEs pending to be scheduled */
-   CmLListCp     sliceCbList;                       /* Linked list to store slice control block with priority, the last node */
-
-   /* For thesis experiment */
-   bool isTimerStart;
-   uint16_t slot_ind_count;
-   uint16_t timer_sec;
-
-}SchSliceBasedCellCb;
 
 /*Following structures to keep record and estimations of PRB allocated for each
  * LC taking into consideration the RRM policies*/
@@ -86,10 +75,10 @@ typedef struct schSliceBasedUeCb
    float_t prbWeight; /*  prbWeight (0 ~ 1) is used for calculate the number of PRB within this TTI */
    float_t weight; /*  Weight (0 ~ 1) which is used for WFQ algorithm */
    bool isTxPayloadLenAdded;
-   bool isDlMsgPending;
-   bool isDlMsgScheduled;
-   bool isUlGrantPending; 
-   bool isUlGrantScheduled;
+   bool isDlMsgPending; /*JOJO: Flag for checking if there is DL data for UE.*/
+   bool isDlMsgScheduled; /*JOJO: Flag for checking if DL data for UE is scheduled.*/
+   bool isUlGrantPending; /*JOJO: Flag for checking if there is UL data for UE.*/
+   bool isUlGrantScheduled; /*JOJO: Flag for checking if UL data for UE is scheduled.*/
 }SchSliceBasedUeCb;
 
 typedef struct schSliceBasedSliceCb
@@ -109,13 +98,14 @@ typedef struct schSliceBasedSliceCb
 
 typedef struct schSliceBasedDlThreadArg
 {
+   uint8_t *triggerFlag;
    SchCellCb *cell;
-   SlotTimingInfo pdcchTime;
-   uint8_t pdschNumSymbols;
+   SlotTimingInfo *pdcchTime;
+   uint8_t *pdschNumSymbols;
    uint16_t *totalRemainingPrb;
-   uint16_t maxFreePRB;
+   uint16_t *maxFreePRB;
    SchSliceBasedSliceCb *sliceCb;
-   uint8_t ueId;
+   CmLListCp *ueDlNewTransmission;
 }SchSliceBasedDlThreadArg;
 
 typedef struct schSliceBasedUlThreadArg
@@ -128,6 +118,22 @@ typedef struct schSliceBasedUlThreadArg
    SchSliceBasedSliceCb *sliceCb;
    uint8_t ueId;
 }SchSliceBasedUlThreadArg;
+
+typedef struct schSliceBasedCellCb
+{
+   CmLListCp     ueToBeScheduled;                   /*!< Linked list to store UEs pending to be scheduled */
+   CmLListCp     sliceCbList;                       /* Linked list to store slice control block with priority, the last node */
+
+   /* For thesis experiment */
+   bool isTimerStart;
+   uint16_t slot_ind_count;
+   uint16_t timer_sec;
+
+   /* For thread creating */
+   SchSliceBasedDlThreadArg *threadArg[NUM_SLICE];
+   pthread_t intraSliceThread[NUM_SLICE];
+   
+}SchSliceBasedCellCb;
 
 uint8_t schSliceBasedAddUeToSchedule(SchCellCb *cellCb, uint16_t ueIdToAdd);
 void SchSliceBasedSliceCfgReq(SchCellCb *cellCb);
@@ -151,7 +157,7 @@ uint8_t schSliceBasedDlIntraSliceScheduling(SchCellCb *cellCb, SlotTimingInfo pd
 void *schSliceBasedDlIntraSliceThreadScheduling(void *threadArg);
 uint8_t schSliceBasedDlFinalScheduling(SchCellCb *cellCb, SlotTimingInfo pdschTime, SlotTimingInfo pdcchTime, \
                   SlotTimingInfo pucchTime, uint8_t pdschStartSymbol, uint8_t pdschNumSymbols, CmLListCp *ueDlNewTransmission, \
-                  bool isRetx, SchDlHqProcCb **hqP, uint16_t remainingPrb, uint16_t startPrb);
+                  bool isRetx, SchDlHqProcCb **ueNewHarqList, uint16_t remainingPrb, uint16_t startPrb);
 
 /* UL Slice-Based Function */
 /* Once the scheduler supports multi-UEs per TTI scheduling, the parameter 'ueId' should be deleted */

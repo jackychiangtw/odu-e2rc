@@ -279,13 +279,13 @@ CmLList *node                  /* node to be removed */
 )
 {
   
-#ifdef ERRCHK
+// #ifdef ERRCHK
    /* cm_llist_c_001.main_8 : added null check for node */
    if (lCp == (CmLListCp *)NULLP || lCp->count == 0 || !node)
    {
       return (NULLP);
    }
-#endif
+// #endif
 
    if (lCp->count == 1)
    {

@@ -94,11 +94,11 @@ int start_O1_module(void)
       return O1::FAILURE;
    }
    
-   if(O1App::instance().setAffinity(O1::CPU_CORE))
-   {
-      O1_LOG("\nO1 O1Interface : CPU affinity set for O1App thread to" );
-      O1App::instance().printAffinity();
-   }
+   // if(O1App::instance().setAffinity(O1::CPU_CORE))
+   // {
+   //    O1_LOG("\nO1 O1Interface : CPU affinity set for O1App thread to" );
+   //    O1App::instance().printAffinity();
+   // }
    return check_O1_module_status();
 }
 

@@ -470,6 +470,11 @@ uint8_t duActvTsk(Pst *pst, Buffer *mBuf)
                      ret = unpackRlcSlicePm(DuProcRlcSliceMetrics, pst, mBuf);
                      break;
                   }
+               case EVENT_RLC_UE_PM_TO_DU:
+                  {
+                     ret = unpackRlcCellPm(DuProcRlcCellMetrics, pst, mBuf);
+                     break;
+                  }   
                default:
                   {
                      DU_LOG("\nERROR  -->  DU_APP : Invalid event %d received at duActvTsk from ENTRLC", \
@@ -550,6 +555,11 @@ uint8_t duActvTsk(Pst *pst, Buffer *mBuf)
                      ret = unpackDuMacSliceCfgRsp(DuProcMacSliceCfgRsp, pst, mBuf);
                      break;
                   }
+               case EVENT_MAC_UE_SYNC_STATUS_IND:
+                  {
+                     ret = unpackDuMacUeSyncStatusInd(DuProcMacUeSyncStatusInd, pst, mBuf);
+                     break;
+                                                                                                }
                case EVENT_MAC_SLICE_RECFG_RSP:
                   {
                      ret = unpackDuMacSliceRecfgRsp(DuProcMacSliceRecfgRsp, pst, mBuf);
@@ -558,6 +568,16 @@ uint8_t duActvTsk(Pst *pst, Buffer *mBuf)
                case EVENT_MAC_RACH_RESOURCE_RSP:
                   {
                      ret = unpackDuMacRachRsrcRsp(DuProcMacRachRsrcRsp, pst, mBuf);
+                     break;
+                  }
+               case EVENT_MAC_UE_RESET_RSP:
+                  {
+                     ret = unpackDuMacUeResetRsp(DuProcMacUeResetRsp, pst, mBuf);
+                     break;
+                  }
+               case EVENT_MAC_PRB_METRIC_TO_DU:
+                  {
+                     ret = unpackDuMacPrbPm(DuProcMacPrbPm, pst, mBuf);
                      break;
                   }
                default:

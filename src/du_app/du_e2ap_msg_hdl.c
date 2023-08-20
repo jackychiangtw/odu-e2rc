@@ -28,7 +28,6 @@
 #include "du_utils.h"
 #include "GlobalE2node-gNB-ID.h"
 #include <ProtocolIE-FieldE2.h>
-#include "E2setupRequest.h"
 #include "InitiatingMessageE2.h"
 #include "SuccessfulOutcomeE2.h"
 #include "UnsuccessfulOutcomeE2.h"
@@ -37,9 +36,9 @@
 #include "odu_common_codec.h"
 #include "E2nodeComponentInterfaceF1.h"
 #include "E2setupRequest.h"
-#include "du_e2sm_rc_handler.h"
+#include "du_e2sm_manager.h"
 
-//uint8_t setRrmPolicy(RrmPolicyList rrmPolicy[], uint8_t policyNum);
+uint8_t BuildAndSendRicIndication(RICindicationHeader_t *ricIndicationHeader, RICindicationMessage_t *ricIndicationMessage);
 
 
 /*******************************************************************
@@ -62,11 +61,7 @@ uint8_t BuildGlobalgNBId(GlobalE2node_gNB_ID_t *gNbId)
 {
    uint8_t unused = 0;
    uint8_t byteSize = 4;
-<<<<<<< Updated upstream
-   uint8_t gnbId = 1;
-=======
    uint8_t gnbId = 10;
->>>>>>> Stashed changes
    uint8_t ret = ROK;
 
    /* Allocate Buffer size */
@@ -231,7 +226,7 @@ uint8_t fillE2SetupReq(E2setupRequest_t **e2SetupReq, uint8_t *idx)
 
    if(*e2SetupReq != NULLP)
    {
-      elementCnt = 3;
+      elementCnt = 4;
       (*e2SetupReq)->protocolIEs.list.count = elementCnt;
       (*e2SetupReq)->protocolIEs.list.size = elementCnt * sizeof(E2setupRequestIEs_t*);
 
@@ -288,6 +283,16 @@ uint8_t fillE2SetupReq(E2setupRequest_t **e2SetupReq, uint8_t *idx)
       }
       
       arrIdx++;
+
+      /* RAN Functions Added List */
+      (*e2SetupReq)->protocolIEs.list.array[arrIdx]->id = ProtocolIE_IDE2_id_RANfunctionsAdded;
+      (*e2SetupReq)->protocolIEs.list.array[arrIdx]->criticality = CriticalityE2_reject;
+      (*e2SetupReq)->protocolIEs.list.array[arrIdx]->value.present = E2setupRequestIEs__value_PR_RANfunctions_List;
+
+      smFillE2SetupReq(&((*e2SetupReq)->protocolIEs.list.array[arrIdx]->value.choice.RANfunctions_List)); 
+      
+      arrIdx++;
+
       /* E2 Node Component Configuration Addition List */
       (*e2SetupReq)->protocolIEs.list.array[arrIdx]->id = ProtocolIE_IDE2_id_E2nodeComponentConfigAddition;
       (*e2SetupReq)->protocolIEs.list.array[arrIdx]->criticality = CriticalityE2_reject;
@@ -531,8 +536,11 @@ uint8_t BuildRicRequestId(RICrequestID_t *ricReqId)
       return RFAILED;
    }
 
-   ricReqId->ricRequestorID = 1;
-   ricReqId->ricInstanceID  = 1;
+   ricReqId->ricRequestorID = e2apMsgDb.ricReqId;
+   ricReqId->ricInstanceID  = e2apMsgDb.ricInstanceId;
+
+   // ricReqId->ricRequestorID = 1;
+   // ricReqId->ricInstanceID  = 1;
    return ROK;
 }
 
@@ -952,6 +960,8 @@ uint8_t BuildAndSendRicSubscriptionRsp()
 
    }
    FreeRicSubscriptionRsp(e2apRicMsg);
+   //ASN_STRUCT_FREE(asn_DEF_E2AP_PDU, e2apRicMsg);
+
 
    return ret;
 }
@@ -1246,50 +1256,40 @@ uint8_t procRicSubsReq(E2AP_PDU_t *e2apMsg)
 		     memcpy(e2apMsgDb.ricEventTrigger, ricSubsReq->protocolIEs.list.array[idx]\
 			   ->value.choice.RICsubscriptionDetails.ricEventTriggerDefinition.buf, \
 			   recvBufLen);
-<<<<<<< Updated upstream
-=======
 
             decapActionDefinitionRet = \
-            smDecapEventTrigDefinition(&ricSubsReq->protocolIEs.list.array[idx]\
+            smProcEventTrigDefinition(&ricSubsReq->protocolIEs.list.array[idx]\
 			   ->value.choice.RICsubscriptionDetails.ricEventTriggerDefinition, e2apMsgDb.ranFuncId,
             e2apMsgDb.ricReqId, e2apMsgDb.ricInstanceId);
             
->>>>>>> Stashed changes
 		     free(ricSubsReq->protocolIEs.list.array[idx]->value.choice.\
 			   RICsubscriptionDetails.ricEventTriggerDefinition.buf);
 		  }
 		  if(ricSubsReq->protocolIEs.list.array[idx]->value.choice.RICsubscriptionDetails.ricAction_ToBeSetup_List.\
 			list.array)
 		  {
-<<<<<<< Updated upstream
-		     actionItem =(RICaction_ToBeSetup_ItemIEs_t *)ricSubsReq->protocolIEs.list\
-				 .array[idx]->value.choice.RICsubscriptionDetails.ricAction_ToBeSetup_List\
-				 .list.array[0];
-
-=======
->>>>>>> Stashed changes
 		     for(ied = 0; ied < ricSubsReq->protocolIEs.list.array[idx]->value.choice.\
 			   RICsubscriptionDetails.ricAction_ToBeSetup_List.list.count; ied++)
 		     {
+            actionItem =(RICaction_ToBeSetup_ItemIEs_t *)ricSubsReq->protocolIEs.list\
+				 .array[idx]->value.choice.RICsubscriptionDetails.ricAction_ToBeSetup_List\
+				 .list.array[ied];
 			switch(actionItem->id)
 			{
 			   case ProtocolIE_IDE2_id_RICaction_ToBeSetup_Item:
 			      {
 				 e2apMsgDb.ricActionId = actionItem->value.choice.RICaction_ToBeSetup_Item.ricActionID;
 				 e2apMsgDb.ricActionType = actionItem->value.choice.RICaction_ToBeSetup_Item.ricActionType;
-<<<<<<< Updated upstream
-=======
-             smDecapActionDefinition(actionItem->value.choice.RICaction_ToBeSetup_Item.ricActionDefinition, e2apMsgDb.ranFuncId,
+             smProcActionDefinition(actionItem->value.choice.RICaction_ToBeSetup_Item.ricActionDefinition, e2apMsgDb.ranFuncId,
              e2apMsgDb.ricReqId, e2apMsgDb.ricInstanceId);
              
->>>>>>> Stashed changes
 				 break;
 			      }
 			   default:
 			      DU_LOG("\nERROR  -->  E2AP : Invalid IE received in RicSetupLst:%ld",actionItem->id);
 			      break;
 			}
-			free(actionItem);
+			//free(actionItem);
 		     }
 		     free(ricSubsReq->protocolIEs.list.array[idx]->value.choice.RICsubscriptionDetails.ricAction_ToBeSetup_List.\
 		     list.array);
@@ -1315,8 +1315,6 @@ uint8_t procRicSubsReq(E2AP_PDU_t *e2apMsg)
    return ret;
 }
 
-<<<<<<< Updated upstream
-=======
 /*******************************************************************
  *
  * brief Fill the RIC Control Acknowledge Message
@@ -1325,7 +1323,7 @@ uint8_t procRicSubsReq(E2AP_PDU_t *e2apMsg)
  *
  *    Function : FillRicCtrlAck
  *
- * Functionality:Fills the RicCtrkAck Message
+ *    Functionality: Fills the RIC Control Acknowledge Message
  *
  * @return ROK     - success
  *         RFAILED - failure
@@ -1395,7 +1393,7 @@ uint8_t FillRicCtrlAck(RICcontrolAcknowledge_t *ricCtrlAck)
  *
  *    Function : BuildAndSendRicCtrlAck
  *
- * Functionality:Fills the RicCtrkAck Message
+ *    Functionality: Builds and Sends the RIC Control Acknowledge Message
  *
  * @return ROK     - success
  *         RFAILED - failure
@@ -1476,8 +1474,21 @@ uint8_t BuildAndSendRicCtrlAck()
    return ret;
 }
 
-
->>>>>>> Stashed changes
+/******************************************************************
+ *
+ * @brief Processes RIC Control Request sent by RIC
+ *
+ * @details
+ *
+ *    Function : procRicCtrlReq
+ *
+ *    Functionality: Processes RIC Control Request sent by RIC
+ *
+ * @params[in] E2AP_PDU_t ASN decoded E2AP message
+ * @return ROK     - success
+ *         RFAILED - failure
+ *
+ * ****************************************************************/
 uint8_t procRicCtrlReq(E2AP_PDU_t *e2apMsg){
    uint8_t idx; 
    uint8_t ied; 
@@ -1499,20 +1510,18 @@ uint8_t procRicCtrlReq(E2AP_PDU_t *e2apMsg){
             case ProtocolIE_IDE2_id_RICrequestID:
             {
                value = ricCtrlReq->protocolIEs.list.array[idx]->value.choice.RICrequestID.ricRequestorID;
-               DU_LOG("\nDEBUG  -->  E2AP : ricRequestorID = %ld", value);
+               e2apMsgDb.ricCtrlReqId = value;
+               DU_LOG("\nDEBUG  -->  E2AP : ricRequestorID = %d", value);
                value = ricCtrlReq->protocolIEs.list.array[idx]-> value.choice.RICrequestID.ricInstanceID;
-<<<<<<< Updated upstream
-               DU_LOG("\nDEBUG  -->  E2AP : ricInstanceID = %ld", value);
-=======
                e2apMsgDb.ricCtrlInstanceId = value;
                DU_LOG("\nDEBUG  -->  E2AP : ricInstanceID = %d", value);
->>>>>>> Stashed changes
                break;
             }
             case ProtocolIE_IDE2_id_RANfunctionID:
             {
                value = ricCtrlReq->protocolIEs.list.array[idx]-> value.choice.RANfunctionID;
-               DU_LOG("\nDEBUG  -->  E2AP : ricInstanceID = %ld", value);
+               e2apMsgDb.ranCtrlFuncId = value;
+               DU_LOG("\nDEBUG  -->  E2AP : ricFunctionID = %ld", value);
                break;
             }
             case ProtocolIE_IDE2_id_RICcontrolHeader:
@@ -1637,7 +1646,7 @@ void FreeRicIndication(E2AP_PDU_t  *e2apMsg)
  *         RFAILED - failure
  *
  ******************************************************************/
-uint8_t FillRicIndication(RICindication_t *ricIndicationMsg)
+uint8_t FillRicIndication(RICindication_t *ricIndicationMsg, RICindicationHeader_t *ricIndicationHeader, RICindicationMessage_t *ricIndicationMessage)
 {
    uint8_t elementCnt=0;
    uint8_t idx=0;
@@ -1708,43 +1717,6 @@ uint8_t FillRicIndication(RICindication_t *ricIndicationMsg)
 	 ricIndicationMsg->protocolIEs.list.array[idx]->criticality = CriticalityE2_reject;
 	 ricIndicationMsg->protocolIEs.list.array[idx]->value.present = \
 									RICindication_IEs__value_PR_RICindicationHeader;
-<<<<<<< Updated upstream
-	 ricIndicationMsg->protocolIEs.list.array[idx]->value.choice.RICindicationHeader.size = 3 *
-	    sizeof(uint8_t);
-	 DU_ALLOC(ricIndicationMsg->protocolIEs.list.array[idx]->value.choice.RICindicationHeader.buf ,\
-	       ricIndicationMsg->protocolIEs.list.array[idx]->value.choice.RICindicationHeader.size);
-	 if(ricIndicationMsg->protocolIEs.list.array[idx]->value.choice.RICindicationHeader.buf == NULLP)
-	 {
-	    DU_LOG("\nERROR  -->  E2AP : Memory allocation for RICindicationIEs failed");
-	    ret = RFAILED;
-	 }
-	 else
-	 {
-	    buildPlmnId(duCfgParam.srvdCellLst[0].duCellInfo.cellInfo.nrCgi.plmn, \
-		  ricIndicationMsg->protocolIEs.list.array[idx]->value.choice.RICindicationHeader.buf);
-	    idx++;
-	    /* TO BE CHANGED: RIC INDICATION DATA */
-	    /* For now filling a dummy octect data, need to tested with PRBs*/
-	    ricIndicationMsg->protocolIEs.list.array[idx]->id = ProtocolIE_IDE2_id_RICindicationMessage;
-	    ricIndicationMsg->protocolIEs.list.array[idx]->criticality = CriticalityE2_reject;
-	    ricIndicationMsg->protocolIEs.list.array[idx]->value.present = \
-									   RICindication_IEs__value_PR_RICindicationMessage;
-	    ricIndicationMsg->protocolIEs.list.array[idx]->value.choice.RICindicationMessage.size = 3 *
-	       sizeof(uint8_t);
-	    DU_ALLOC(ricIndicationMsg->protocolIEs.list.array[idx]->value.choice.RICindicationMessage.buf ,\
-		  ricIndicationMsg->protocolIEs.list.array[idx]->value.choice.RICindicationMessage.size);
-	    if(ricIndicationMsg->protocolIEs.list.array[idx]->value.choice.RICindicationMessage.buf == NULLP)
-	    {
-	       DU_LOG("\nERROR  -->  E2AP : Memory allocation for RICindicationIEs failed");
-	       ret = RFAILED;
-	    }
-	    else
-	    {
-	       buildPlmnId(duCfgParam.srvdCellLst[0].duCellInfo.cellInfo.nrCgi.plmn, \
-		     ricIndicationMsg->protocolIEs.list.array[idx]->value.choice.RICindicationMessage.buf);
-	    }
-	 }
-=======
    if(ricIndicationHeader == NULLP){
       DU_LOG("\nDEBUG  -->  E2AP : Empty RIC Indication Header");
       return -1;
@@ -1774,7 +1746,6 @@ uint8_t FillRicIndication(RICindication_t *ricIndicationMsg)
       DU_ALLOC(ricIndicationMsg->protocolIEs.list.array[idx]->value.choice.RICindicationMessage.buf, ricIndicationMsg->protocolIEs.list.array[idx]->value.choice.RICindicationMessage.size);
       memcpy(ricIndicationMsg->protocolIEs.list.array[idx]->value.choice.RICindicationMessage.buf, ricIndicationMessage->buf, ricIndicationMessage->size);
    }
->>>>>>> Stashed changes
       }
    }
    return ret;
@@ -1795,7 +1766,7 @@ uint8_t FillRicIndication(RICindication_t *ricIndicationMsg)
  *
  ******************************************************************/
 
-uint8_t BuildAndSendRicIndication()
+uint8_t BuildAndSendRicIndication(RICindicationHeader_t *ricIndicationHeader, RICindicationMessage_t *ricIndicationMessage)
 {
    E2AP_PDU_t                 *e2apMsg = NULLP;
    RICindication_t            *ricIndicationMsg=NULLP;
@@ -1827,7 +1798,7 @@ uint8_t BuildAndSendRicIndication()
 
       ricIndicationMsg = &e2apMsg->choice.initiatingMessage->value.choice.RICindication;
 
-      FillRicIndicationret = FillRicIndication(ricIndicationMsg);
+      FillRicIndicationret = FillRicIndication(ricIndicationMsg, ricIndicationHeader, ricIndicationMessage);
       if(FillRicIndicationret != ROK)
       {
 	      break;
@@ -1864,13 +1835,11 @@ uint8_t BuildAndSendRicIndication()
       break;
    }
    FreeRicIndication(e2apMsg);	
-<<<<<<< Updated upstream
-=======
    //ASN_STRUCT_FREE(asn_DEF_E2AP_PDU, e2apMsg);
    
->>>>>>> Stashed changes
    return ret;
 }
+
 
 /*******************************************************************
  *

@@ -30,7 +30,7 @@
 #ifndef O1_ENABLE
 #define DU_IP_V4_ADDR "192.168.8.5"
 #define CU_IP_V4_ADDR "192.168.8.245"
-#define RIC_IP_V4_ADDR "192.168.8.228" /*192.168.8.85*/
+#define RIC_IP_V4_ADDR "192.168.8.228"
 
 #define F1_SCTP_PORT 38472  /* As per the spec 38.472, the registered port number for F1AP is 38472 */
 #define E2_SCTP_PORT 32222 /* 36421 */
@@ -87,7 +87,8 @@
 #define OFFSET_TO_POINT_A 24                     /* PRB Offset to Point A */
 #define BETA_PSS BETA_PSS_0DB  
 #define SSB_PERIODICITY 20
-#define SSB_SUBCARRIER_OFFSET 0               
+#define SSB_SUBCARRIER_OFFSET 0         
+#define SSB_FREQUENCY  3000000   /*ssbFrequency in kHz*/
 #define SSB_MULT_CARRIER_BAND FALSE
 #define MULT_CELL_CARRIER FALSE
 #define FREQ_LOC_BW  28875             /* DL frequency location and bandwidth. Spec 38.508 Table 4.3.1.0B-1*/
@@ -128,8 +129,6 @@
 #define RSS_MEASUREMENT_UNIT DONT_REPORT_RSSI
 #define RA_CONT_RES_TIMER 64
 #define RA_RSP_WINDOW 10
-#define PRACH_RESTRICTED_SET 0 /* Unrestricted */
-#define ROOT_SEQ_LEN 139
 
 /* MACRCO Ddefine for PDCCH Configuration */
 #define PDCCH_SEARCH_SPACE_ID      1    /* Common search space id */
@@ -218,7 +217,7 @@
 /* Macro definitions for F1 procedures */
 #define CU_DU_NAME_LEN_MAX 30      /* Max length of CU/DU name string */
 #define MAX_F1_CONNECTIONS 65536    /* Max num of F1 connections */
-#define MAX_PLMN           1        /* Max num of broadcast PLMN ids */
+
 #define MAXNRARFCN         3279165  /* Maximum values of NRAFCN */
 #define MAX_NRCELL_BANDS   2       /* Maximum number of frequency bands */
 #define MAX_NUM_OF_SLICE_ITEMS 1024     /* Maximum number of signalled slice support items */
@@ -1305,7 +1304,6 @@ typedef struct rrmPolicyList
 DuCfgParams duCfgParam;
 
 /*function declarations */
-void FillSlotConfig();
 uint8_t readClCfg();
 uint8_t readCfg();
 uint8_t duReadCfg(); 
