@@ -30,10 +30,10 @@
 #ifndef O1_ENABLE
 #define DU_IP_V4_ADDR "192.168.8.5"
 #define CU_IP_V4_ADDR "192.168.8.245"
-#define RIC_IP_V4_ADDR "192.168.8.228"
+#define RIC_IP_V4_ADDR "192.168.8.46" // 228
 
 #define F1_SCTP_PORT 38472  /* As per the spec 38.472, the registered port number for F1AP is 38472 */
-#define E2_SCTP_PORT 32222 /* 36421 */
+#define E2_SCTP_PORT 36421 /* 32222 */
 #endif
 
 #define F1_EGTP_PORT  2152  /* As per the spec 29.281, the registered port number for GTP-U is 2152 */

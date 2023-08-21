@@ -1,5 +1,4 @@
 # documentation
 .tox
+.DS_Store
 docs/_build/
-*.c
-*.c

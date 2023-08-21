@@ -2973,8 +2973,10 @@ void kpmSendSliceMetric(){
     RICindicationHeader_t *ricIndicationHeader;
     RICindicationMessage_t *ricIndicationMessage;
     uint8_t ret;
-    if(kpmCellIndicationEnable == false){
+    if(kpmSliceIndicationEnable == false){
+        DU_LOG("\nINFO   -->  E2SM-KPM : Send Slice Metric is disabled, %d", __LINE__);
         return;
+        
     }
     DU_ALLOC(ricIndicationMessage, sizeof(RICindicationMessage_t));
     if(ricIndicationMessage == NULL){
@@ -2989,12 +2991,23 @@ void kpmSendSliceMetric(){
     }
 
     kpmCalcSliceMetric();
-    ret = kpmFillRicIndicationHeader(ricIndicationHeader);
+    if(kpmIndicationV3Enable){
+        ret = kpmFillRicIndicationHeaderV3(ricIndicationHeader);
+    }
+    else{
+        DU_LOG("\nINFO   -->  E2SM-KPM : Sending Slice Metric, %d", __LINE__);
+        ret = kpmFillRicIndicationHeader(ricIndicationHeader);
+    }
     if(ret != ROK){
         DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill RIC Indication Header, %d", __LINE__);
         return;
     }
-    ret = kpmFillRicIndicationMessage(ricIndicationMessage, INDICATION_FORMAT2);
+    if(kpmIndicationV3Enable){
+        ret = kpmFillRicIndicationMessageV3(ricIndicationMessage, INDICATION_FORMAT2);
+    }
+    else{
+        ret = kpmFillRicIndicationMessage(ricIndicationMessage, INDICATION_FORMAT2);
+    }
     if(ret != ROK){
         DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill RIC Indication Message, %d", __LINE__);
         return;
@@ -3036,12 +3049,22 @@ void kpmSendCellMetric(){
     }
 
     kpmCalcCellMetric();
-    ret = kpmFillRicIndicationHeader(ricIndicationHeader);
+    if(kpmIndicationV3Enable){
+        ret = kpmFillRicIndicationHeaderV3(ricIndicationHeader);
+    }
+    else{
+        ret = kpmFillRicIndicationHeader(ricIndicationHeader);
+    }
     if(ret != ROK){
         DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill RIC Indication Header, %d", __LINE__);
         return;
     }
-    ret = kpmFillRicIndicationMessage(ricIndicationMessage, INDICATION_FORMAT1);
+    if(kpmIndicationV3Enable){
+        ret = kpmFillRicIndicationMessageV3(ricIndicationMessage, INDICATION_FORMAT1);
+    }
+    else{
+        ret = kpmFillRicIndicationMessage(ricIndicationMessage, INDICATION_FORMAT1);
+    }
     if(ret != ROK){
         DU_LOG("\nERROR   -->  E2SM-KPM : Could not fill RIC Indication Message, %d", __LINE__);
         return;
