@@ -27,7 +27,7 @@ using namespace std;
    Description : It is a callback function, called on get request of
                  alarm-list (overridden function of sysrepo::Callback )
    Params[In]  : (sysrepo::S_Session, module_name, path,
-                 request_xpath, request_id, &parent)
+                 request_xpath, request_id, &parent, private_data)
    Return      : SR_ERR_OK - success
 **********************************************************************/
 
@@ -36,7 +36,8 @@ int Alarm3GPPYangModel::oper_get_items(sysrepo::S_Session session,
                                        const char         *path,
                                        const char         *request_xpath,
                                        uint32_t           request_id,
-                                       libyang::S_Data_Node &parent)
+                                       libyang::S_Data_Node &parent,
+                                       void *private_data) 
 {
     O1_LOG("\n\n ========== CALLBACK CALLED TO PROVIDE \" %s DATA ==========\n", path); 
 

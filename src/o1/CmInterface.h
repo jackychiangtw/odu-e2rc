@@ -33,17 +33,17 @@
 
 //RRM POLICY MACRO
 
-#define MAX_MEMBER_LIST 3
+#define MAX_MEMBER_LIST 2
 #define ID_MAX_LEN 64
 #define MAX_LEN 100
-#define MAX_POLICY 3
+#define MAX_POLICY 2
 #define MAX_POLICY_LIST 4
 #define MCC_LEN 3
 #define MNC_LEN 3
 #define SD_LEN 3
 
 //NRCELLDU MACRO
-#define MAX_SUPPORTED_PLMN 3
+#define MAX_SUPPORTED_PLMN 2
 
 #ifdef __cplusplus
 extern "C"

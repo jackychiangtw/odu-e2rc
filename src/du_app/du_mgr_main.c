@@ -18,12 +18,14 @@
 
 /* This file is the entry point for DU APP */
 #include "common_def.h"
+#include "du_tmr.h"
 #include "lrg.h"
 #include "legtp.h"
 #include "lrg.x"
 #include "lkw.x"
 #include "du_app_mac_inf.h"
 #include "du_app_rlc_inf.h"
+#include "du_e2ap_mgr.h"
 #include "du_cfg.h"
 #include "du_mgr.h"
 #include "du_mgr_main.h"
@@ -31,7 +33,6 @@
 #include "du_egtp.h"
 #include "du_cell_mgr.h"
 #include "du_f1ap_msg_hdl.h"
-#include "du_e2ap_msg_hdl.h"
 
 #ifdef O1_ENABLE
 
@@ -171,12 +172,6 @@ uint8_t setRrmPolicy(RrmPolicyList rrmPolicy[], uint8_t policyNum)
            }
        }
     }
-   return ROK;
-}
-
-uint8_t setRrmPolicyDummy()
-{
-   DU_LOG("\nINFO   -->  DU_APP : Dummy");
    return ROK;
 }
 

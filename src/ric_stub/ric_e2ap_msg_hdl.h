@@ -29,6 +29,8 @@
 #define RIC_ID           1
 #define CRNTI           17017
 #define CELL_INDEX      0
+#define CELL_SUBSCRIPTION 0
+#define SLICE_SUBSCRIPTION 1
 
 /* allocate and zero out a static buffer */
 #define RIC_ALLOC(_datPtr, _size)                                \
@@ -52,7 +54,7 @@
 
 
 void E2APMsgHdlr(uint32_t *duId, Buffer *mBuf);
-uint8_t BuildAndSendE2SetupRsp(uint32_t duId);
+uint8_t BuildAndSendE2SetupRsp(uint32_t duId, uint8_t transId);
 uint8_t BuildAndSendRicSubscriptionReq(uint32_t duId);
 uint8_t SendE2APMsg(Region region, Pool pool, uint32_t duId);
 

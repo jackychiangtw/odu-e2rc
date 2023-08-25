@@ -88,6 +88,78 @@ uint8_t sendCrcIndMacToSch(CrcIndInfo *crcInd)
 
 /*******************************************************************
  *
+ * @brief Sends UL CQI Indication to SCH
+ *
+ * @details
+ *
+ *    Function : sendUlCqiIndMacToSch 
+ *
+ *    Functionality:
+ *       Sends Ul Cqi Indication to SCH
+ *
+ * @params[in] 
+ * @return ROK     - success
+ *         RFAILED - failure
+ *
+ ****************************************************************/
+uint8_t sendUlCqiIndMacToSch(SchUlCqiInd *ulCqiInd)
+{
+   Pst pst;
+
+   FILL_PST_MAC_TO_SCH(pst, EVENT_UL_CQI_TO_SCH);
+   return(SchMessageRouter(&pst, (void *)ulCqiInd));
+}
+
+/*******************************************************************
+ *
+ * @brief Sends DL CQI Indication to SCH
+ *
+ * @details
+ *
+ *    Function : sendDlCqiIndMacToSch 
+ *
+ *    Functionality:
+ *       Sends Dl Cqi Indication to SCH
+ *
+ * @params[in] 
+ * @return ROK     - success
+ *         RFAILED - failure
+ *
+ ****************************************************************/
+uint8_t sendDlCqiIndMacToSch(SchDlCqiInd *dlCqiInd)
+{
+   Pst pst;
+
+   FILL_PST_MAC_TO_SCH(pst, EVENT_DL_CQI_TO_SCH);
+   return(SchMessageRouter(&pst, (void *)dlCqiInd));
+}
+
+/*******************************************************************
+ *
+ * @brief Sends Power Headroom Indication to SCH
+ *
+ * @details
+ *
+ *    Function : sendPhrIndToSch 
+ *
+ *    Functionality:
+ *       Sends Phr Indication to SCH
+ *
+ * @params[in] 
+ * @return ROK     - success
+ *         RFAILED - failure
+ *
+ ****************************************************************/
+uint8_t sendPhrIndToSch(SchPwrHeadroomInd *macPhrInd)
+{
+   Pst pst;
+
+   FILL_PST_MAC_TO_SCH(pst, EVENT_PHR_IND_TO_SCH);
+   return(SchMessageRouter(&pst, (void *)macPhrInd));
+}
+
+/*******************************************************************
+ *
  * @brief Processes CRC Indication from PHY
  *
  * @details
@@ -190,7 +262,6 @@ uint8_t MacProcRlcDlData(Pst* pstInfo, RlcDlData *dlData)
    uint8_t   ueId  = 0;
    uint8_t   lcIdx = 0;
    uint8_t   *txPdu = NULLP;
-   uint8_t   schInfoIdx = 0 ;
    uint16_t  cellIdx = 0, txPduLen = 0;
    MacDlData macDlData;
    MacDlSlot *currDlSlot = NULLP;
@@ -222,29 +293,25 @@ uint8_t MacProcRlcDlData(Pst* pstInfo, RlcDlData *dlData)
    currDlSlot = &macCb.macCell[cellIdx]->dlSlot[dlData->slotInfo.slot];
    if(currDlSlot->dlInfo.dlMsgAlloc[ueId-1])
    {
-      for(schInfoIdx=0; schInfoIdx<currDlSlot->dlInfo.dlMsgAlloc[ueId-1]->numSchedInfo; schInfoIdx++)
+      if(currDlSlot->dlInfo.dlMsgAlloc[ueId-1]->dlMsgPdschCfg)
       {
-         if((currDlSlot->dlInfo.dlMsgAlloc[ueId-1]->dlMsgSchedInfo[schInfoIdx].pduPres == PDSCH_PDU) ||
-               (currDlSlot->dlInfo.dlMsgAlloc[ueId-1]->dlMsgSchedInfo[schInfoIdx].pduPres == BOTH))
-            break;
-      }
+         txPduLen = currDlSlot->dlInfo.dlMsgAlloc[ueId-1]->dlMsgPdschCfg->codeword[0].tbSize\
+                    - TX_PAYLOAD_HDR_LEN;
+         MAC_ALLOC(txPdu, txPduLen);
+         if(!txPdu)
+         {
+            DU_LOG("\nERROR  -->  MAC : Memory allocation failed in MacProcRlcDlData");
+            return RFAILED;
+         }
+         macMuxPdu(&macDlData, NULLP, txPdu, txPduLen);
 
-      txPduLen = currDlSlot->dlInfo.dlMsgAlloc[ueId-1]->dlMsgSchedInfo[schInfoIdx].dlMsgPdschCfg.codeword[0].tbSize\
-                 - TX_PAYLOAD_HDR_LEN;
-      MAC_ALLOC(txPdu, txPduLen);
-      if(!txPdu)
-      {
-         DU_LOG("\nERROR  -->  MAC : Memory allocation failed in MacProcRlcDlData");
-         return RFAILED;
+         currDlSlot->dlInfo.dlMsgAlloc[ueId-1]->dlMsgPduLen = txPduLen;
+         currDlSlot->dlInfo.dlMsgAlloc[ueId-1]->dlMsgPdu = txPdu;
+         /* Add muxed TB to DL HARQ Proc CB. This will be used if retranmission of
+          * TB is requested in future. */
+         updateNewTbInDlHqProcCb(dlData->slotInfo, &macCb.macCell[cellIdx]->ueCb[ueId -1], \
+               currDlSlot->dlInfo.dlMsgAlloc[ueId-1]->dlMsgPdschCfg->codeword[0].tbSize, txPdu);
       }
-      macMuxPdu(&macDlData, NULLP, txPdu, txPduLen);
-
-      currDlSlot->dlInfo.dlMsgAlloc[ueId-1]->dlMsgSchedInfo[schInfoIdx].dlMsgInfo.dlMsgPduLen = txPduLen;
-      currDlSlot->dlInfo.dlMsgAlloc[ueId-1]->dlMsgSchedInfo[schInfoIdx].dlMsgInfo.dlMsgPdu = txPdu;
-      /* Add muxed TB to DL HARQ Proc CB. This will be used if retranmission of
-       * TB is requested in future. */
-      updateNewTbInDlHqProcCb(dlData->slotInfo, &macCb.macCell[cellIdx]->ueCb[ueId -1], \
-         currDlSlot->dlInfo.dlMsgAlloc[ueId-1]->dlMsgSchedInfo[schInfoIdx].dlMsgPdschCfg.codeword[0].tbSize, txPdu);
    }
 
    for(lcIdx = 0; lcIdx < dlData->numLc; lcIdx++)
@@ -399,11 +466,11 @@ uint8_t sendSchedRptToRlc(DlSchedInfo dlInfo, SlotTimingInfo slotInfo, uint8_t u
    if(dlInfo.dlMsgAlloc[ueIdx])
    {
       schedRpt->rnti = dlInfo.dlMsgAlloc[ueIdx]->crnti;
-      schedRpt->numLc = dlInfo.dlMsgAlloc[ueIdx]->dlMsgSchedInfo[schInfoIdx].numLc;
+      schedRpt->numLc = dlInfo.dlMsgAlloc[ueIdx]->transportBlock[0].numLc;
       for(lcIdx = 0; lcIdx < schedRpt->numLc; lcIdx++)
       {
-         schedRpt->lcSch[lcIdx].lcId = dlInfo.dlMsgAlloc[ueIdx]->dlMsgSchedInfo[schInfoIdx].lcSchInfo[lcIdx].lcId;
-         schedRpt->lcSch[lcIdx].bufSize = dlInfo.dlMsgAlloc[ueIdx]->dlMsgSchedInfo[schInfoIdx].lcSchInfo[lcIdx].schBytes;
+         schedRpt->lcSch[lcIdx].lcId = dlInfo.dlMsgAlloc[ueIdx]->transportBlock[0].lcSchInfo[lcIdx].lcId;
+         schedRpt->lcSch[lcIdx].bufSize = dlInfo.dlMsgAlloc[ueIdx]->transportBlock[0].lcSchInfo[lcIdx].schBytes;
       }
    }
 
@@ -697,7 +764,7 @@ uint8_t macProcLongBsr(uint16_t cellId, uint16_t crnti,uint8_t numLcg,\
  *         RFAILED - failure
  *
  * ****************************************************************/
-uint8_t buildAndSendHarqInd(HarqInfoF0F1 *harqInfo, uint8_t crnti, uint16_t cellIdx, SlotTimingInfo *slotInd)
+uint8_t buildAndSendHarqInd(HarqInfoF0F1 *harqInfo, uint16_t crnti, uint16_t cellIdx, SlotTimingInfo *slotInd)
 {
    uint16_t harqCounter=0;
    Pst pst;
@@ -740,7 +807,7 @@ uint8_t buildAndSendHarqInd(HarqInfoF0F1 *harqInfo, uint8_t crnti, uint16_t cell
  *         RFAILED - failure
  *
  * ****************************************************************/
-uint8_t buildAndSendSrInd(UciInd *macUciInd, uint8_t crnti)
+uint8_t buildAndSendSrInd(UciInd *macUciInd, uint16_t crnti)
 {
    uint16_t cellIdx;
    Pst pst;
@@ -847,8 +914,8 @@ uint8_t FapiMacUciInd(Pst *pst, UciInd *macUciInd)
  **********************************************************************/
 uint8_t fillSliceCfgInfo(SchSliceCfgReq *schSliceCfgReq, MacSliceCfgReq *macSliceCfgReq)
 {
-   uint8_t cfgIdx = 0, memberListIdx = 0, totalSliceCfgRecvd = 0;
-
+   uint8_t rrmPolicyIdx= 0,cfgIdx = 0, memberListIdx = 0, totalSliceCfgRecvd = 0;
+ 
    if(macSliceCfgReq->listOfRrmPolicy)
    {
       for(cfgIdx = 0; cfgIdx<macSliceCfgReq->numOfRrmPolicy; cfgIdx++)
@@ -863,11 +930,13 @@ uint8_t fillSliceCfgInfo(SchSliceCfgReq *schSliceCfgReq, MacSliceCfgReq *macSlic
          DU_LOG("\nERROR  -->  MAC : Memory allocation failed in fillSliceCfgInfo");
          return RFAILED;
       }
-      for(cfgIdx = 0; cfgIdx<schSliceCfgReq->numOfConfiguredSlice; cfgIdx++)
+      cfgIdx = 0; 
+
+      for(rrmPolicyIdx = 0; rrmPolicyIdx<macSliceCfgReq->numOfRrmPolicy; rrmPolicyIdx++)
       {
-         for(memberListIdx = 0; memberListIdx<macSliceCfgReq->listOfRrmPolicy[cfgIdx]->numOfRrmPolicyMem; memberListIdx++)
+         for(memberListIdx = 0; memberListIdx<macSliceCfgReq->listOfRrmPolicy[rrmPolicyIdx]->numOfRrmPolicyMem; memberListIdx++)
          {
-            if(macSliceCfgReq->listOfRrmPolicy[cfgIdx]->rRMPolicyMemberList[memberListIdx])
+            if(macSliceCfgReq->listOfRrmPolicy[rrmPolicyIdx]->rRMPolicyMemberList[memberListIdx])
             {
 
                MAC_ALLOC(schSliceCfgReq->listOfSlices[cfgIdx], sizeof(SchRrmPolicyOfSlice));
@@ -877,11 +946,12 @@ uint8_t fillSliceCfgInfo(SchSliceCfgReq *schSliceCfgReq, MacSliceCfgReq *macSlic
                   return RFAILED;
                }
 
-               memcpy(&schSliceCfgReq->listOfSlices[cfgIdx]->snssai, &macSliceCfgReq->listOfRrmPolicy[cfgIdx]->rRMPolicyMemberList[memberListIdx]->snssai, sizeof(Snssai));
+               memcpy(&schSliceCfgReq->listOfSlices[cfgIdx]->snssai, &macSliceCfgReq->listOfRrmPolicy[rrmPolicyIdx]->rRMPolicyMemberList[memberListIdx]->snssai, sizeof(Snssai));
 
-               schSliceCfgReq->listOfSlices[cfgIdx]->rrmPolicyRatioInfo.maxRatio = macSliceCfgReq->listOfRrmPolicy[cfgIdx]->policyRatio.maxRatio;
-               schSliceCfgReq->listOfSlices[cfgIdx]->rrmPolicyRatioInfo.minRatio = macSliceCfgReq->listOfRrmPolicy[cfgIdx]->policyRatio.minRatio;
-               schSliceCfgReq->listOfSlices[cfgIdx]->rrmPolicyRatioInfo.dedicatedRatio = macSliceCfgReq->listOfRrmPolicy[cfgIdx]->policyRatio.dedicatedRatio;
+               schSliceCfgReq->listOfSlices[cfgIdx]->rrmPolicyRatioInfo.maxRatio = macSliceCfgReq->listOfRrmPolicy[rrmPolicyIdx]->policyRatio.maxRatio;
+               schSliceCfgReq->listOfSlices[cfgIdx]->rrmPolicyRatioInfo.minRatio = macSliceCfgReq->listOfRrmPolicy[rrmPolicyIdx]->policyRatio.minRatio;
+               schSliceCfgReq->listOfSlices[cfgIdx]->rrmPolicyRatioInfo.dedicatedRatio = macSliceCfgReq->listOfRrmPolicy[rrmPolicyIdx]->policyRatio.dedicatedRatio;
+               cfgIdx++;
             }
          }
       }

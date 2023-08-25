@@ -23,7 +23,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include "sysrepo-cpp/Session.hpp"
-#include "sysrepo_extend.hpp"
 #include "AlarmManager.hpp"
 #include "GlobalDefs.hpp"
 
@@ -35,7 +34,8 @@ class AlarmOranYangModel : public sysrepo::Callback {
                          const char *path,\
                          const char *request_xpath,\
                          uint32_t request_id,\
-                         libyang::S_Data_Node &parent);
+                         libyang::S_Data_Node &parent,\
+                         void *private_data);
 
 };
 

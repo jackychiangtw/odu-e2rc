@@ -89,7 +89,7 @@ std::string SliceMeasurementEventStdDef::getMeasPath(string str, int sd, int sst
    std::ostringstream os;
    os<<"/"<<YANG_NAME<<":network-function/distributed-unit-functions[id='"\ 
 	   << ODU_HIGH <<"']/cell[id='"<<cellParams.cellLocalId <<\ 
-	   "']/supported-measurements[performance-measurement-type='"\ 
+	   "']/supported-measurements[performance-measurement-type='user-equipment-average-throughput-"\ 
 	   <<str<<"']/supported-snssai-subcounter-instances[slice-differentiator='"\ 
 	   <<sd<<"'][slice-service-type='"<<sst<<"']" ;
    return os.str();
@@ -117,13 +117,12 @@ bool SliceMeasurementEventStdDef::prepareEventFields(const Message* msg)
 {
 
    const SliceMetrics* sliceMetrics = dynamic_cast<const SliceMetrics*> (msg);
-   const vector<SliceMetricRecord>& sliceList = sliceMetrics->getSliceMetrics();
-   
+
    bool ret = true;
 
    cJSON* stndDefinedFields = this->mVesEventFields;
    if(JsonHelper::addNodeToObject(stndDefinedFields, "stndDefinedFieldsVersion",\
-			   STND_DEFINED_FEILD_VERSION) == 0) //  getISOEventTime().c_str()
+			   STND_DEFINED_FEILD_VERSION) == 0) 
    {
       ret = false;
    }
@@ -143,35 +142,35 @@ bool SliceMeasurementEventStdDef::prepareEventFields(const Message* msg)
                                        data) == 0) {
       ret = false;
    }
-   else if(JsonHelper::addNodeToObject(data, "id", "demo") == 0)
+   else if(JsonHelper::addNodeToObject(data, "id", SLICE_ID) == 0)
    {
       ret = false;
    }
    else if(JsonHelper::addNodeToObject(data, "start-time",\
-			   double(sliceList[0].DRB_UEThpDl_SNSSAI)) == 0)
+			   getISOEventTime().c_str()) == 0)
    {
       ret = false;
    }
    else if(JsonHelper::addNodeToObject(data, "administrative-state",\
-			   double(sliceList[0].DRB_PrbUsedDl_SNSSAI)) == 0)
+			   ADMINISTRATIVE_STATE) == 0)
    {
       ret = false;
    }
    else if(JsonHelper::addNodeToObject(data, "operational-state",\
-			   double(sliceList[1].DRB_UEThpDl_SNSSAI)) == 0)
+			   OPERATIONAL_STATE) == 0)
    {
       ret = false;
    }
-   else if(JsonHelper::addNodeToObject(data, "user-label", double(sliceList[1].DRB_PrbUsedDl_SNSSAI)) == 0)
+   else if(JsonHelper::addNodeToObject(data, "user-label", USER_LABEL) == 0)
    {
       ret = false;
    }
-   else if(JsonHelper::addNodeToObject(data, "job-tag", double(sliceList[2].DRB_UEThpDl_SNSSAI)) == 0)
+   else if(JsonHelper::addNodeToObject(data, "job-tag", "") == 0)
    {
       ret = false;
    }
    else if(JsonHelper::addNodeToObject(data, "granularity-period",\
-			   double(sliceList[2].DRB_PrbUsedDl_SNSSAI)) == 0)
+			   GRANULARITY_PERIOD) == 0)
    {
       ret = false;
    }
@@ -188,6 +187,7 @@ bool SliceMeasurementEventStdDef::prepareEventFields(const Message* msg)
 
    else if(ret)
    {
+      const vector<SliceMetricRecord>& sliceList = sliceMetrics->getSliceMetrics();
       for (size_t i{0}; i < sliceList.size(); i++)
       {
          for(int j=0;j<MAX_THP_TYPE;j++)
@@ -199,13 +199,13 @@ bool SliceMeasurementEventStdDef::prepareEventFields(const Message* msg)
             cJSON *value;
 	    if(j==0)
 	    {
-               str = "user-equipment-average-throughput-downlink";
+               str = "downlink";
                value = cJSON_CreateNumber(sliceList[i].DRB_UEThpDl_SNSSAI);
             }
             else
 	    {
-               str = "slice-level-average-prb-downlink";
-               value = cJSON_CreateNumber(sliceList[i].DRB_PrbUsedDl_SNSSAI);
+               str = "uplink";
+               value = cJSON_CreateNumber(sliceList[i].DRB_UEThpUl_SNSSAI);
             }
 
             if(JsonHelper::addNodeToObject(arr, MEAS_REF, getMeasPath(str,\
@@ -216,15 +216,8 @@ bool SliceMeasurementEventStdDef::prepareEventFields(const Message* msg)
             }
 
             cJSON_AddItemToObject(arr,"value", value);
-            cJSON *unit;
-      if(j==0)
-	   {
-            unit = cJSON_CreateString(THROUGHPUT_UNIT);
-      }
-      else
-      {
-            unit = cJSON_CreateString(PRB_UNIT);
-      }
+
+            cJSON *unit = cJSON_CreateString(THROUGHPUT_UNIT);
             cJSON_AddItemToObject(arr,"unit", unit);
          }
       }

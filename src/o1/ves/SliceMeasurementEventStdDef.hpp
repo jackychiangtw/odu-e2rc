@@ -43,7 +43,6 @@ using namespace std;
 #define GRANULARITY_PERIOD 5.0
 #define RANDOM_NUM 12345
 #define THROUGHPUT_UNIT "kbit/s"
-#define PRB_UNIT "unit/s"
 #define MEAS_REF "measurement-type-instance-reference"
 #define YANG_NAME "o-ran-sc-du-hello-world"
 #define MAX_THP_TYPE 2

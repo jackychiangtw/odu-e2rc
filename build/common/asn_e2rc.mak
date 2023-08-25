@@ -20,7 +20,7 @@ include ../common/rsys_fancy.mak
 include ../common/env.mak
 COLOR=$(COLOR_RED)
 
-SRC_DIR=$(ROOT_DIR)/src/codec_utils/E2RC
+SRC_DIR=$(ROOT_DIR)/src/codec_utils/E2SM_RC
 C_SRCS=$(wildcard $(SRC_DIR)/*.c)
 C_OBJS=$(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(C_SRCS))
 
