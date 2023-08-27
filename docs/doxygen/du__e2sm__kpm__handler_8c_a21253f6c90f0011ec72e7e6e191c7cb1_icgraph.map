@@ -1,0 +1,9 @@
+<map id="kpmFillPrintableString" name="kpmFillPrintableString">
+<area shape="rect" id="node1" title="Fill in the Printable String." alt="" coords="1103,31,1252,57"/>
+<area shape="rect" id="node2" href="$du__e2sm__kpm__handler_8c.html#af15a64b2a294242ae149d186fe9d2a49" title="Fill in the optinal item of Indication Header format 1." alt="" coords="847,23,1055,65"/>
+<area shape="rect" id="node3" href="$du__e2sm__kpm__handler_8c.html#a46f1f8cbdceb062fbc0c6f2c8546e37c" title="Fill in the Indication Header format 1 of KPM." alt="" coords="591,31,799,57"/>
+<area shape="rect" id="node4" href="$du__e2sm__kpm__handler_8c.html#aafbdbd72c0d442e628c8ddf8ed74335f" title="Fill in the Indication Header." alt="" coords="364,31,543,57"/>
+<area shape="rect" id="node5" href="$du__e2sm__kpm__handler_8c.html#a4cf81af92c604415b05581277b455d80" title="Send the cell metrics to RIC with RIC Indication." alt="" coords="177,5,312,32"/>
+<area shape="rect" id="node7" href="$du__e2sm__kpm__handler_8c.html#a54bfb427e9fb9c9eb22d09ced452b1e8" title="Send the slice metrics to RIC with RIC Indication." alt="" coords="173,56,316,83"/>
+<area shape="rect" id="node6" href="$du__e2sm__kpm__handler_8c.html#ac4ed88963daa15aa3a816a3f203eaad9" title="Send the metrics to RIC with RIC Indication." alt="" coords="5,31,125,57"/>
+</map>

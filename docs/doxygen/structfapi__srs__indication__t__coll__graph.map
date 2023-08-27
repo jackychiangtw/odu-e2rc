@@ -1,0 +1,6 @@
+<map id="fapi_srs_indication_t" name="fapi_srs_indication_t">
+<area shape="rect" id="node1" title=" " alt="" coords="71,184,211,211"/>
+<area shape="rect" id="node2" href="$structfapi__srs__pdu__t.html" title=" " alt="" coords="11,95,117,121"/>
+<area shape="rect" id="node3" href="$structfapi__symb__snr__t.html" title=" " alt="" coords="5,5,123,32"/>
+<area shape="rect" id="node4" href="$structfapi__msg__t.html" title=" " alt="" coords="141,95,227,121"/>
+</map>

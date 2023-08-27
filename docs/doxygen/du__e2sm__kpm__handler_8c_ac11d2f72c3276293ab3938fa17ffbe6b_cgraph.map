@@ -1,0 +1,7 @@
+<map id="kpmFillIndicationMessageFormat2" name="kpmFillIndicationMessageFormat2">
+<area shape="rect" id="node1" title="Fill in the Indication Message format 2 for slice metrics." alt="" coords="5,49,177,90"/>
+<area shape="rect" id="node2" href="$du__e2sm__kpm__handler_8c.html#aab5b3805c0d7cbd3cc9c5a265e11708b" title="Fill in the matching conditional item for slice information of KPM." alt="" coords="234,5,414,32"/>
+<area shape="rect" id="node4" href="$du__e2sm__kpm__handler_8c.html#a3e90212e6e381f872d609e9e792a7485" title="Fill in the measurement record item for slice metrics." alt="" coords="235,56,413,83"/>
+<area shape="rect" id="node5" href="$du__e2sm__kpm__handler_8c.html#a089d8f9d8a5f3c83a04753092c1e4979" title="Get the index of measurement name for slice metrics." alt="" coords="225,107,423,133"/>
+<area shape="rect" id="node3" href="$du__e2sm__kpm__handler_8c.html#a93aa83a07bb99a0a0bd229676ddeadfe" title="Fill in the Octet String." alt="" coords="471,5,601,32"/>
+</map>

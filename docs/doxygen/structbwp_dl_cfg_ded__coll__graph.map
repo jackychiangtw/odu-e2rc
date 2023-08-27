@@ -1,0 +1,15 @@
+<map id="bwpDlCfgDed" name="bwpDlCfgDed">
+<area shape="rect" id="node1" title=" " alt="" coords="959,140,1057,167"/>
+<area shape="rect" id="node2" href="$structsps_config.html" title=" " alt="" coords="695,63,773,89"/>
+<area shape="rect" id="node3" href="$structpdsch_config.html" title=" " alt="" coords="687,113,781,140"/>
+<area shape="rect" id="node4" href="$structpdsch_time_dom_rsrc_alloc.html" title=" " alt="" coords="280,12,448,39"/>
+<area shape="rect" id="node5" href="$structdmrs_dl_cfg.html" title=" " alt="" coords="323,63,405,89"/>
+<area shape="rect" id="node6" href="$structpdsch_bundling.html" title=" " alt="" coords="311,113,417,140"/>
+<area shape="rect" id="node7" href="$structpdsch_bundling_1_1static_bundling.html" title=" " alt="" coords="14,88,118,115"/>
+<area shape="rect" id="node8" href="$structpdsch_bundling_1_1dynamic_bundling.html" title=" " alt="" coords="5,139,127,165"/>
+<area shape="rect" id="node9" href="$structpdcch_config.html" title=" " alt="" coords="687,164,781,191"/>
+<area shape="rect" id="node10" href="$structsearch_space.html" title=" " alt="" coords="315,164,413,191"/>
+<area shape="rect" id="node11" href="$structcontrol_rsrc_set.html" title=" " alt="" coords="310,215,418,241"/>
+<area shape="rect" id="node12" href="$structradio_link_config.html" title=" " alt="" coords="679,240,789,267"/>
+<area shape="rect" id="node13" href="$structradio_link_mon_r_s.html" title=" " alt="" coords="305,265,423,292"/>
+</map>

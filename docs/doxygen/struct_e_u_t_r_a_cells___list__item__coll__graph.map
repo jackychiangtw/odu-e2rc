@@ -1,0 +1,11 @@
+<map id="EUTRACells_List_item" name="EUTRACells_List_item">
+<area shape="rect" id="node1" title=" " alt="" coords="56,505,211,532"/>
+<area shape="rect" id="node2" href="$struct_served___e_u_t_r_a___cells___information.html" title=" " alt="" coords="60,387,207,428"/>
+<area shape="rect" id="node3" href="$struct_o_c_t_e_t___s_t_r_i_n_g.html" title=" " alt="" coords="122,145,241,172"/>
+<area shape="rect" id="node4" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="207,5,329,32"/>
+<area shape="rect" id="node5" href="$struct_e_u_t_r_a___mode___info.html" title=" " alt="" coords="300,297,431,324"/>
+<area shape="rect" id="node7" href="$struct_e_u_t_r_a___t_d_d___info.html" title=" " alt="" coords="306,95,430,121"/>
+<area shape="rect" id="node8" href="$struct_e_u_t_r_a___f_d_d___info.html" title=" " alt="" coords="455,95,580,121"/>
+<area shape="rect" id="node9" href="$struct_b_i_t___s_t_r_i_n_g__s.html" title=" " alt="" coords="516,247,625,273"/>
+<area shape="rect" id="node6" href="$union_e_u_t_r_a___mode___info_1_1_e_u_t_r_a___mode___info__u.html" title=" " alt="" coords="337,196,482,223"/>
+</map>

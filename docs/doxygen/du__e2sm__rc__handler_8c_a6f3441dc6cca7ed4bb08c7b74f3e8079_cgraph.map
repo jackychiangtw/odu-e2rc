@@ -1,0 +1,5 @@
+<map id="rcFillRanFuncDefiCtrlActionItem" name="rcFillRanFuncDefiCtrlActionItem">
+<area shape="rect" id="node1" title="Fills the Contol Action Item to indicate the supported Control Action." alt="" coords="5,31,212,57"/>
+<area shape="rect" id="node2" href="$du__e2sm__rc__handler_8c.html#a5cc0384696b24a814fc671087233f7af" title="Fills the RAN Parameter of Control Action Item to indicate the supported RAN Parameter." alt="" coords="260,5,475,32"/>
+<area shape="rect" id="node3" href="$du__e2sm__rc__handler_8c.html#a98e8b308ee80f4dbb1abc146a945b266" title="Fill in the Octet String." alt="" coords="523,31,639,57"/>
+</map>

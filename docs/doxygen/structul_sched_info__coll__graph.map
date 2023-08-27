@@ -1,0 +1,19 @@
+<map id="ulSchedInfo" name="ulSchedInfo">
+<area shape="rect" id="node1" title=" " alt="" coords="688,220,777,247"/>
+<area shape="rect" id="node2" href="$structsch_pusch_info.html" title=" " alt="" coords="457,99,557,125"/>
+<area shape="rect" id="node3" href="$structtime_domain_alloc.html" title=" " alt="" coords="195,260,315,287"/>
+<area shape="rect" id="node9" href="$structsch_pucch_info.html" title=" " alt="" coords="457,396,557,423"/>
+<area shape="rect" id="node14" href="$structsch_pusch_uci.html" title=" " alt="" coords="457,220,556,247"/>
+<area shape="rect" id="node4" href="$structfreq_domain_alloc.html" title=" " alt="" coords="197,33,313,60"/>
+<area shape="rect" id="node5" href="$structres_alloc_type0.html" title=" " alt="" coords="5,33,109,60"/>
+<area shape="rect" id="node6" href="$structres_alloc_type1.html" title=" " alt="" coords="5,261,109,288"/>
+<area shape="rect" id="node7" href="$structtb_info.html" title=" " alt="" coords="228,101,281,128"/>
+<area shape="rect" id="node8" href="$structprach_sch_info.html" title=" " alt="" coords="458,169,555,196"/>
+<area shape="rect" id="node10" href="$structcsi_fdbk_info.html" title=" " alt="" coords="211,556,299,583"/>
+<area shape="rect" id="node11" href="$structharq_fdbk_info.html" title=" " alt="" coords="207,392,303,419"/>
+<area shape="rect" id="node12" href="$structbeamforming_info.html" title=" " alt="" coords="197,505,313,532"/>
+<area shape="rect" id="node13" href="$structprg.html" title=" " alt="" coords="37,505,77,532"/>
+<area shape="rect" id="node15" href="$structharq_info.html" title=" " alt="" coords="221,169,288,196"/>
+<area shape="rect" id="node16" href="$structcsi_info.html" title=" " alt="" coords="225,341,284,368"/>
+<area shape="rect" id="node17" href="$structslot_timing_info.html" title=" " alt="" coords="456,447,557,473"/>
+</map>

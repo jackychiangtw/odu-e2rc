@@ -1,0 +1,15 @@
+<map id="schUlCfgCommon" name="schUlCfgCommon">
+<area shape="rect" id="node1" title=" " alt="" coords="969,107,1096,133"/>
+<area shape="rect" id="node2" href="$structsch_freq_info_ul_sib.html" title=" " alt="" coords="699,56,819,83"/>
+<area shape="rect" id="node3" href="$structsch_scs_specific_carrier.html" title=" " alt="" coords="385,5,536,32"/>
+<area shape="rect" id="node4" href="$structsch_multi_freq_band_list_sib.html" title=" " alt="" coords="377,56,544,83"/>
+<area shape="rect" id="node5" href="$structsch_nr_ns_pmax_list.html" title=" " alt="" coords="37,56,164,83"/>
+<area shape="rect" id="node6" href="$structsch_bwp_ul_cfg.html" title=" " alt="" coords="709,157,808,184"/>
+<area shape="rect" id="node7" href="$structsch_pusch_cfg_cmn.html" title=" " alt="" coords="397,107,524,133"/>
+<area shape="rect" id="node8" href="$structsch_pusch_time_dom_rsrc_alloc.html" title=" " alt="" coords="5,107,196,133"/>
+<area shape="rect" id="node9" href="$structsch_bwp_params.html" title=" " alt="" coords="404,157,517,184"/>
+<area shape="rect" id="node10" href="$structres_alloc_type1.html" title=" " alt="" coords="49,157,153,184"/>
+<area shape="rect" id="node11" href="$structsch_pucch_cfg_cmn.html" title=" " alt="" coords="397,208,524,235"/>
+<area shape="rect" id="node12" href="$structsch_rach_cfg.html" title=" " alt="" coords="415,259,507,285"/>
+<area shape="rect" id="node13" href="$structsch_rach_cfg_generic.html" title=" " alt="" coords="32,259,169,285"/>
+</map>

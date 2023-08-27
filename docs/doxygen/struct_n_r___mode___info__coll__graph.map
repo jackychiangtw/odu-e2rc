@@ -1,0 +1,11 @@
+<map id="NR_Mode_Info" name="NR_Mode_Info">
+<area shape="rect" id="node1" title=" " alt="" coords="5,583,112,609"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="515,5,637,32"/>
+<area shape="rect" id="node4" href="$struct_f_d_d___info.html" title=" " alt="" coords="383,404,457,431"/>
+<area shape="rect" id="node5" href="$struct_transmission___bandwidth.html" title=" " alt="" coords="281,95,447,121"/>
+<area shape="rect" id="node6" href="$struct_n_r_freq_info.html" title=" " alt="" coords="515,300,602,327"/>
+<area shape="rect" id="node7" href="$struct_s_u_l___information.html" title=" " alt="" coords="500,196,617,223"/>
+<area shape="rect" id="node8" href="$struct_n_r_freq_info_1_1_n_r_freq_info____freq_band_list_nr.html" title=" " alt="" coords="735,145,921,172"/>
+<area shape="rect" id="node9" href="$struct_t_d_d___info.html" title=" " alt="" coords="145,404,220,431"/>
+<area shape="rect" id="node3" href="$union_n_r___mode___info_1_1_n_r___mode___info__u.html" title=" " alt="" coords="123,493,243,520"/>
+</map>

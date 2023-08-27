@@ -1,0 +1,4 @@
+<map id="rlcLmmSendAlarm" name="rlcLmmSendAlarm">
+<area shape="rect" id="node1" title="This function sends Unsolicited Status Indication to the Layer Management Entity." alt="" coords="5,5,135,32"/>
+<area shape="rect" id="node2" href="$rlc__portable__functions_8c.html#ae2310063c79ff274496a83d9a88e4bce" title="Description:" alt="" coords="183,5,297,32"/>
+</map>

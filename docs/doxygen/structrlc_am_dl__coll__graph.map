@@ -1,0 +1,9 @@
+<map id="rlcAmDl" name="rlcAmDl">
+<area shape="rect" id="node1" title="Structure to hold Acknowledged Mode Downlink information for a RB." alt="" coords="107,273,175,300"/>
+<area shape="rect" id="node2" href="$structrlc_status_pdu.html" title=" " alt="" coords="5,184,103,211"/>
+<area shape="rect" id="node3" href="$structrlc_nack_info.html" title=" " alt="" coords="11,95,97,121"/>
+<area shape="rect" id="node4" href="$structrlc_sdu.html" title="Structure to hold information regarding a SDU received from PDCP." alt="" coords="133,5,191,32"/>
+<area shape="rect" id="node7" href="$structrlc_sdu_map.html" title="Structure to hold information about which SDUs a PDU/segment carries." alt="" coords="179,95,263,121"/>
+<area shape="rect" id="node5" href="$structrlc_retx.html" title="Structure to hold info about a PDU/segment to be re&#45;transmitted." alt="" coords="189,184,252,211"/>
+<area shape="rect" id="node6" href="$structrlc_am_hdr.html" title="Structure to hold an Acknowledged Mode header." alt="" coords="287,95,363,121"/>
+</map>

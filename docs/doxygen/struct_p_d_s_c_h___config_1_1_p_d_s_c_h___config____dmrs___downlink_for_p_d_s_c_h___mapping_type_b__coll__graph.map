@@ -1,0 +1,11 @@
+<map id="PDSCH_Config::PDSCH_Config__dmrs_DownlinkForPDSCH_MappingTypeB" name="PDSCH_Config::PDSCH_Config__dmrs_DownlinkForPDSCH_MappingTypeB">
+<area shape="rect" id="node1" title=" " alt="" coords="5,689,236,745"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="223,5,346,32"/>
+<area shape="rect" id="node4" href="$struct_d_m_r_s___downlink_config.html" title=" " alt="" coords="186,496,341,523"/>
+<area shape="rect" id="node5" href="$struct_d_m_r_s___downlink_config_1_1_d_m_r_s___downlink_config____phase_tracking_r_s.html" title=" " alt="" coords="214,392,369,433"/>
+<area shape="rect" id="node7" href="$struct_p_t_r_s___downlink_config.html" title=" " alt="" coords="367,199,517,225"/>
+<area shape="rect" id="node8" href="$struct_p_t_r_s___downlink_config_1_1_p_t_r_s___downlink_config____time_density.html" title=" " alt="" coords="397,95,548,136"/>
+<area shape="rect" id="node9" href="$struct_p_t_r_s___downlink_config_1_1_p_t_r_s___downlink_config____frequency_density.html" title=" " alt="" coords="572,95,723,136"/>
+<area shape="rect" id="node3" href="$union_p_d_s_c_h___config_1_1_p_d_s_c_h___config____dmrs___downlink_for_p_d_s_c_h___mapping_type_87ad2658e2527a551015722e66489782.html" title=" " alt="" coords="137,585,389,627"/>
+<area shape="rect" id="node6" href="$union_d_m_r_s___downlink_config_1_1_d_m_r_s___downlink_config____phase_tracking_r_s_1_1_d_m_r_s_00c08e3cd7631d704cc648ebe679f39f.html" title=" " alt="" coords="327,288,482,329"/>
+</map>

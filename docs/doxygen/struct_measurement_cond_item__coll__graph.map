@@ -1,0 +1,10 @@
+<map id="MeasurementCondItem" name="MeasurementCondItem">
+<area shape="rect" id="node1" title=" " alt="" coords="198,392,354,419"/>
+<area shape="rect" id="node2" href="$struct_measurement_type.html" title=" " alt="" coords="145,303,274,329"/>
+<area shape="rect" id="node3" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="209,5,332,32"/>
+<area shape="rect" id="node5" href="$struct_o_c_t_e_t___s_t_r_i_n_g.html" title=" " alt="" coords="155,95,274,121"/>
+<area shape="rect" id="node6" href="$struct_matching_cond_list.html" title=" " alt="" coords="266,154,393,181"/>
+<area shape="rect" id="node7" href="$struct_bin_range_definition.html" title=" " alt="" coords="361,213,492,240"/>
+<area shape="rect" id="node8" href="$struct_bin_range_list.html" title=" " alt="" coords="495,95,593,121"/>
+<area shape="rect" id="node4" href="$union_measurement_type_1_1_measurement_type__u.html" title=" " alt="" coords="138,213,281,240"/>
+</map>

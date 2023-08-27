@@ -1,0 +1,7 @@
+<map id="bwpUlConfig" name="bwpUlConfig">
+<area shape="rect" id="node1" title=" " alt="" coords="147,184,240,211"/>
+<area shape="rect" id="node2" href="$structbwp_params.html" title=" " alt="" coords="5,95,96,121"/>
+<area shape="rect" id="node3" href="$structpucch_config_common.html" title=" " alt="" coords="121,95,266,121"/>
+<area shape="rect" id="node4" href="$structpusch_config_common.html" title=" " alt="" coords="290,95,435,121"/>
+<area shape="rect" id="node5" href="$structpusch_time_dom_rsrc_alloc.html" title=" " alt="" coords="279,5,447,32"/>
+</map>

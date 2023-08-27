@@ -1,0 +1,5 @@
+<map id="ricSctpParams" name="ricSctpParams">
+<area shape="rect" id="node1" title=" " alt="" coords="5,184,113,211"/>
+<area shape="rect" id="node2" href="$structip_addr.html" title=" " alt="" coords="30,5,89,32"/>
+<area shape="rect" id="node3" href="$structsctp_dest_info.html" title=" " alt="" coords="132,95,227,121"/>
+</map>

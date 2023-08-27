@@ -1,0 +1,13 @@
+<map id="E2SM_RC_EventTrigger_Format4_Item" name="E2SM_RC_EventTrigger_Format4_Item">
+<area shape="rect" id="node1" title=" " alt="" coords="62,508,223,549"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="332,5,455,32"/>
+<area shape="rect" id="node3" href="$struct_event_trigger___u_e___info.html" title=" " alt="" coords="70,218,215,245"/>
+<area shape="rect" id="node4" href="$struct_event_trigger___u_e___info_1_1_event_trigger___u_e___info____ue_info___list.html" title=" " alt="" coords="149,95,294,136"/>
+<area shape="rect" id="node5" href="$struct_trigger_type___choice.html" title=" " alt="" coords="264,419,400,445"/>
+<area shape="rect" id="node7" href="$struct_trigger_type___choice___l2state.html" title=" " alt="" coords="459,211,595,252"/>
+<area shape="rect" id="node8" href="$struct_r_a_n_parameter___testing.html" title=" " alt="" coords="475,102,634,129"/>
+<area shape="rect" id="node9" href="$struct_trigger_type___choice___r_r_cstate.html" title=" " alt="" coords="619,211,755,252"/>
+<area shape="rect" id="node10" href="$struct_trigger_type___choice___r_r_cstate_1_1_trigger_type___choice___r_r_cstate____rrc_state___list.html" title=" " alt="" coords="764,95,937,136"/>
+<area shape="rect" id="node11" href="$struct_trigger_type___choice___u_e_i_d.html" title=" " alt="" coords="868,160,1041,187"/>
+<area shape="rect" id="node6" href="$union_trigger_type___choice_1_1_trigger_type___choice__u.html" title=" " alt="" coords="527,329,678,356"/>
+</map>

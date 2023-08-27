@@ -1,0 +1,35 @@
+<map id="E2nodeComponentConfigAddition_ItemIEs::E2nodeComponentConfigAddition_ItemIEs__value" name="E2nodeComponentConfigAddition_ItemIEs::E2nodeComponentConfigAddition_ItemIEs__value">
+<area shape="rect" id="node1" title=" " alt="" coords="4172,22,4447,78"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="35,744,157,771"/>
+<area shape="rect" id="node4" href="$struct_e2node_component_config_addition___item.html" title=" " alt="" coords="3343,1366,3589,1392"/>
+<area shape="rect" id="node5" href="$struct_e2node_component_configuration.html" title=" " alt="" coords="1300,1390,1507,1416"/>
+<area shape="rect" id="node6" href="$struct_o_c_t_e_t___s_t_r_i_n_g.html" title=" " alt="" coords="943,742,1061,768"/>
+<area shape="rect" id="node7" href="$struct_e2node_component_i_d.html" title=" " alt="" coords="3025,1338,3169,1364"/>
+<area shape="rect" id="node9" href="$struct_e2node_component_interface_s1.html" title=" " alt="" coords="1305,659,1502,686"/>
+<area shape="rect" id="node10" href="$struct_e2node_component_interface_f1.html" title=" " alt="" coords="336,151,532,178"/>
+<area shape="rect" id="node12" href="$struct_e2node_component_interface_e1.html" title=" " alt="" coords="335,87,533,114"/>
+<area shape="rect" id="node13" href="$struct_e2node_component_interface_n_g.html" title=" " alt="" coords="1303,739,1503,766"/>
+<area shape="rect" id="node14" href="$struct_e2node_component_interface_x2.html" title=" " alt="" coords="1716,988,1911,1015"/>
+<area shape="rect" id="node15" href="$struct_global_e_n_b___i_d.html" title=" " alt="" coords="1351,939,1456,966"/>
+<area shape="rect" id="node16" href="$struct_e_n_b___i_d.html" title=" " alt="" coords="968,956,1036,983"/>
+<area shape="rect" id="node18" href="$struct_b_i_t___s_t_r_i_n_g__s.html" title=" " alt="" coords="379,912,489,939"/>
+<area shape="rect" id="node19" href="$struct_globalen_g_n_b___i_d.html" title=" " alt="" coords="1343,1062,1463,1088"/>
+<area shape="rect" id="node20" href="$struct_e_n_g_n_b___i_d.html" title=" " alt="" coords="959,1060,1045,1087"/>
+<area shape="rect" id="node22" href="$struct_e_n___g_n_b___i_d.html" title=" " alt="" coords="955,1111,1049,1138"/>
+<area shape="rect" id="node24" href="$struct_e2node_component_interface_w1.html" title=" " alt="" coords="333,580,535,607"/>
+<area shape="rect" id="node25" href="$struct_e2node_component_interface_xn.html" title=" " alt="" coords="2372,310,2567,336"/>
+<area shape="rect" id="node26" href="$struct_global_n_g___r_a_n_node___i_d.html" title=" " alt="" coords="2001,310,2163,336"/>
+<area shape="rect" id="node28" href="$struct_globalg_n_b___i_d.html" title=" " alt="" coords="1352,367,1455,394"/>
+<area shape="rect" id="node29" href="$struct_g_n_b___i_d___choice.html" title=" " alt="" coords="944,367,1060,394"/>
+<area shape="rect" id="node31" href="$struct_globalnge_n_b___i_d.html" title=" " alt="" coords="1345,468,1462,495"/>
+<area shape="rect" id="node32" href="$struct_e_n_b___i_d___choice.html" title=" " alt="" coords="945,530,1059,556"/>
+<area shape="rect" id="node3" href="$union_e2node_component_config_addition___item_i_es_1_1_e2node_component_config_addition___item_i35d02ef4e3f0c0123222b87f782955cc.html" title=" " alt="" coords="3867,389,4081,430"/>
+<area shape="rect" id="node8" href="$union_e2node_component_i_d_1_1_e2node_component_i_d__u.html" title=" " alt="" coords="2776,616,2935,643"/>
+<area shape="rect" id="node11" href="$struct_a_s_n_____p_r_i_m_i_t_i_v_e___t_y_p_e__s.html" title=" " alt="" coords="5,42,187,68"/>
+<area shape="rect" id="node17" href="$union_e_n_b___i_d_1_1_e_n_b___i_d__u.html" title=" " alt="" coords="731,920,813,947"/>
+<area shape="rect" id="node21" href="$union_e_n_g_n_b___i_d_1_1_e_n_g_n_b___i_d__u.html" title=" " alt="" coords="721,971,823,998"/>
+<area shape="rect" id="node23" href="$union_e_n___g_n_b___i_d_1_1_e_n___g_n_b___i_d__u.html" title=" " alt="" coords="718,1072,826,1099"/>
+<area shape="rect" id="node30" href="$union_g_n_b___i_d___choice_1_1_g_n_b___i_d___choice__u.html" title=" " alt="" coords="707,479,837,506"/>
+<area shape="rect" id="node33" href="$union_e_n_b___i_d___choice_1_1_e_n_b___i_d___choice__u.html" title=" " alt="" coords="707,631,837,658"/>
+<area shape="rect" id="node27" href="$union_global_n_g___r_a_n_node___i_d_1_1_global_n_g___r_a_n_node___i_d__u.html" title=" " alt="" coords="1726,367,1901,394"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="PTRS_UplinkConfig" name="PTRS_UplinkConfig">
+<area shape="rect" id="node1" title=" " alt="" coords="967,93,1101,120"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="5,125,128,152"/>
+<area shape="rect" id="node3" href="$struct_p_t_r_s___uplink_config_1_1_p_t_r_s___uplink_config____transform_precoder_disabled.html" title=" " alt="" coords="572,86,757,127"/>
+<area shape="rect" id="node4" href="$struct_p_t_r_s___uplink_config_1_1_p_t_r_s___uplink_config____transform_precoder_disabled_1_1_p_8332d7fb15b52b3b7d9a337df42b2577.html" title=" " alt="" coords="233,79,419,135"/>
+<area shape="rect" id="node5" href="$struct_p_t_r_s___uplink_config_1_1_p_t_r_s___uplink_config____transform_precoder_disabled_1_1_p_4c49cba00851e822187950fc7896eee6.html" title=" " alt="" coords="233,159,419,215"/>
+<area shape="rect" id="node6" href="$struct_p_t_r_s___uplink_config_1_1_p_t_r_s___uplink_config____transform_precoder_enabled.html" title=" " alt="" coords="573,233,756,274"/>
+<area shape="rect" id="node7" href="$struct_p_t_r_s___uplink_config_1_1_p_t_r_s___uplink_config____transform_precoder_enabled_1_1_p_t1ecda18f1dc10bc137b41d1e09114d30.html" title=" " alt="" coords="235,301,417,357"/>
+</map>

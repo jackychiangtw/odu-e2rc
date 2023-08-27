@@ -1,0 +1,12 @@
+<map id="FeatureSetDownlink" name="FeatureSetDownlink">
+<area shape="rect" id="node1" title=" " alt="" coords="721,289,860,316"/>
+<area shape="rect" id="node2" href="$struct_feature_set_downlink_1_1_feature_set_downlink____type_i___multi_panel_codebook_list.html" title=" " alt="" coords="243,93,454,134"/>
+<area shape="rect" id="node3" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="5,289,128,316"/>
+<area shape="rect" id="node4" href="$struct_feature_set_downlink_1_1_feature_set_downlink____time_duration_for_q_c_l.html" title=" " alt="" coords="271,158,426,199"/>
+<area shape="rect" id="node5" href="$struct_feature_set_downlink_1_1_feature_set_downlink____type_i___single_panel_codebook_list.html" title=" " alt="" coords="239,223,458,265"/>
+<area shape="rect" id="node6" href="$struct_c_s_i___r_s___i_m___reception_for_feedback.html" title=" " alt="" coords="233,289,464,316"/>
+<area shape="rect" id="node7" href="$struct_feature_set_downlink_1_1_feature_set_downlink____pdsch___processing_type1___different_t_b___per_slot.html" title=" " alt="" coords="259,340,438,396"/>
+<area shape="rect" id="node8" href="$struct_feature_set_downlink_1_1_feature_set_downlink____type_i_i___codebook_port_selection_list.html" title=" " alt="" coords="233,421,464,462"/>
+<area shape="rect" id="node9" href="$struct_feature_set_downlink_1_1_feature_set_downlink____type_i_i___codebook_list.html" title=" " alt="" coords="272,486,425,527"/>
+<area shape="rect" id="node10" href="$struct_feature_set_downlink_1_1_feature_set_downlink____feature_set_list_per_downlink_c_c.html" title=" " alt="" coords="245,551,452,593"/>
+</map>

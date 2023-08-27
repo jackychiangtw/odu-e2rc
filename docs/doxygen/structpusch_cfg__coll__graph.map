@@ -1,0 +1,6 @@
+<map id="puschCfg" name="puschCfg">
+<area shape="rect" id="node1" title=" " alt="" coords="145,184,221,211"/>
+<area shape="rect" id="node2" href="$structdmrs_ul_cfg.html" title=" " alt="" coords="35,95,118,121"/>
+<area shape="rect" id="node3" href="$structtrans_precod_disabled.html" title=" " alt="" coords="5,5,148,32"/>
+<area shape="rect" id="node4" href="$structpusch_time_dom_rsrc_alloc.html" title=" " alt="" coords="206,95,374,121"/>
+</map>

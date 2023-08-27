@@ -1,0 +1,12 @@
+<map id="UERadioPagingInformation" name="UERadioPagingInformation">
+<area shape="rect" id="node1" title=" " alt="" coords="2252,36,2428,63"/>
+<area shape="rect" id="node2" href="$struct_u_e_radio_paging_information_1_1_u_e_radio_paging_information____critical_extensions.html" title=" " alt="" coords="1920,58,2096,99"/>
+<area shape="rect" id="node3" href="$union_u_e_radio_paging_information_1_1_u_e_radio_paging_information____critical_extensions_1_1_ub44e7e781db01ad1858d3ffc4f9a67d4.html" title=" " alt="" coords="1653,114,1829,155"/>
+<area shape="rect" id="node4" href="$struct_u_e_radio_paging_information_1_1_u_e_radio_paging_information____critical_extensions_1_1_78dc3f8cd2d92184fd1d7558ec43e5bf.html" title=" " alt="" coords="504,107,695,163"/>
+<area shape="rect" id="node5" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="5,173,128,200"/>
+<area shape="rect" id="node6" href="$struct_u_e_radio_paging_information_1_1_u_e_radio_paging_information____critical_extensions_1_1_fcd6ffcbafdefce6006192443121ccb0.html" title=" " alt="" coords="1411,175,1587,217"/>
+<area shape="rect" id="node8" href="$struct_u_e_radio_paging_information___i_es.html" title=" " alt="" coords="719,271,921,297"/>
+<area shape="rect" id="node9" href="$struct_u_e_radio_paging_information___i_es_1_1_u_e_radio_paging_information___i_es____non_critical_extension.html" title=" " alt="" coords="266,287,447,329"/>
+<area shape="rect" id="node10" href="$struct_u_e_radio_paging_information___i_es_1_1_u_e_radio_paging_information___i_es____supported_band_list_n_r_for_paging.html" title=" " alt="" coords="233,353,480,394"/>
+<area shape="rect" id="node7" href="$union_u_e_radio_paging_information_1_1_u_e_radio_paging_information____critical_extensions_1_1_u28d60410e26db251ae958e9638f3a7e3.html" title=" " alt="" coords="1124,238,1305,279"/>
+</map>

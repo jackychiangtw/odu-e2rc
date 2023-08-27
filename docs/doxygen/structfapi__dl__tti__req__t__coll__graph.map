@@ -1,0 +1,17 @@
+<map id="fapi_dl_tti_req_t" name="fapi_dl_tti_req_t">
+<area shape="rect" id="node1" title=" " alt="" coords="504,553,617,580"/>
+<area shape="rect" id="node2" href="$structfapi__dl__tti__req__pdu__t.html" title=" " alt="" coords="353,464,494,491"/>
+<area shape="rect" id="node3" href="$structfapi__dl__ssb__pdu__t.html" title=" " alt="" coords="115,273,241,300"/>
+<area shape="rect" id="node4" href="$structfapi__bch__payload__t.html" title=" " alt="" coords="7,184,141,211"/>
+<area shape="rect" id="node5" href="$structfapi__phy__mib__pdu__t.html" title=" " alt="" coords="5,95,143,121"/>
+<area shape="rect" id="node6" href="$structfapi__precoding__bmform__t.html" title=" " alt="" coords="383,184,549,211"/>
+<area shape="rect" id="node9" href="$structfapi__dl__csi__rs__pdu__t.html" title=" " alt="" coords="300,324,440,351"/>
+<area shape="rect" id="node10" href="$structfapi__dl__pdsch__pdu__t.html" title=" " alt="" coords="608,273,748,300"/>
+<area shape="rect" id="node13" href="$structfapi__dl__dci__t.html" title=" " alt="" coords="488,273,583,300"/>
+<area shape="rect" id="node7" href="$structfapi__pmi__bfi__t.html" title=" " alt="" coords="415,95,517,121"/>
+<area shape="rect" id="node8" href="$structfapi__bmi__t.html" title=" " alt="" coords="425,5,507,32"/>
+<area shape="rect" id="node11" href="$structfapi__codeword__pdu__t.html" title=" " alt="" coords="799,184,941,211"/>
+<area shape="rect" id="node12" href="$structfapi__dl__pdcch__pdu__t.html" title=" " alt="" coords="464,375,604,401"/>
+<area shape="rect" id="node14" href="$structfapi__msg__t.html" title=" " alt="" coords="518,464,603,491"/>
+<area shape="rect" id="node15" href="$structfapi__ue__info__t.html" title=" " alt="" coords="627,464,729,491"/>
+</map>

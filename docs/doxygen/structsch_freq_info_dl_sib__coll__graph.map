@@ -1,0 +1,6 @@
+<map id="schFreqInfoDlSib" name="schFreqInfoDlSib">
+<area shape="rect" id="node1" title=" " alt="" coords="95,184,215,211"/>
+<area shape="rect" id="node2" href="$structsch_scs_specific_carrier.html" title=" " alt="" coords="5,95,156,121"/>
+<area shape="rect" id="node3" href="$structsch_multi_freq_band_list_sib.html" title=" " alt="" coords="180,95,347,121"/>
+<area shape="rect" id="node4" href="$structsch_nr_ns_pmax_list.html" title=" " alt="" coords="200,5,327,32"/>
+</map>

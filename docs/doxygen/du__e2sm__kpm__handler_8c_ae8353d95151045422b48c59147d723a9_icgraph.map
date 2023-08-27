@@ -1,0 +1,9 @@
+<map id="kpmFreeMeasData" name="kpmFreeMeasData">
+<area shape="rect" id="node1" title="Deallocate the memory allocated for MeasurementData_t." alt="" coords="881,31,1013,57"/>
+<area shape="rect" id="node2" href="$du__e2sm__kpm__handler_8c.html#ab24cc69580d631d71adfaee3d4b29ffe" title="Deallocate the memory allocated for E2SM_KPM_IndicationMessage_Format1_t." alt="" coords="603,5,833,32"/>
+<area shape="rect" id="node7" href="$du__e2sm__kpm__handler_8c.html#a2d3340d8fb63118602cb1dd0748444d0" title="Deallocate the memory allocated for E2SM_KPM_IndicationMessage_Format2_t." alt="" coords="603,56,833,83"/>
+<area shape="rect" id="node3" href="$du__e2sm__kpm__handler_8c.html#a8ce02956c2f52647d795a9580dbb7d57" title="Fill in the Indication Message." alt="" coords="364,31,555,57"/>
+<area shape="rect" id="node4" href="$du__e2sm__kpm__handler_8c.html#a4cf81af92c604415b05581277b455d80" title="Send the cell metrics to RIC with RIC Indication." alt="" coords="177,5,312,32"/>
+<area shape="rect" id="node6" href="$du__e2sm__kpm__handler_8c.html#a54bfb427e9fb9c9eb22d09ced452b1e8" title="Send the slice metrics to RIC with RIC Indication." alt="" coords="173,56,316,83"/>
+<area shape="rect" id="node5" href="$du__e2sm__kpm__handler_8c.html#ac4ed88963daa15aa3a816a3f203eaad9" title="Send the metrics to RIC with RIC Indication." alt="" coords="5,31,125,57"/>
+</map>

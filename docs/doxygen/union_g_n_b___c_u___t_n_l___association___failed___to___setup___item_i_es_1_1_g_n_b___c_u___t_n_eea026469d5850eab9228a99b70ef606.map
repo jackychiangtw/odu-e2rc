@@ -1,0 +1,11 @@
+<map id="GNB_CU_TNL_Association_Failed_To_Setup_ItemIEs::GNB_CU_TNL_Association_Failed_To_Setup_ItemIEs__value::GNB_CU_TNL_Association_Failed_To_Setup_ItemIEs__value_u" name="GNB_CU_TNL_Association_Failed_To_Setup_ItemIEs::GNB_CU_TNL_Association_Failed_To_Setup_ItemIEs__value::GNB_CU_TNL_Association_Failed_To_Setup_ItemIEs__value_u">
+<area shape="rect" id="node1" title=" " alt="" coords="57,615,292,715"/>
+<area shape="rect" id="node2" href="$struct_g_n_b___c_u___t_n_l___association___failed___to___setup___item.html" title=" " alt="" coords="85,496,265,537"/>
+<area shape="rect" id="node3" href="$struct_c_p___transport_layer_address.html" title=" " alt="" coords="84,392,265,419"/>
+<area shape="rect" id="node4" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="101,5,224,32"/>
+<area shape="rect" id="node6" href="$struct_endpoint___i_p__address__and__port.html" title=" " alt="" coords="165,184,310,225"/>
+<area shape="rect" id="node7" href="$struct_b_i_t___s_t_r_i_n_g__s.html" title=" " alt="" coords="244,95,353,121"/>
+<area shape="rect" id="node8" href="$struct_cause.html" title=" " alt="" coords="420,95,479,121"/>
+<area shape="rect" id="node5" href="$union_c_p___transport_layer_address_1_1_c_p___transport_layer_address__u.html" title=" " alt="" coords="120,303,315,329"/>
+<area shape="rect" id="node9" href="$union_cause_1_1_cause__u.html" title=" " alt="" coords="413,5,486,32"/>
+</map>

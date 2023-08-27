@@ -1,0 +1,13 @@
+<map id="PCCH_Message" name="PCCH_Message">
+<area shape="rect" id="node1" title=" " alt="" coords="5,657,124,684"/>
+<area shape="rect" id="node2" href="$struct_p_c_c_h___message_type.html" title=" " alt="" coords="63,568,210,595"/>
+<area shape="rect" id="node3" href="$union_p_c_c_h___message_type_1_1_p_c_c_h___message_type__u.html" title=" " alt="" coords="174,479,334,505"/>
+<area shape="rect" id="node4" href="$struct_p_c_c_h___message_type_1_1_p_c_c_h___message_type__u_1_1_p_c_c_h___message_type____c1.html" title=" " alt="" coords="167,389,341,416"/>
+<area shape="rect" id="node5" href="$union_p_c_c_h___message_type_1_1_p_c_c_h___message_type__u_1_1_p_c_c_h___message_type____c1_1_1_p_c_c_h___message_type____c1__u.html" title=" " alt="" coords="236,300,424,327"/>
+<area shape="rect" id="node6" href="$struct_paging_rrc.html" title=" " alt="" coords="290,211,373,237"/>
+<area shape="rect" id="node7" href="$struct_o_c_t_e_t___s_t_r_i_n_g.html" title=" " alt="" coords="339,95,457,121"/>
+<area shape="rect" id="node8" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="266,5,389,32"/>
+<area shape="rect" id="node9" href="$struct_paging_rrc_1_1_paging_rrc____non_critical_extension.html" title=" " alt="" coords="481,95,696,121"/>
+<area shape="rect" id="node10" href="$struct_paging_record_list.html" title=" " alt="" coords="720,95,844,121"/>
+<area shape="rect" id="node11" href="$struct_p_c_c_h___message_type_1_1_p_c_c_h___message_type__u_1_1_p_c_c_h___message_type____message_class_extension.html" title=" " alt="" coords="775,145,989,187"/>
+</map>

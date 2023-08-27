@@ -1,0 +1,8 @@
+<map id="fapi_carrier_config_t" name="fapi_carrier_config_t">
+<area shape="rect" id="node1" title=" " alt="" coords="206,228,343,255"/>
+<area shape="rect" id="node2" href="$structfapi__uint16__tlv__t.html" title=" " alt="" coords="5,95,120,121"/>
+<area shape="rect" id="node3" href="$structfapi__tl__t.html" title=" " alt="" coords="208,5,275,32"/>
+<area shape="rect" id="node4" href="$structfapi__uint8__tlv__t.html" title=" " alt="" coords="144,95,251,121"/>
+<area shape="rect" id="node5" href="$structfapi__uint32__tlv__t.html" title=" " alt="" coords="275,95,389,121"/>
+<area shape="rect" id="node6" href="$structfapi__config__num__tlv__t.html" title=" " alt="" coords="414,95,559,121"/>
+</map>

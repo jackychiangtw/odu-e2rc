@@ -1,0 +1,5 @@
+<map id="kpmFreeRanFuncDesc" name="kpmFreeRanFuncDesc">
+<area shape="rect" id="node1" title="Deallocate the memory allocated for E2SM_KPM_RANfunction_Description_t." alt="" coords="5,31,160,57"/>
+<area shape="rect" id="node2" href="$du__e2sm__kpm__handler_8c.html#afdf8193709546f9e43e40da50c7c2996" title="Deallocate the memory allocated for E2SM_KPM_RANfunction_Description__ric_EventTriggerStyle_List." alt="" coords="208,5,385,32"/>
+<area shape="rect" id="node3" href="$du__e2sm__kpm__handler_8c.html#ae8ad48ec6acab7c0ca66c8b6c1829807" title="Deallocate the memory allocated for RANfunction_Name_t." alt="" coords="217,56,376,83"/>
+</map>

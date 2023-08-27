@@ -1,0 +1,20 @@
+<map id="BWP_DownlinkCommon" name="BWP_DownlinkCommon">
+<area shape="rect" id="node1" title=" " alt="" coords="2840,85,3004,112"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="5,355,128,381"/>
+<area shape="rect" id="node3" href="$struct_b_w_p.html" title=" " alt="" coords="535,68,588,95"/>
+<area shape="rect" id="node4" href="$struct_b_w_p___downlink_common_1_1_b_w_p___downlink_common____pdcch___config_common.html" title=" " alt="" coords="2491,119,2657,161"/>
+<area shape="rect" id="node6" href="$struct_p_d_c_c_h___config_common.html" title=" " alt="" coords="1972,272,2135,299"/>
+<area shape="rect" id="node7" href="$struct_control_resource_set.html" title=" " alt="" coords="1601,308,1739,335"/>
+<area shape="rect" id="node8" href="$struct_control_resource_set_1_1_control_resource_set____tci___states_p_d_c_c_h___to_add_list.html" title=" " alt="" coords="459,270,664,311"/>
+<area shape="rect" id="node9" href="$struct_b_i_t___s_t_r_i_n_g__s.html" title=" " alt="" coords="963,333,1072,360"/>
+<area shape="rect" id="node10" href="$struct_control_resource_set_1_1_control_resource_set____cce___r_e_g___mapping_type.html" title=" " alt="" coords="1167,397,1343,438"/>
+<area shape="rect" id="node12" href="$struct_control_resource_set_1_1_control_resource_set____cce___r_e_g___mapping_type_1_1_control_r50b668c935d369958dbb07f6d40d8222.html" title=" " alt="" coords="246,436,422,492"/>
+<area shape="rect" id="node13" href="$struct_control_resource_set_1_1_control_resource_set____tci___states_p_d_c_c_h___to_release_list.html" title=" " alt="" coords="903,498,1132,539"/>
+<area shape="rect" id="node14" href="$struct_p_d_c_c_h___config_common_1_1_p_d_c_c_h___config_common____common_search_space_list.html" title=" " alt="" coords="1377,538,1563,579"/>
+<area shape="rect" id="node15" href="$struct_b_w_p___downlink_common_1_1_b_w_p___downlink_common____pdsch___config_common.html" title=" " alt="" coords="1587,622,1753,663"/>
+<area shape="rect" id="node17" href="$struct_p_d_s_c_h___config_common.html" title=" " alt="" coords="702,691,865,717"/>
+<area shape="rect" id="node18" href="$struct_p_d_s_c_h___time_domain_resource_allocation_list.html" title=" " alt="" coords="233,743,435,785"/>
+<area shape="rect" id="node5" href="$union_b_w_p___downlink_common_1_1_b_w_p___downlink_common____pdcch___config_common_1_1_b_w_p___dbc08677c598b8aecb4552fd015fd265a.html" title=" " alt="" coords="2220,194,2400,235"/>
+<area shape="rect" id="node11" href="$union_control_resource_set_1_1_control_resource_set____cce___r_e_g___mapping_type_1_1_control_re962eaf368fbf0982ca53ea7fc5cd68f3.html" title=" " alt="" coords="688,439,879,481"/>
+<area shape="rect" id="node16" href="$union_b_w_p___downlink_common_1_1_b_w_p___downlink_common____pdsch___config_common_1_1_b_w_p___da03ed07ed0f6ceeeab8ff5e7bf284429.html" title=" " alt="" coords="1165,681,1345,722"/>
+</map>

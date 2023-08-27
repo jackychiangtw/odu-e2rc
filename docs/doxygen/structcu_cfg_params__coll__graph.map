@@ -1,0 +1,11 @@
+<map id="cuCfgParams" name="cuCfgParams">
+<area shape="rect" id="node1" title=" " alt="" coords="163,377,263,404"/>
+<area shape="rect" id="node2" href="$struct_plmn_identity.html" title=" " alt="" coords="5,288,100,315"/>
+<area shape="rect" id="node3" href="$struct_rrc_version.html" title=" " alt="" coords="124,288,211,315"/>
+<area shape="rect" id="node4" href="$structcu_egtp_params.html" title=" " alt="" coords="205,184,313,211"/>
+<area shape="rect" id="node5" href="$structip_addr.html" title=" " alt="" coords="329,5,387,32"/>
+<area shape="rect" id="node6" href="$structegtp_dst_cfg.html" title=" " alt="" coords="261,95,348,121"/>
+<area shape="rect" id="node7" href="$structcu_sctp_params.html" title=" " alt="" coords="359,288,467,315"/>
+<area shape="rect" id="node9" href="$structsctp_dest_info.html" title=" " alt="" coords="432,95,527,121"/>
+<area shape="rect" id="node8" href="$structsctp_cfg_per_intf.html" title=" " alt="" coords="429,184,532,211"/>
+</map>

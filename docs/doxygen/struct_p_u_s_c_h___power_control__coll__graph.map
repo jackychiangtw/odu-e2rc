@@ -1,0 +1,9 @@
+<map id="PUSCH_PowerControl" name="PUSCH_PowerControl">
+<area shape="rect" id="node1" title=" " alt="" coords="736,188,887,215"/>
+<area shape="rect" id="node2" href="$struct_p_u_s_c_h___power_control_1_1_p_u_s_c_h___power_control____p0___alpha_sets.html" title=" " alt="" coords="279,78,430,119"/>
+<area shape="rect" id="node3" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="5,181,128,208"/>
+<area shape="rect" id="node4" href="$struct_p_u_s_c_h___power_control_1_1_p_u_s_c_h___power_control____pathloss_reference_r_s_to_release_list.html" title=" " alt="" coords="233,143,476,185"/>
+<area shape="rect" id="node5" href="$struct_p_u_s_c_h___power_control_1_1_p_u_s_c_h___power_control____pathloss_reference_r_s_to_add_mod_list.html" title=" " alt="" coords="255,209,454,265"/>
+<area shape="rect" id="node6" href="$struct_p_u_s_c_h___power_control_1_1_p_u_s_c_h___power_control____sri___p_u_s_c_h___mapping_to_release_list.html" title=" " alt="" coords="235,290,475,331"/>
+<area shape="rect" id="node7" href="$struct_p_u_s_c_h___power_control_1_1_p_u_s_c_h___power_control____sri___p_u_s_c_h___mapping_to_add_mod_list.html" title=" " alt="" coords="234,355,475,397"/>
+</map>

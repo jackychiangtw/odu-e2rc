@@ -1,0 +1,4 @@
+<map id="kpmSendSliceMetric" name="kpmSendSliceMetric">
+<area shape="rect" id="node1" title="Send the slice metrics to RIC with RIC Indication." alt="" coords="173,5,316,32"/>
+<area shape="rect" id="node2" href="$du__e2sm__kpm__handler_8c.html#ac4ed88963daa15aa3a816a3f203eaad9" title="Send the metrics to RIC with RIC Indication." alt="" coords="5,5,125,32"/>
+</map>

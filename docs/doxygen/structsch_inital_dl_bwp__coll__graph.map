@@ -1,0 +1,12 @@
+<map id="schInitalDlBwp" name="schInitalDlBwp">
+<area shape="rect" id="node1" title=" " alt="" coords="971,157,1077,184"/>
+<area shape="rect" id="node2" href="$structsch_pdsch_config.html" title=" " alt="" coords="748,107,864,133"/>
+<area shape="rect" id="node3" href="$structsch_pdsch_bundling.html" title=" " alt="" coords="357,31,487,57"/>
+<area shape="rect" id="node4" href="$structsch_pdsch_bundling_1_1sch_static_bundling.html" title=" " alt="" coords="14,5,141,32"/>
+<area shape="rect" id="node5" href="$structsch_pdsch_bundling_1_1sch_dynamic_bundling.html" title=" " alt="" coords="5,56,149,83"/>
+<area shape="rect" id="node6" href="$structsch_dmrs_dl_cfg.html" title=" " alt="" coords="369,81,475,108"/>
+<area shape="rect" id="node7" href="$structsch_pdsch_time_dom_rsrc_alloc.html" title=" " alt="" coords="327,132,517,159"/>
+<area shape="rect" id="node8" href="$structsch_pdcch_config.html" title=" " alt="" coords="748,183,864,209"/>
+<area shape="rect" id="node9" href="$structsch_control_rsrc_set.html" title=" " alt="" coords="357,183,487,209"/>
+<area shape="rect" id="node10" href="$structsch_search_space.html" title=" " alt="" coords="361,233,483,260"/>
+</map>

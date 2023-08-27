@@ -1,0 +1,8 @@
+<map id="schPucchResrcCfg" name="schPucchResrcCfg">
+<area shape="rect" id="node1" title=" " alt="" coords="243,199,376,225"/>
+<area shape="rect" id="node2" href="$structsch_pucch_resrc_info.html" title=" " alt="" coords="242,109,377,136"/>
+<area shape="rect" id="node3" href="$structsch_pucch_format4.html" title=" " alt="" coords="5,5,133,32"/>
+<area shape="rect" id="node4" href="$structsch_pucch_format2__3.html" title=" " alt="" coords="158,5,301,32"/>
+<area shape="rect" id="node5" href="$structsch_pucch_format0.html" title=" " alt="" coords="325,5,453,32"/>
+<area shape="rect" id="node6" href="$structsch_pucch_format1.html" title=" " alt="" coords="477,5,605,32"/>
+</map>

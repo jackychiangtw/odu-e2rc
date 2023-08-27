@@ -1,0 +1,7 @@
+<map id="PDCCH_Config::PDCCH_Config__downlinkPreemption" name="PDCCH_Config::PDCCH_Config__downlinkPreemption">
+<area shape="rect" id="node1" title=" " alt="" coords="5,377,200,419"/>
+<area shape="rect" id="node2" href="$union_p_d_c_c_h___config_1_1_p_d_c_c_h___config____downlink_preemption_1_1_p_d_c_c_h___config____downlink_preemption__u.html" title=" " alt="" coords="89,288,343,315"/>
+<area shape="rect" id="node3" href="$struct_downlink_preemption.html" title=" " alt="" coords="146,199,286,225"/>
+<area shape="rect" id="node4" href="$struct_downlink_preemption_1_1_downlink_preemption____int___configuration_per_serving_cell.html" title=" " alt="" coords="193,95,409,136"/>
+<area shape="rect" id="node5" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="51,5,173,32"/>
+</map>

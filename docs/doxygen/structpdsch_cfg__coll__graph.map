@@ -1,0 +1,10 @@
+<map id="pdschCfg" name="pdschCfg">
+<area shape="rect" id="node1" title=" " alt="" coords="381,184,457,211"/>
+<area shape="rect" id="node2" href="$structbeamforming_info.html" title=" " alt="" coords="5,95,121,121"/>
+<area shape="rect" id="node3" href="$structprg.html" title=" " alt="" coords="43,5,83,32"/>
+<area shape="rect" id="node4" href="$structtx_power_pdsch_info.html" title=" " alt="" coords="145,95,272,121"/>
+<area shape="rect" id="node5" href="$structpdsch_time_alloc.html" title=" " alt="" coords="297,95,411,121"/>
+<area shape="rect" id="node6" href="$structcodewordinfo.html" title=" " alt="" coords="436,95,533,121"/>
+<area shape="rect" id="node7" href="$structpdsch_freq_alloc.html" title=" " alt="" coords="558,95,670,121"/>
+<area shape="rect" id="node8" href="$structdmrs_info.html" title=" " alt="" coords="699,95,769,121"/>
+</map>

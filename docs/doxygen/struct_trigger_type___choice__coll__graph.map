@@ -1,0 +1,10 @@
+<map id="TriggerType_Choice" name="TriggerType_Choice">
+<area shape="rect" id="node1" title=" " alt="" coords="5,419,141,445"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="303,5,425,32"/>
+<area shape="rect" id="node4" href="$struct_trigger_type___choice___l2state.html" title=" " alt="" coords="179,211,315,252"/>
+<area shape="rect" id="node5" href="$struct_r_a_n_parameter___testing.html" title=" " alt="" coords="195,102,354,129"/>
+<area shape="rect" id="node6" href="$struct_trigger_type___choice___r_r_cstate.html" title=" " alt="" coords="339,211,475,252"/>
+<area shape="rect" id="node7" href="$struct_trigger_type___choice___r_r_cstate_1_1_trigger_type___choice___r_r_cstate____rrc_state___list.html" title=" " alt="" coords="484,95,657,136"/>
+<area shape="rect" id="node8" href="$struct_trigger_type___choice___u_e_i_d.html" title=" " alt="" coords="588,160,761,187"/>
+<area shape="rect" id="node3" href="$union_trigger_type___choice_1_1_trigger_type___choice__u.html" title=" " alt="" coords="247,329,398,356"/>
+</map>

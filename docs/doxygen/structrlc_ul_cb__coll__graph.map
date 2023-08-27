@@ -1,0 +1,7 @@
+<map id="rlcUlCb" name="rlcUlCb">
+<area shape="rect" id="node1" title="Structure to hold an information about UL RLC instance." alt="" coords="209,95,273,121"/>
+<area shape="rect" id="node2" href="$structrlc_ckw_sap_cb.html" title="Structure to hold an information about the CKW SAP." alt="" coords="5,5,105,32"/>
+<area shape="rect" id="node3" href="$structrlc_rgu_sap_cb.html" title="Structure to hold an information about the RGU SAP." alt="" coords="130,5,229,32"/>
+<area shape="rect" id="node4" href="$structrlc_kwu_sap_cb.html" title="Structure to hold an information about the KWU SAP." alt="" coords="253,5,353,32"/>
+<area shape="rect" id="node5" href="$structrlc_udx_ul_sap_cb.html" title="Structure to hold an information about the UDX UL SAP." alt="" coords="377,5,488,32"/>
+</map>

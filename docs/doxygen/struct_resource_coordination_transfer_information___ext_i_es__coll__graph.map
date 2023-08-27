@@ -1,0 +1,6 @@
+<map id="ResourceCoordinationTransferInformation_ExtIEs" name="ResourceCoordinationTransferInformation_ExtIEs">
+<area shape="rect" id="node1" title=" " alt="" coords="5,213,200,255"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="20,13,143,39"/>
+<area shape="rect" id="node3" href="$struct_resource_coordination_transfer_information___ext_i_es_1_1_resource_coordination_transfer_b4015e4b9f710c2888c3e323bdad4c9f.html" title=" " alt="" coords="163,109,397,151"/>
+<area shape="rect" id="node4" href="$union_resource_coordination_transfer_information___ext_i_es_1_1_resource_coordination_transfer_i134bf46fc9f525b28c0a58a6468de4f7.html" title=" " alt="" coords="167,5,415,47"/>
+</map>

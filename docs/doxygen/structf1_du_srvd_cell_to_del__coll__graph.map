@@ -1,0 +1,20 @@
+<map id="f1DuSrvdCellToDel" name="f1DuSrvdCellToDel">
+<area shape="rect" id="node1" title=" " alt="" coords="5,672,133,699"/>
+<area shape="rect" id="node2" href="$structnr_ecgi.html" title=" " alt="" coords="33,303,92,329"/>
+<area shape="rect" id="node6" href="$structf1_cell_info.html" title=" " alt="" coords="123,404,197,431"/>
+<area shape="rect" id="node3" href="$struct_plmn_identity.html" title=" " alt="" coords="110,199,205,225"/>
+<area shape="rect" id="node7" href="$structf1_srvd_plmn.html" title=" " alt="" coords="117,303,203,329"/>
+<area shape="rect" id="node10" href="$structf1_brdcst_plmn_info.html" title=" " alt="" coords="224,353,344,380"/>
+<area shape="rect" id="node4" href="$structf1_du_srvd_cell_info.html" title=" " alt="" coords="113,583,228,609"/>
+<area shape="rect" id="node5" href="$structf1_du_cell_info.html" title=" " alt="" coords="240,493,331,520"/>
+<area shape="rect" id="node8" href="$structf1_tai_slice_supp_lst.html" title=" " alt="" coords="262,199,389,225"/>
+<area shape="rect" id="node9" href="$structsnssai.html" title=" " alt="" coords="295,95,355,121"/>
+<area shape="rect" id="node11" href="$structf1_nr_mode_info.html" title=" " alt="" coords="415,404,513,431"/>
+<area shape="rect" id="node12" href="$structf1_nr_tdd_info.html" title=" " alt="" coords="546,303,633,329"/>
+<area shape="rect" id="node13" href="$structf1_nr_freq_info.html" title=" " alt="" coords="515,199,605,225"/>
+<area shape="rect" id="node17" href="$structf1_nr_fdd_info.html" title=" " alt="" coords="421,303,507,329"/>
+<area shape="rect" id="node14" href="$structf1_sul_info.html" title=" " alt="" coords="479,95,550,121"/>
+<area shape="rect" id="node15" href="$structf1_tx_bw.html" title=" " alt="" coords="483,5,547,32"/>
+<area shape="rect" id="node16" href="$structf1_freq_band.html" title=" " alt="" coords="575,95,663,121"/>
+<area shape="rect" id="node18" href="$structf1_du_sys_info.html" title=" " alt="" coords="125,493,216,520"/>
+</map>

@@ -1,0 +1,9 @@
+<map id="bwpDlConfig" name="bwpDlConfig">
+<area shape="rect" id="node1" title=" " alt="" coords="147,273,240,300"/>
+<area shape="rect" id="node2" href="$structbwp_params.html" title=" " alt="" coords="5,184,96,211"/>
+<area shape="rect" id="node3" href="$structpdcch_config_common.html" title=" " alt="" coords="121,184,266,211"/>
+<area shape="rect" id="node4" href="$structsearch_space_cfg.html" title=" " alt="" coords="115,95,232,121"/>
+<area shape="rect" id="node5" href="$structcandidates_info.html" title=" " alt="" coords="121,5,226,32"/>
+<area shape="rect" id="node6" href="$structpdsch_config_common.html" title=" " alt="" coords="294,184,439,211"/>
+<area shape="rect" id="node7" href="$structpdsch_cfg_comm_time_dom_rsrc_alloc.html" title=" " alt="" coords="257,95,482,121"/>
+</map>

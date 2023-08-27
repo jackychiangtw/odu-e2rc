@@ -1,0 +1,8 @@
+<map id="GNBDUConfigurationUpdateAcknowledgeIEs::GNBDUConfigurationUpdateAcknowledgeIEs__value::GNBDUConfigurationUpdateAcknowledgeIEs__value_u" name="GNBDUConfigurationUpdateAcknowledgeIEs::GNBDUConfigurationUpdateAcknowledgeIEs__value::GNBDUConfigurationUpdateAcknowledgeIEs__value_u">
+<area shape="rect" id="node1" title=" " alt="" coords="129,300,466,371"/>
+<area shape="rect" id="node2" href="$struct_cells__to__be___deactivated___list.html" title=" " alt="" coords="5,160,197,187"/>
+<area shape="rect" id="node3" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="240,5,363,32"/>
+<area shape="rect" id="node4" href="$struct_criticality_diagnostics.html" title=" " alt="" coords="225,211,369,237"/>
+<area shape="rect" id="node5" href="$struct_criticality_diagnostics___i_e___list.html" title=" " alt="" coords="307,95,451,136"/>
+<area shape="rect" id="node6" href="$struct_cells__to__be___activated___list.html" title=" " alt="" coords="425,160,604,187"/>
+</map>

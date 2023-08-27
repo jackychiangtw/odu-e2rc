@@ -1,0 +1,11 @@
+<map id="E2SM_KPM_IndicationMessage::E2SM_KPM_IndicationMessage__indicationMessage_formats::E2SM_KPM_IndicationMessage__indicationMessage_formats_u" name="E2SM_KPM_IndicationMessage::E2SM_KPM_IndicationMessage__indicationMessage_formats::E2SM_KPM_IndicationMessage__indicationMessage_formats_u">
+<area shape="rect" id="node1" title=" " alt="" coords="1003,124,1220,209"/>
+<area shape="rect" id="node2" href="$struct_e2_s_m___k_p_m___indication_message___format1.html" title=" " alt="" coords="577,34,787,75"/>
+<area shape="rect" id="node3" href="$struct_measurement_info_list.html" title=" " alt="" coords="252,47,395,73"/>
+<area shape="rect" id="node4" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="5,152,128,179"/>
+<area shape="rect" id="node5" href="$struct_measurement_data.html" title=" " alt="" coords="259,100,387,127"/>
+<area shape="rect" id="node6" href="$struct_e2_s_m___k_p_m___indication_message___format2.html" title=" " alt="" coords="577,146,787,187"/>
+<area shape="rect" id="node7" href="$struct_measurement_cond_u_eid_list.html" title=" " alt="" coords="233,213,413,240"/>
+<area shape="rect" id="node8" href="$struct_e2_s_m___k_p_m___indication_message___format3.html" title=" " alt="" coords="577,258,787,299"/>
+<area shape="rect" id="node9" href="$struct_u_e_measurement_report_list.html" title=" " alt="" coords="234,327,413,353"/>
+</map>

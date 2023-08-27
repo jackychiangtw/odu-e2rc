@@ -1,0 +1,8 @@
+<map id="PRACH_ResourceDedicatedBFR" name="PRACH_ResourceDedicatedBFR">
+<area shape="rect" id="node1" title=" " alt="" coords="5,389,219,416"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="181,5,304,32"/>
+<area shape="rect" id="node4" href="$struct_b_f_r___s_s_b___resource.html" title=" " alt="" coords="119,160,263,187"/>
+<area shape="rect" id="node5" href="$struct_b_f_r___c_s_i_r_s___resource.html" title=" " alt="" coords="246,211,402,237"/>
+<area shape="rect" id="node6" href="$struct_b_f_r___c_s_i_r_s___resource_1_1_b_f_r___c_s_i_r_s___resource____ra___occasion_list.html" title=" " alt="" coords="365,95,521,136"/>
+<area shape="rect" id="node3" href="$union_p_r_a_c_h___resource_dedicated_b_f_r_1_1_p_r_a_c_h___resource_dedicated_b_f_r__u.html" title=" " alt="" coords="128,300,355,327"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="MeasConfigMN" name="MeasConfigMN">
+<area shape="rect" id="node1" title=" " alt="" coords="146,375,257,401"/>
+<area shape="rect" id="node2" href="$struct_meas_config_m_n_1_1_meas_config_m_n____meas_gap_config.html" title=" " alt="" coords="93,285,309,312"/>
+<area shape="rect" id="node3" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="73,5,196,32"/>
+<area shape="rect" id="node5" href="$struct_gap_config.html" title=" " alt="" coords="141,95,224,121"/>
+<area shape="rect" id="node6" href="$struct_meas_config_m_n_1_1_meas_config_m_n____measured_frequencies_m_n.html" title=" " alt="" coords="260,145,532,172"/>
+<area shape="rect" id="node4" href="$union_meas_config_m_n_1_1_meas_config_m_n____meas_gap_config_1_1_meas_config_m_n____meas_gap_config__u.html" title=" " alt="" coords="138,196,369,223"/>
+</map>

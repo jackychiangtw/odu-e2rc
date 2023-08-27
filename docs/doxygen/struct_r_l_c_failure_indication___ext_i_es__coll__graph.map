@@ -1,0 +1,6 @@
+<map id="RLCFailureIndication_ExtIEs" name="RLCFailureIndication_ExtIEs">
+<area shape="rect" id="node1" title=" " alt="" coords="17,213,159,255"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="5,13,128,39"/>
+<area shape="rect" id="node3" href="$struct_r_l_c_failure_indication___ext_i_es_1_1_r_l_c_failure_indication___ext_i_es____extension_value.html" title=" " alt="" coords="148,109,319,151"/>
+<area shape="rect" id="node4" href="$union_r_l_c_failure_indication___ext_i_es_1_1_r_l_c_failure_indication___ext_i_es____extension_v57a4c45df6360f3d97bab5c87ab610d1.html" title=" " alt="" coords="153,5,338,47"/>
+</map>

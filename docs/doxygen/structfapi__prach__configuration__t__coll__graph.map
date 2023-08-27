@@ -1,0 +1,7 @@
+<map id="fapi_prach_configuration_t" name="fapi_prach_configuration_t">
+<area shape="rect" id="node1" title=" " alt="" coords="210,393,382,420"/>
+<area shape="rect" id="node2" href="$structfapi__prach_fd_occasion__t.html" title=" " alt="" coords="144,266,307,293"/>
+<area shape="rect" id="node3" href="$structfapi__uint16__tlv__t.html" title=" " alt="" coords="5,95,120,121"/>
+<area shape="rect" id="node4" href="$structfapi__tl__t.html" title=" " alt="" coords="96,5,163,32"/>
+<area shape="rect" id="node5" href="$structfapi__uint8__tlv__t.html" title=" " alt="" coords="172,95,279,121"/>
+</map>

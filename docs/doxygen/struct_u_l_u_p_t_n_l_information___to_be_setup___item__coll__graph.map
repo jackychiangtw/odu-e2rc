@@ -1,0 +1,9 @@
+<map id="ULUPTNLInformation_ToBeSetup_Item" name="ULUPTNLInformation_ToBeSetup_Item">
+<area shape="rect" id="node1" title=" " alt="" coords="5,452,148,493"/>
+<area shape="rect" id="node2" href="$struct_u_p_transport_layer_information.html" title=" " alt="" coords="70,363,259,389"/>
+<area shape="rect" id="node3" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="110,5,233,32"/>
+<area shape="rect" id="node5" href="$struct_g_t_p_tunnel.html" title=" " alt="" coords="252,184,339,211"/>
+<area shape="rect" id="node6" href="$struct_o_c_t_e_t___s_t_r_i_n_g.html" title=" " alt="" coords="253,95,372,121"/>
+<area shape="rect" id="node7" href="$struct_b_i_t___s_t_r_i_n_g__s.html" title=" " alt="" coords="397,95,506,121"/>
+<area shape="rect" id="node4" href="$union_u_p_transport_layer_information_1_1_u_p_transport_layer_information__u.html" title=" " alt="" coords="161,273,363,300"/>
+</map>

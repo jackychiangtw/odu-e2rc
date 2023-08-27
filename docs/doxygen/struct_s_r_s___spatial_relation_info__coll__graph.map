@@ -1,0 +1,7 @@
+<map id="SRS_SpatialRelationInfo" name="SRS_SpatialRelationInfo">
+<area shape="rect" id="node1" title=" " alt="" coords="5,407,168,433"/>
+<area shape="rect" id="node2" href="$struct_s_r_s___spatial_relation_info_1_1_s_r_s___spatial_relation_info____reference_signal.html" title=" " alt="" coords="103,303,265,344"/>
+<area shape="rect" id="node3" href="$union_s_r_s___spatial_relation_info_1_1_s_r_s___spatial_relation_info____reference_signal_1_1_s_2c725ba25b232c6e1f56fe7825c4f4e0.html" title=" " alt="" coords="197,199,360,240"/>
+<area shape="rect" id="node4" href="$struct_s_r_s___spatial_relation_info_1_1_s_r_s___spatial_relation_info____reference_signal_1_1_s96213daafb3fa5a6e5f2f3fc737b0500.html" title=" " alt="" coords="197,95,360,136"/>
+<area shape="rect" id="node5" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="99,5,221,32"/>
+</map>

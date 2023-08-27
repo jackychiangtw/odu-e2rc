@@ -1,0 +1,13 @@
+<map id="GNB_CU_TNL_Association_Failed_To_Setup_ItemIEs" name="GNB_CU_TNL_Association_Failed_To_Setup_ItemIEs">
+<area shape="rect" id="node1" title=" " alt="" coords="5,852,185,893"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="254,5,377,32"/>
+<area shape="rect" id="node3" href="$struct_g_n_b___c_u___t_n_l___association___failed___to___setup___item_i_es_1_1_g_n_b___c_u___t_n7f788ae104ce684df4fc22bb59f8d07a.html" title=" " alt="" coords="112,733,292,789"/>
+<area shape="rect" id="node5" href="$struct_g_n_b___c_u___t_n_l___association___failed___to___setup___item.html" title=" " alt="" coords="245,496,425,537"/>
+<area shape="rect" id="node6" href="$struct_c_p___transport_layer_address.html" title=" " alt="" coords="283,392,465,419"/>
+<area shape="rect" id="node8" href="$struct_endpoint___i_p__address__and__port.html" title=" " alt="" coords="397,184,543,225"/>
+<area shape="rect" id="node9" href="$struct_b_i_t___s_t_r_i_n_g__s.html" title=" " alt="" coords="458,95,567,121"/>
+<area shape="rect" id="node10" href="$struct_cause.html" title=" " alt="" coords="634,95,693,121"/>
+<area shape="rect" id="node4" href="$union_g_n_b___c_u___t_n_l___association___failed___to___setup___item_i_es_1_1_g_n_b___c_u___t_n_d1d10bf0697d2e7b57d71d9232fcefdc.html" title=" " alt="" coords="225,615,405,671"/>
+<area shape="rect" id="node7" href="$union_c_p___transport_layer_address_1_1_c_p___transport_layer_address__u.html" title=" " alt="" coords="361,303,555,329"/>
+<area shape="rect" id="node11" href="$union_cause_1_1_cause__u.html" title=" " alt="" coords="627,5,700,32"/>
+</map>

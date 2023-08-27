@@ -1,0 +1,10 @@
+<map id="SchProcCellCfgReq" name="SchProcCellCfgReq">
+<area shape="rect" id="node1" title="cell config from MAC to SCH." alt="" coords="5,31,141,57"/>
+<area shape="rect" id="node2" href="$sch_8c.html#aad3d5acfb583204fa3eb036cd8e99394" title="Fill SIB1 configuration." alt="" coords="189,5,292,32"/>
+<area shape="rect" id="node3" href="$sch_8c.html#a0e81341a4f36985ebbc43aadb4d84e17" title="init cellCb based on cellCfg" alt="" coords="191,56,290,83"/>
+<area shape="rect" id="node4" href="$sch_8c.html#acd6956ee99d9fc4e132dd2fa4e1c1d34" title="Fill SSB start symbol." alt="" coords="340,5,459,32"/>
+<area shape="rect" id="node5" href="$sch__utils_8c.html#a0f65db74549ddf0a06dd2b60711292fb" title="initialize DL slot info" alt="" coords="352,107,447,133"/>
+<area shape="rect" id="node8" href="$sch__utils_8c.html#a9b88435bda23ffe60b43956f8e17a2eb" title="initialize UL slot info" alt="" coords="352,56,447,83"/>
+<area shape="rect" id="node6" href="$sch__utils_8c.html#ac8608ff3295ee09445888b5cb85d03ec" title="Function to add a node to a linked list." alt="" coords="522,56,637,83"/>
+<area shape="rect" id="node7" href="$sch__utils_8c.html#aebc3f1ec367addd53a2e5837e8d55919" title="Function to delete a node from linked list." alt="" coords="507,107,652,133"/>
+</map>

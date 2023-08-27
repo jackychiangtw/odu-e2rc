@@ -1,0 +1,5 @@
+<map id="schCheckPrachOcc" name="schCheckPrachOcc">
+<area shape="rect" id="node1" title="Checks if PRACH can be scheduled in current slot." alt="" coords="337,5,476,32"/>
+<area shape="rect" id="node2" href="$sch__rach_8c.html#add0c0d30ef24b68d30d1398d09d20b1c" title="resource allocation for PRACH" alt="" coords="160,5,289,32"/>
+<area shape="rect" id="node3" href="$sch__common_8c.html#ad00228f103df2a72faccab36ecd399ef" title="resource allocation for UL" alt="" coords="5,5,112,32"/>
+</map>

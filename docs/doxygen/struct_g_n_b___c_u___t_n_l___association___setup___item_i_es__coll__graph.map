@@ -1,0 +1,11 @@
+<map id="GNB_CU_TNL_Association_Setup_ItemIEs" name="GNB_CU_TNL_Association_Setup_ItemIEs">
+<area shape="rect" id="node1" title=" " alt="" coords="5,823,185,864"/>
+<area shape="rect" id="node2" href="$struct_g_n_b___c_u___t_n_l___association___setup___item_i_es_1_1_g_n_b___c_u___t_n_l___association___setup___item_i_es____value.html" title=" " alt="" coords="91,719,271,760"/>
+<area shape="rect" id="node3" href="$union_g_n_b___c_u___t_n_l___association___setup___item_i_es_1_1_g_n_b___c_u___t_n_l___associatio7b393cbafecee6b6aa81261940f87869.html" title=" " alt="" coords="185,615,365,656"/>
+<area shape="rect" id="node4" href="$struct_g_n_b___c_u___t_n_l___association___setup___item.html" title=" " alt="" coords="185,496,365,537"/>
+<area shape="rect" id="node5" href="$struct_c_p___transport_layer_address.html" title=" " alt="" coords="262,392,443,419"/>
+<area shape="rect" id="node6" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="198,5,321,32"/>
+<area shape="rect" id="node8" href="$struct_endpoint___i_p__address__and__port.html" title=" " alt="" coords="380,184,525,225"/>
+<area shape="rect" id="node9" href="$struct_b_i_t___s_t_r_i_n_g__s.html" title=" " alt="" coords="441,95,550,121"/>
+<area shape="rect" id="node7" href="$union_c_p___transport_layer_address_1_1_c_p___transport_layer_address__u.html" title=" " alt="" coords="343,303,538,329"/>
+</map>
