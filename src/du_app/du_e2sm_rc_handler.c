@@ -109,6 +109,22 @@ uint8_t rcProcRrmPolicyValue(int id, void *value, int size){
 }
 
 #ifndef O1_ENABLE
+/*******************************************************************
+ *
+ * @brief Set the RrmPolicy
+ *
+ * @details
+ *
+ *    Function : setRrmPolicy
+ *
+ *    Functionality: Set and send in RRM Policy
+ *
+ * @param[in] rrmPolicy, RrmPolicyList
+ * @param[in] policyNum, uint8_t
+ * @return ROK     - success
+ *         RFAILED - failure
+ *
+ ******************************************************************/
 uint8_t setRrmPolicy(RrmPolicyList rrmPolicy[], uint8_t policyNum)
 {
    DU_LOG("\nINFO   -->  E2SM-RC : E2SM-RC RRM number of policy %d,", \
