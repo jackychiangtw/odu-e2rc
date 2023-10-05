@@ -1,0 +1,26 @@
+<map id="kpmSendSliceMetric" name="kpmSendSliceMetric">
+<area shape="rect" id="node1" title="Send the slice metrics to RIC with RIC Indication." alt="" coords="5,71,148,98"/>
+<area shape="rect" id="node2" href="$du__kpi__module_8c.html#a0635986d388e6dbf35470d107cda285f" title="Get the average value of slice metrics." alt="" coords="222,21,361,47"/>
+<area shape="rect" id="node3" href="$du__e2sm__kpm__handler_8c.html#aafbdbd72c0d442e628c8ddf8ed74335f" title="Fill in the Indication Header." alt="" coords="202,71,381,98"/>
+<area shape="rect" id="node9" href="$du__e2sm__kpm__handler_8c.html#a8ce02956c2f52647d795a9580dbb7d57" title="Fill in the Indication Message." alt="" coords="196,325,387,351"/>
+<area shape="rect" id="node4" href="$du__e2sm__kpm__handler_8c.html#a46f1f8cbdceb062fbc0c6f2c8546e37c" title="Fill in the Indication Header format 1 of KPM." alt="" coords="446,17,654,43"/>
+<area shape="rect" id="node7" href="$du__e2sm__kpm__handler_8c.html#aac50a148716fcc6845937b23a3d0ad61" title="Deallocate the memory allocated for E2SM_KPM_IndicationHeader_Format1_t." alt="" coords="969,147,1139,174"/>
+<area shape="rect" id="node5" href="$du__e2sm__kpm__handler_8c.html#af15a64b2a294242ae149d186fe9d2a49" title="Fill in the optinal item of Indication Header format 1." alt="" coords="713,5,921,47"/>
+<area shape="rect" id="node6" href="$du__e2sm__kpm__handler_8c.html#a21253f6c90f0011ec72e7e6e191c7cb1" title="Fill in the Printable String." alt="" coords="979,13,1129,39"/>
+<area shape="rect" id="node8" href="$du__e2sm__kpm__handler_8c.html#a96df775d16debb4c18337aaf9a12ed3c" title="Deallocate the memory allocated for OCTET_STRING_t." alt="" coords="1187,249,1325,275"/>
+<area shape="rect" id="node10" href="$du__e2sm__kpm__handler_8c.html#acbb00de4dfe8e56e760c1ff46277e5e3" title="Fill in the Indication Message format 1 for cell metrics." alt="" coords="464,191,636,232"/>
+<area shape="rect" id="node14" href="$du__e2sm__kpm__handler_8c.html#ac11d2f72c3276293ab3938fa17ffbe6b" title="Fill in the Indication Message format 2 for slice metrics." alt="" coords="464,317,636,359"/>
+<area shape="rect" id="node19" href="$du__e2sm__kpm__handler_8c.html#ab24cc69580d631d71adfaee3d4b29ffe" title="Deallocate the memory allocated for E2SM_KPM_IndicationMessage_Format1_t." alt="" coords="435,426,665,453"/>
+<area shape="rect" id="node23" href="$du__e2sm__kpm__handler_8c.html#a2d3340d8fb63118602cb1dd0748444d0" title="Deallocate the memory allocated for E2SM_KPM_IndicationMessage_Format2_t." alt="" coords="435,477,665,503"/>
+<area shape="rect" id="node11" href="$du__e2sm__kpm__handler_8c.html#a89e798bd24ef82776168f05d8611fe94" title="Get the index of measurement name for cell metrics." alt="" coords="722,122,913,149"/>
+<area shape="rect" id="node12" href="$du__e2sm__kpm__handler_8c.html#a65eacc58fa8c1fb3bb3195b5016b6115" title="Fill in the measurement record item for cell metrics." alt="" coords="732,173,903,199"/>
+<area shape="rect" id="node13" href="$du__e2sm__kpm__handler_8c.html#af93fb3b475c02d1d315e8ef4eb443db8" title="Build the measurement info item." alt="" coords="747,223,888,250"/>
+<area shape="rect" id="node15" href="$du__e2sm__kpm__handler_8c.html#aab5b3805c0d7cbd3cc9c5a265e11708b" title="Fill in the matching conditional item for slice information of KPM." alt="" coords="727,274,907,301"/>
+<area shape="rect" id="node17" href="$du__e2sm__kpm__handler_8c.html#a3e90212e6e381f872d609e9e792a7485" title="Fill in the measurement record item for slice metrics." alt="" coords="729,325,906,351"/>
+<area shape="rect" id="node18" href="$du__e2sm__kpm__handler_8c.html#a089d8f9d8a5f3c83a04753092c1e4979" title="Get the index of measurement name for slice metrics." alt="" coords="719,375,916,402"/>
+<area shape="rect" id="node16" href="$du__e2sm__kpm__handler_8c.html#a93aa83a07bb99a0a0bd229676ddeadfe" title="Fill in the Octet String." alt="" coords="989,274,1119,301"/>
+<area shape="rect" id="node20" href="$du__e2sm__kpm__handler_8c.html#ae8353d95151045422b48c59147d723a9" title="Deallocate the memory allocated for MeasurementData_t." alt="" coords="751,477,883,503"/>
+<area shape="rect" id="node21" href="$du__e2sm__kpm__handler_8c.html#a65fe448b096a05701fc6929e5790a60e" title="Deallocate the memory allocated for MeasurementInfoList_t." alt="" coords="744,426,891,453"/>
+<area shape="rect" id="node22" href="$du__e2sm__kpm__handler_8c.html#a36cda6c7fda3f18ead1c972075b941c3" title="Deallocate the memory allocated for MeasurementLabel_t." alt="" coords="986,426,1122,453"/>
+<area shape="rect" id="node24" href="$du__e2sm__kpm__handler_8c.html#aa956a3a6b9719e72e3f53de56b677d36" title="Deallocate the memory allocated for MeasurementCondUEidList_t." alt="" coords="741,527,893,554"/>
+</map>

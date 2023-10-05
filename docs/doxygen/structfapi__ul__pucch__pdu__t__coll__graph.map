@@ -1,0 +1,6 @@
+<map id="fapi_ul_pucch_pdu_t" name="fapi_ul_pucch_pdu_t">
+<area shape="rect" id="node1" title=" " alt="" coords="19,273,159,300"/>
+<area shape="rect" id="node2" href="$structfapi__ul__rx__bmform__pdu__t.html" title=" " alt="" coords="5,184,172,211"/>
+<area shape="rect" id="node3" href="$structfapi__rx__bfi__t.html" title=" " alt="" coords="43,95,134,121"/>
+<area shape="rect" id="node4" href="$structfapi__bmi__t.html" title=" " alt="" coords="48,5,129,32"/>
+</map>

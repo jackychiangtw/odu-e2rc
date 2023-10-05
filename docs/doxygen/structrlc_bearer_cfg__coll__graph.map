@@ -1,0 +1,12 @@
+<map id="rlcBearerCfg" name="rlcBearerCfg">
+<area shape="rect" id="node1" title=" " alt="" coords="348,184,441,211"/>
+<area shape="rect" id="node2" href="$structum_uni_dir_ul_bearer_cfg.html" title=" " alt="" coords="5,95,149,121"/>
+<area shape="rect" id="node3" href="$structul_um_cfg.html" title=" " alt="" coords="127,5,198,32"/>
+<area shape="rect" id="node8" href="$structum_bi_dir_bearer_cfg.html" title=" " alt="" coords="173,95,299,121"/>
+<area shape="rect" id="node4" href="$structsnssai.html" title=" " alt="" coords="491,95,551,121"/>
+<area shape="rect" id="node5" href="$structam_bearer_cfg.html" title=" " alt="" coords="575,95,673,121"/>
+<area shape="rect" id="node6" href="$structdl_am_cfg.html" title=" " alt="" coords="541,5,611,32"/>
+<area shape="rect" id="node7" href="$structul_am_cfg.html" title=" " alt="" coords="635,5,706,32"/>
+<area shape="rect" id="node9" href="$structdl_um_cfg.html" title=" " alt="" coords="258,5,329,32"/>
+<area shape="rect" id="node10" href="$structum_uni_dir_dl_bearer_cfg.html" title=" " alt="" coords="323,95,467,121"/>
+</map>

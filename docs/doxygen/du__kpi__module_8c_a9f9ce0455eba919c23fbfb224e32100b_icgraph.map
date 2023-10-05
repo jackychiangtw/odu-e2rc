@@ -1,0 +1,5 @@
+<map id="kpmCalcCellMetric" name="kpmCalcCellMetric">
+<area shape="rect" id="node1" title="Get the average value of cell metrics." alt="" coords="356,5,487,32"/>
+<area shape="rect" id="node2" href="$du__e2sm__kpm__handler_8c.html#a4cf81af92c604415b05581277b455d80" title="Send the cell metrics to RIC with RIC Indication." alt="" coords="173,5,308,32"/>
+<area shape="rect" id="node3" href="$du__e2sm__kpm__handler_8c.html#ac4ed88963daa15aa3a816a3f203eaad9" title="Send the metrics to RIC with RIC Indication." alt="" coords="5,5,125,32"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="CarrierFreqEUTRA" name="CarrierFreqEUTRA">
+<area shape="rect" id="node1" title=" " alt="" coords="627,104,756,131"/>
+<area shape="rect" id="node2" href="$struct_e_u_t_r_a___freq_black_cell_list.html" title=" " alt="" coords="247,53,422,80"/>
+<area shape="rect" id="node3" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="5,104,128,131"/>
+<area shape="rect" id="node4" href="$struct_carrier_freq_e_u_t_r_a_1_1_carrier_freq_e_u_t_r_a____thresh_x___q.html" title=" " alt="" coords="233,104,436,131"/>
+<area shape="rect" id="node5" href="$struct_e_u_t_r_a___freq_neigh_cell_list.html" title=" " alt="" coords="247,155,422,181"/>
+<area shape="rect" id="node6" href="$struct_e_u_t_r_a___multi_band_info_list.html" title=" " alt="" coords="249,205,420,232"/>
+</map>

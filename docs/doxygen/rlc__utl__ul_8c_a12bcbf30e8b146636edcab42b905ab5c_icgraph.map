@@ -1,0 +1,5 @@
+<map id="rlcUtlGetUmRecBuf" name="rlcUtlGetUmRecBuf">
+<area shape="rect" id="node1" title="Retrieve the UL buffer from the list." alt="" coords="216,31,351,57"/>
+<area shape="rect" id="node2" href="$rlc__umm__ul_8c.html#a15bbcef830d9f4981f9d8abf07288788" title="Private handler to store the received segment." alt="" coords="16,5,157,32"/>
+<area shape="rect" id="node3" href="$rlc__umm__ul_8c.html#a96dd91f4b3082834b42fc58997c47c56" title="Handler to updated expected byte seg." alt="" coords="5,56,168,83"/>
+</map>

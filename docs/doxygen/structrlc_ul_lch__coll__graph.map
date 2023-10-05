@@ -1,0 +1,8 @@
+<map id="rlcUlLch" name="rlcUlLch">
+<area shape="rect" id="node1" title="Structure to hold mapping between logical channel and Radio Bearer." alt="" coords="134,184,203,211"/>
+<area shape="rect" id="node2" href="$struct__rlc_ul_rb_cb.html" title="Structure to hold uplink information about a Radio Bearer." alt="" coords="125,95,212,121"/>
+<area shape="rect" id="node3" href="$structsnssai.html" title=" " alt="" coords="5,5,65,32"/>
+<area shape="rect" id="node4" href="$structrlc_um_ul.html" title="Structure to hold uplink information in UM mode for a particular RB." alt="" coords="89,5,157,32"/>
+<area shape="rect" id="node5" href="$structrlc_am_ul.html" title="Structure to hold information about an uplink AM Radio Bearer." alt="" coords="181,5,249,32"/>
+<area shape="rect" id="node6" href="$structrlc_lch_info.html" title="Structure to hold information about a Logical channel." alt="" coords="274,5,351,32"/>
+</map>

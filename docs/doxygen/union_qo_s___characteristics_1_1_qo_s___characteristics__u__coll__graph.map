@@ -1,0 +1,7 @@
+<map id="QoS_Characteristics::QoS_Characteristics_u" name="QoS_Characteristics::QoS_Characteristics_u">
+<area shape="rect" id="node1" title=" " alt="" coords="32,285,196,327"/>
+<area shape="rect" id="node2" href="$struct_non_dynamic5_q_i_descriptor.html" title=" " alt="" coords="5,145,180,172"/>
+<area shape="rect" id="node3" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="139,5,262,32"/>
+<area shape="rect" id="node4" href="$struct_dynamic5_q_i_descriptor.html" title=" " alt="" coords="227,196,379,223"/>
+<area shape="rect" id="node5" href="$struct_packet_error_rate.html" title=" " alt="" coords="283,95,401,121"/>
+</map>

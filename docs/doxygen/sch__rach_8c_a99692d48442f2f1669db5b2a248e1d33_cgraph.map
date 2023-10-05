@@ -1,0 +1,5 @@
+<map id="schAllocMsg3Pusch" name="schAllocMsg3Pusch">
+<area shape="rect" id="node1" title="resource allocation for msg3 PUSCH" alt="" coords="5,31,147,57"/>
+<area shape="rect" id="node2" href="$sch__utils_8c.html#ad121b510f89c5c730f308769b573ff6c" title="frequency domain allocation function." alt="" coords="195,5,311,32"/>
+<area shape="rect" id="node3" href="$sch__utils_8c.html#a5cbcc841cbd383f17e5f9bd8c7d5b3f9" title="frequency domain allocation function." alt="" coords="198,56,307,83"/>
+</map>

@@ -1,0 +1,10 @@
+<map id="rlcUlHdlCfgReq" name="rlcUlHdlCfgReq">
+<area shape="rect" id="node1" title="Handler for Configuration Request." alt="" coords="5,132,115,159"/>
+<area shape="rect" id="node2" href="$rlc__cfg__ul_8c.html#acaffded9ab122a6f22a5f4edf7bef094" title="This primitive apply reestablishment of RB." alt="" coords="164,5,316,32"/>
+<area shape="rect" id="node3" href="$rlc__cfg__ul_8c.html#a593774d866be6ee707b2124dbf81f03e" title="This primitive apply RB Configuration." alt="" coords="182,56,298,83"/>
+<area shape="rect" id="node4" href="$rlc__cfg__ul_8c.html#a8d265a1aa27128598574390e3271404e" title="This primitive validates uplink Delete UE request for RB creation." alt="" coords="163,107,317,133"/>
+<area shape="rect" id="node5" href="$rlc__cfg__ul_8c.html#a7cce8c3979483ecde10aacab720a0d99" title="This primitive validates uplink Delete UE request for RB creation." alt="" coords="165,157,315,184"/>
+<area shape="rect" id="node6" href="$rlc__cfg__ul_8c.html#a68925b2fea3fa97572b004dee5adb9d8" title="This primitive validates reestablishment of RB." alt="" coords="163,208,317,235"/>
+<area shape="rect" id="node7" href="$rlc__cfg__ul_8c.html#abfc307f317107764f15d84ebf7d43ad3" title="This primitive validates uplink Add RB Configuration and reserve memory for RB creation." alt="" coords="175,259,305,285"/>
+<area shape="rect" id="node8" href="$rlc__cfg__ul_8c.html#a060dde8be3aeb6cd4c56263c6e98d7bf" title="This primitive validates uplink Add RB Configuration and reserve memory for RB creation." alt="" coords="365,259,528,285"/>
+</map>

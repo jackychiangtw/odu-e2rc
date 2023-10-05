@@ -1,0 +1,10 @@
+<map id="RICsubscription_withCause_ItemIEs" name="RICsubscription_withCause_ItemIEs">
+<area shape="rect" id="node1" title=" " alt="" coords="359,481,539,523"/>
+<area shape="rect" id="node2" href="$struct_r_i_csubscription__with_cause___item_i_es_1_1_r_i_csubscription__with_cause___item_i_es____value.html" title=" " alt="" coords="295,377,475,419"/>
+<area shape="rect" id="node3" href="$union_r_i_csubscription__with_cause___item_i_es_1_1_r_i_csubscription__with_cause___item_i_es___022c976bfdbfa231f562761482f8007d.html" title=" " alt="" coords="157,273,337,315"/>
+<area shape="rect" id="node4" href="$struct_r_i_csubscription__with_cause___item.html" title=" " alt="" coords="95,184,307,211"/>
+<area shape="rect" id="node5" href="$struct_cause_e2.html" title=" " alt="" coords="78,95,153,121"/>
+<area shape="rect" id="node6" href="$union_cause_e2_1_1_cause_e2__u.html" title=" " alt="" coords="5,5,95,32"/>
+<area shape="rect" id="node7" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="270,5,393,32"/>
+<area shape="rect" id="node8" href="$struct_r_i_crequest_i_d.html" title=" " alt="" coords="282,95,381,121"/>
+</map>

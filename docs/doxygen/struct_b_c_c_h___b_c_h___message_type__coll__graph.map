@@ -1,0 +1,9 @@
+<map id="BCCH_BCH_MessageType" name="BCCH_BCH_MessageType">
+<area shape="rect" id="node1" title=" " alt="" coords="5,389,185,416"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="225,5,347,32"/>
+<area shape="rect" id="node4" href="$struct_b_c_c_h___b_c_h___message_type_1_1_b_c_c_h___b_c_h___message_type__u_1_1_b_c_c_h___b_c_h_f6dcac81f65eedc30c701dedbf672a9a.html" title=" " alt="" coords="95,145,275,187"/>
+<area shape="rect" id="node5" href="$struct_m_i_b.html" title=" " alt="" coords="381,211,426,237"/>
+<area shape="rect" id="node6" href="$struct_b_i_t___s_t_r_i_n_g__s.html" title=" " alt="" coords="367,95,477,121"/>
+<area shape="rect" id="node7" href="$struct_p_d_c_c_h___config_s_i_b1.html" title=" " alt="" coords="501,95,639,121"/>
+<area shape="rect" id="node3" href="$union_b_c_c_h___b_c_h___message_type_1_1_b_c_c_h___b_c_h___message_type__u.html" title=" " alt="" coords="111,300,306,327"/>
+</map>

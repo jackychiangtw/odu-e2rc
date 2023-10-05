@@ -1,0 +1,7 @@
+<map id="BandParameters" name="BandParameters">
+<area shape="rect" id="node1" title=" " alt="" coords="5,273,124,300"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="91,5,214,32"/>
+<area shape="rect" id="node4" href="$struct_band_parameters_1_1_band_parameters__u_1_1_band_parameters____nr.html" title=" " alt="" coords="81,95,225,121"/>
+<area shape="rect" id="node5" href="$struct_band_parameters_1_1_band_parameters__u_1_1_band_parameters____eutra.html" title=" " alt="" coords="249,95,411,121"/>
+<area shape="rect" id="node3" href="$union_band_parameters_1_1_band_parameters__u.html" title=" " alt="" coords="86,184,219,211"/>
+</map>

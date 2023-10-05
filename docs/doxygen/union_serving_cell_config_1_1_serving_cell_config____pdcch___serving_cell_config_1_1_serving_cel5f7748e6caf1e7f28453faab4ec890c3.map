@@ -1,0 +1,10 @@
+<map id="ServingCellConfig::ServingCellConfig__pdcch_ServingCellConfig::ServingCellConfig__pdcch_ServingCellConfig_u" name="ServingCellConfig::ServingCellConfig__pdcch_ServingCellConfig::ServingCellConfig__pdcch_ServingCellConfig_u">
+<area shape="rect" id="node1" title=" " alt="" coords="1784,14,2012,85"/>
+<area shape="rect" id="node2" href="$struct_p_d_c_c_h___serving_cell_config.html" title=" " alt="" coords="1524,36,1699,63"/>
+<area shape="rect" id="node3" href="$struct_p_d_c_c_h___serving_cell_config_1_1_p_d_c_c_h___serving_cell_config____slot_format_indicator.html" title=" " alt="" coords="1185,58,1360,99"/>
+<area shape="rect" id="node4" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="5,111,128,137"/>
+<area shape="rect" id="node6" href="$struct_slot_format_indicator.html" title=" " alt="" coords="680,132,815,159"/>
+<area shape="rect" id="node7" href="$struct_slot_format_indicator_1_1_slot_format_indicator____slot_format_comb_to_add_mod_list.html" title=" " alt="" coords="233,173,448,214"/>
+<area shape="rect" id="node8" href="$struct_slot_format_indicator_1_1_slot_format_indicator____slot_format_comb_to_release_list.html" title=" " alt="" coords="233,238,448,279"/>
+<area shape="rect" id="node5" href="$union_p_d_c_c_h___serving_cell_config_1_1_p_d_c_c_h___serving_cell_config____slot_format_indicatebd8189dea2a6e8bd480dbdb3b2692d9.html" title=" " alt="" coords="920,110,1095,151"/>
+</map>

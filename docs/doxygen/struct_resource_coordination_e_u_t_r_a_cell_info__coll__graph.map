@@ -1,0 +1,10 @@
+<map id="ResourceCoordinationEUTRACellInfo" name="ResourceCoordinationEUTRACellInfo">
+<area shape="rect" id="node1" title=" " alt="" coords="5,464,240,491"/>
+<area shape="rect" id="node2" href="$struct_e_u_t_r_a___p_r_a_c_h___configuration.html" title=" " alt="" coords="94,145,293,172"/>
+<area shape="rect" id="node3" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="304,5,427,32"/>
+<area shape="rect" id="node4" href="$struct_e_u_t_r_a___coex___mode___info.html" title=" " alt="" coords="256,375,424,401"/>
+<area shape="rect" id="node6" href="$struct_e_u_t_r_a___coex___f_d_d___info.html" title=" " alt="" coords="360,145,523,172"/>
+<area shape="rect" id="node7" href="$struct_e_u_t_r_a___coex___t_d_d___info.html" title=" " alt="" coords="495,196,657,223"/>
+<area shape="rect" id="node8" href="$struct_e_u_t_r_a___special_subframe___info.html" title=" " alt="" coords="624,95,821,121"/>
+<area shape="rect" id="node5" href="$union_e_u_t_r_a___coex___mode___info_1_1_e_u_t_r_a___coex___mode___info__u.html" title=" " alt="" coords="378,285,561,312"/>
+</map>

@@ -1,0 +1,11 @@
+<map id="ErrorIndicationE2_IEs" name="ErrorIndicationE2_IEs">
+<area shape="rect" id="node1" title=" " alt="" coords="553,496,699,523"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="286,5,409,32"/>
+<area shape="rect" id="node3" href="$struct_error_indication_e2___i_es_1_1_error_indication_e2___i_es____value.html" title=" " alt="" coords="497,392,643,433"/>
+<area shape="rect" id="node5" href="$struct_cause_e2.html" title=" " alt="" coords="13,102,87,129"/>
+<area shape="rect" id="node7" href="$struct_r_i_crequest_i_d.html" title=" " alt="" coords="385,102,483,129"/>
+<area shape="rect" id="node8" href="$struct_criticality_diagnostics_e2.html" title=" " alt="" coords="219,199,379,225"/>
+<area shape="rect" id="node9" href="$struct_criticality_diagnostics___i_e___list_e2.html" title=" " alt="" coords="111,95,255,136"/>
+<area shape="rect" id="node4" href="$union_error_indication_e2___i_es_1_1_error_indication_e2___i_es____value_1_1_error_indication_e2___i_es____value__u.html" title=" " alt="" coords="302,288,449,329"/>
+<area shape="rect" id="node6" href="$union_cause_e2_1_1_cause_e2__u.html" title=" " alt="" coords="5,5,95,32"/>
+</map>

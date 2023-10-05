@@ -1,0 +1,13 @@
+<map id="UciInd" name="UciInd">
+<area shape="rect" id="node1" title=" " alt="" coords="306,273,365,300"/>
+<area shape="rect" id="node2" href="$struct_uci_ind_pdu_info.html" title=" " alt="" coords="222,184,323,211"/>
+<area shape="rect" id="node3" href="$struct_uci_pucch_f2_f3_f4.html" title=" " alt="" coords="77,95,199,121"/>
+<area shape="rect" id="node4" href="$struct_uci_pusch.html" title=" " alt="" coords="228,95,307,121"/>
+<area shape="rect" id="node5" href="$struct_pusch_csi_part2_info.html" title=" " alt="" coords="5,5,135,32"/>
+<area shape="rect" id="node6" href="$struct_pusch_csi_part1_info.html" title=" " alt="" coords="159,5,288,32"/>
+<area shape="rect" id="node7" href="$struct_pusch_harq_info.html" title=" " alt="" coords="313,5,419,32"/>
+<area shape="rect" id="node8" href="$struct_uci_pucch_f0_f1.html" title=" " alt="" coords="439,95,547,121"/>
+<area shape="rect" id="node9" href="$struct_harq_info_f0_f1.html" title=" " alt="" coords="443,5,542,32"/>
+<area shape="rect" id="node10" href="$struct_sr_info_f0_f1.html" title=" " alt="" coords="566,5,651,32"/>
+<area shape="rect" id="node11" href="$structslot_timing_info.html" title=" " alt="" coords="347,184,449,211"/>
+</map>

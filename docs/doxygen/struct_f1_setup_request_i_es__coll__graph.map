@@ -1,0 +1,12 @@
+<map id="F1SetupRequestIEs" name="F1SetupRequestIEs">
+<area shape="rect" id="node1" title=" " alt="" coords="5,508,144,535"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="228,5,351,32"/>
+<area shape="rect" id="node3" href="$struct_f1_setup_request_i_es_1_1_f1_setup_request_i_es____value.html" title=" " alt="" coords="91,404,237,445"/>
+<area shape="rect" id="node6" href="$struct_o_c_t_e_t___s_t_r_i_n_g.html" title=" " alt="" coords="151,160,270,187"/>
+<area shape="rect" id="node7" href="$struct_r_r_c___version.html" title=" " alt="" coords="359,211,459,237"/>
+<area shape="rect" id="node8" href="$struct_protocol_extension_container__4624_p81.html" title=" " alt="" coords="371,95,554,136"/>
+<area shape="rect" id="node9" href="$struct_b_i_t___s_t_r_i_n_g__s.html" title=" " alt="" coords="579,102,688,129"/>
+<area shape="rect" id="node10" href="$struct_g_n_b___d_u___served___cells___list.html" title=" " alt="" coords="651,160,837,187"/>
+<area shape="rect" id="node4" href="$union_f1_setup_request_i_es_1_1_f1_setup_request_i_es____value_1_1_f1_setup_request_i_es____value__u.html" title=" " alt="" coords="334,300,479,341"/>
+<area shape="rect" id="node5" href="$struct_a_s_n_____p_r_i_m_i_t_i_v_e___t_y_p_e__s.html" title=" " alt="" coords="701,211,883,237"/>
+</map>

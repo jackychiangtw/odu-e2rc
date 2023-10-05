@@ -1,0 +1,12 @@
+<map id="dlPageAlloc" name="dlPageAlloc">
+<area shape="rect" id="node1" title=" " alt="" coords="287,184,377,211"/>
+<area shape="rect" id="node2" href="$structpage_dl_sch.html" title=" " alt="" coords="221,95,307,121"/>
+<area shape="rect" id="node3" href="$structres_alloc_type1.html" title=" " alt="" coords="5,5,109,32"/>
+<area shape="rect" id="node7" href="$structbwp_cfg.html" title=" " alt="" coords="97,95,161,121"/>
+<area shape="rect" id="node4" href="$structpage_tb_info.html" title=" " alt="" coords="134,5,218,32"/>
+<area shape="rect" id="node5" href="$structpage_dmrs_config.html" title=" " alt="" coords="243,5,360,32"/>
+<area shape="rect" id="node6" href="$structpage_time_domain_alloc.html" title=" " alt="" coords="385,5,535,32"/>
+<area shape="rect" id="node8" href="$structslot_timing_info.html" title=" " alt="" coords="331,95,432,121"/>
+<area shape="rect" id="node9" href="$structpage_dl_dci.html" title=" " alt="" coords="529,95,610,121"/>
+<area shape="rect" id="node10" href="$structinterleaved__t.html" title=" " alt="" coords="559,5,654,32"/>
+</map>

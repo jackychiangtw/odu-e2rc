@@ -1,0 +1,6 @@
+<map id="kpmFillIndicationMessageFormat1" name="kpmFillIndicationMessageFormat1">
+<area shape="rect" id="node1" title="Fill in the Indication Message format 1 for cell metrics." alt="" coords="5,49,177,90"/>
+<area shape="rect" id="node2" href="$du__e2sm__kpm__handler_8c.html#a89e798bd24ef82776168f05d8611fe94" title="Get the index of measurement name for cell metrics." alt="" coords="225,5,416,32"/>
+<area shape="rect" id="node3" href="$du__e2sm__kpm__handler_8c.html#a65eacc58fa8c1fb3bb3195b5016b6115" title="Fill in the measurement record item for cell metrics." alt="" coords="235,56,406,83"/>
+<area shape="rect" id="node4" href="$du__e2sm__kpm__handler_8c.html#af93fb3b475c02d1d315e8ef4eb443db8" title="Build the measurement info item." alt="" coords="250,107,391,133"/>
+</map>

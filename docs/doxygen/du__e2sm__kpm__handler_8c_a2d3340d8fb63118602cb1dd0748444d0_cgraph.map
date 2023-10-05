@@ -1,0 +1,7 @@
+<map id="kpmFreeRicIndicationMessageFmt2" name="kpmFreeRicIndicationMessageFmt2">
+<area shape="rect" id="node1" title="Deallocate the memory allocated for E2SM_KPM_IndicationMessage_Format2_t." alt="" coords="5,31,236,57"/>
+<area shape="rect" id="node2" href="$du__e2sm__kpm__handler_8c.html#aa956a3a6b9719e72e3f53de56b677d36" title="Deallocate the memory allocated for MeasurementCondUEidList_t." alt="" coords="284,5,436,32"/>
+<area shape="rect" id="node5" href="$du__e2sm__kpm__handler_8c.html#ae8353d95151045422b48c59147d723a9" title="Deallocate the memory allocated for MeasurementData_t." alt="" coords="294,56,426,83"/>
+<area shape="rect" id="node3" href="$du__e2sm__kpm__handler_8c.html#a36cda6c7fda3f18ead1c972075b941c3" title="Deallocate the memory allocated for MeasurementLabel_t." alt="" coords="484,5,620,32"/>
+<area shape="rect" id="node4" href="$du__e2sm__kpm__handler_8c.html#a96df775d16debb4c18337aaf9a12ed3c" title="Deallocate the memory allocated for OCTET_STRING_t." alt="" coords="668,5,807,32"/>
+</map>

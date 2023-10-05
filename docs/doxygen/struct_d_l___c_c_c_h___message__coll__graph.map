@@ -1,0 +1,28 @@
+<map id="DL_CCCH_Message" name="DL_CCCH_Message">
+<area shape="rect" id="node1" title=" " alt="" coords="3843,869,3984,896"/>
+<area shape="rect" id="node2" href="$struct_d_l___c_c_c_h___message_type.html" title=" " alt="" coords="3568,228,3737,255"/>
+<area shape="rect" id="node3" href="$union_d_l___c_c_c_h___message_type_1_1_d_l___c_c_c_h___message_type__u.html" title=" " alt="" coords="3295,228,3477,255"/>
+<area shape="rect" id="node4" href="$struct_d_l___c_c_c_h___message_type_1_1_d_l___c_c_c_h___message_type__u_1_1_d_l___c_c_c_h___message_type____c1.html" title=" " alt="" coords="3031,356,3228,383"/>
+<area shape="rect" id="node5" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="5,553,128,580"/>
+<area shape="rect" id="node7" href="$struct_r_r_c_reject.html" title=" " alt="" coords="1933,195,2020,221"/>
+<area shape="rect" id="node8" href="$struct_r_r_c_reject_1_1_r_r_c_reject____critical_extensions.html" title=" " alt="" coords="1511,195,1713,221"/>
+<area shape="rect" id="node10" href="$struct_r_r_c_reject_1_1_r_r_c_reject____critical_extensions_1_1_r_r_c_reject____critical_extensi097be615ef13fbd88fab9ec2a711990f.html" title=" " alt="" coords="615,315,817,357"/>
+<area shape="rect" id="node11" href="$struct_r_r_c_reject___i_es.html" title=" " alt="" coords="660,264,772,291"/>
+<area shape="rect" id="node12" href="$struct_o_c_t_e_t___s_t_r_i_n_g.html" title=" " alt="" coords="267,401,386,428"/>
+<area shape="rect" id="node13" href="$struct_r_r_c_reject___i_es_1_1_r_r_c_reject___i_es____non_critical_extension.html" title=" " alt="" coords="233,210,420,251"/>
+<area shape="rect" id="node14" href="$struct_r_r_c_setup.html" title=" " alt="" coords="2587,461,2669,488"/>
+<area shape="rect" id="node15" href="$struct_r_r_c_setup_1_1_r_r_c_setup____critical_extensions.html" title=" " alt="" coords="2189,461,2389,488"/>
+<area shape="rect" id="node17" href="$struct_r_r_c_setup___i_es.html" title=" " alt="" coords="1557,719,1667,745"/>
+<area shape="rect" id="node18" href="$struct_r_r_c_setup___i_es_1_1_r_r_c_setup___i_es____non_critical_extension.html" title=" " alt="" coords="849,861,1033,902"/>
+<area shape="rect" id="node19" href="$struct_radio_bearer_config.html" title=" " alt="" coords="1109,651,1239,677"/>
+<area shape="rect" id="node20" href="$struct_s_r_b___to_add_mod_list.html" title=" " alt="" coords="448,664,587,691"/>
+<area shape="rect" id="node21" href="$struct_security_config.html" title=" " alt="" coords="663,741,769,768"/>
+<area shape="rect" id="node22" href="$struct_security_algorithm_config.html" title=" " alt="" coords="246,768,407,795"/>
+<area shape="rect" id="node23" href="$struct_d_r_b___to_add_mod_list.html" title=" " alt="" coords="448,504,587,531"/>
+<area shape="rect" id="node24" href="$struct_d_r_b___to_release_list.html" title=" " alt="" coords="448,560,587,587"/>
+<area shape="rect" id="node25" href="$struct_r_r_c_setup_1_1_r_r_c_setup____critical_extensions_1_1_r_r_c_setup____critical_extensions106dc27cf0eb4ade69855da60b339d1b.html" title=" " alt="" coords="841,925,1041,966"/>
+<area shape="rect" id="node26" href="$struct_d_l___c_c_c_h___message_type_1_1_d_l___c_c_c_h___message_type__u_1_1_d_l___c_c_c_h___mess8309df447a6b49d0c3fcc9c8ce8a36b5.html" title=" " alt="" coords="1307,50,1487,91"/>
+<area shape="rect" id="node6" href="$union_d_l___c_c_c_h___message_type_1_1_d_l___c_c_c_h___message_type__u_1_1_d_l___c_c_c_h___messa72be552647ff1e0722d8d61786466e2a.html" title=" " alt="" coords="2771,349,2940,390"/>
+<area shape="rect" id="node9" href="$union_r_r_c_reject_1_1_r_r_c_reject____critical_extensions_1_1_r_r_c_reject____critical_extensions__u.html" title=" " alt="" coords="1065,264,1283,291"/>
+<area shape="rect" id="node16" href="$union_r_r_c_setup_1_1_r_r_c_setup____critical_extensions_1_1_r_r_c_setup____critical_extensions__u.html" title=" " alt="" coords="1869,719,2084,745"/>
+</map>

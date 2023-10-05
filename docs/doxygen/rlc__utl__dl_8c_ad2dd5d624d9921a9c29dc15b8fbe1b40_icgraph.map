@@ -1,0 +1,4 @@
+<map id="rlcUtlEmptySduQ" name="rlcUtlEmptySduQ">
+<area shape="rect" id="node1" title="Handler for emptying the SDU queue." alt="" coords="200,5,323,32"/>
+<area shape="rect" id="node2" href="$rlc__tmm__dl_8c.html#ace792da71f31771db197aeab69b688cc" title="Handler to process the re&#45;establishment request received from the upper layer." alt="" coords="5,5,152,32"/>
+</map>

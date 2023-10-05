@@ -1,0 +1,8 @@
+<map id="PDCCH_ServingCellConfig::PDCCH_ServingCellConfig__slotFormatIndicator" name="PDCCH_ServingCellConfig::PDCCH_ServingCellConfig__slotFormatIndicator">
+<area shape="rect" id="node1" title=" " alt="" coords="1165,21,1348,77"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="5,76,128,103"/>
+<area shape="rect" id="node4" href="$struct_slot_format_indicator.html" title=" " alt="" coords="680,80,815,107"/>
+<area shape="rect" id="node5" href="$struct_slot_format_indicator_1_1_slot_format_indicator____slot_format_comb_to_add_mod_list.html" title=" " alt="" coords="233,121,448,162"/>
+<area shape="rect" id="node6" href="$struct_slot_format_indicator_1_1_slot_format_indicator____slot_format_comb_to_release_list.html" title=" " alt="" coords="233,186,448,227"/>
+<area shape="rect" id="node3" href="$union_p_d_c_c_h___serving_cell_config_1_1_p_d_c_c_h___serving_cell_config____slot_format_indicatebd8189dea2a6e8bd480dbdb3b2692d9.html" title=" " alt="" coords="900,58,1075,99"/>
+</map>

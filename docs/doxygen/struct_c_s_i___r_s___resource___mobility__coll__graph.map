@@ -1,0 +1,10 @@
+<map id="CSI_RS_Resource_Mobility" name="CSI_RS_Resource_Mobility">
+<area shape="rect" id="node1" title=" " alt="" coords="1459,85,1641,112"/>
+<area shape="rect" id="node2" href="$struct_c_s_i___r_s___resource___mobility_1_1_c_s_i___r_s___resource___mobility____associated_s_s_b.html" title=" " alt="" coords="500,61,683,102"/>
+<area shape="rect" id="node3" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="35,119,158,145"/>
+<area shape="rect" id="node4" href="$struct_c_s_i___r_s___resource___mobility_1_1_c_s_i___r_s___resource___mobility____slot_config.html" title=" " alt="" coords="293,229,476,270"/>
+<area shape="rect" id="node6" href="$struct_c_s_i___r_s___resource___mobility_1_1_c_s_i___r_s___resource___mobility____frequency_domain_allocation.html" title=" " alt="" coords="1056,119,1249,161"/>
+<area shape="rect" id="node8" href="$struct_b_i_t___s_t_r_i_n_g__s.html" title=" " alt="" coords="330,173,439,200"/>
+<area shape="rect" id="node5" href="$union_c_s_i___r_s___resource___mobility_1_1_c_s_i___r_s___resource___mobility____slot_config_1_183b4fe05d5aac12248c4617e3bd02454.html" title=" " alt="" coords="5,237,188,278"/>
+<area shape="rect" id="node7" href="$union_c_s_i___r_s___resource___mobility_1_1_c_s_i___r_s___resource___mobility____frequency_domaifb230c9ce08ca4082c3541e5840e1339.html" title=" " alt="" coords="707,170,913,211"/>
+</map>

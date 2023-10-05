@@ -1,0 +1,8 @@
+<map id="kpmFillMeasInfoItem" name="kpmFillMeasInfoItem">
+<area shape="rect" id="node1" title="Build the measurement info item." alt="" coords="823,31,964,57"/>
+<area shape="rect" id="node2" href="$du__e2sm__kpm__handler_8c.html#acbb00de4dfe8e56e760c1ff46277e5e3" title="Fill in the Indication Message format 1 for cell metrics." alt="" coords="603,23,775,65"/>
+<area shape="rect" id="node3" href="$du__e2sm__kpm__handler_8c.html#a8ce02956c2f52647d795a9580dbb7d57" title="Fill in the Indication Message." alt="" coords="364,31,555,57"/>
+<area shape="rect" id="node4" href="$du__e2sm__kpm__handler_8c.html#a4cf81af92c604415b05581277b455d80" title="Send the cell metrics to RIC with RIC Indication." alt="" coords="177,5,312,32"/>
+<area shape="rect" id="node6" href="$du__e2sm__kpm__handler_8c.html#a54bfb427e9fb9c9eb22d09ced452b1e8" title="Send the slice metrics to RIC with RIC Indication." alt="" coords="173,56,316,83"/>
+<area shape="rect" id="node5" href="$du__e2sm__kpm__handler_8c.html#ac4ed88963daa15aa3a816a3f203eaad9" title="Send the metrics to RIC with RIC Indication." alt="" coords="5,31,125,57"/>
+</map>

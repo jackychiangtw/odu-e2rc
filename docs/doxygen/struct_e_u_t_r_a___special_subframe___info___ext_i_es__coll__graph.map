@@ -1,0 +1,6 @@
+<map id="EUTRA_SpecialSubframe_Info_ExtIEs" name="EUTRA_SpecialSubframe_Info_ExtIEs">
+<area shape="rect" id="node1" title=" " alt="" coords="5,213,176,255"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="8,13,131,39"/>
+<area shape="rect" id="node3" href="$struct_e_u_t_r_a___special_subframe___info___ext_i_es_1_1_e_u_t_r_a___special_subframe___info___ext_i_es____extension_value.html" title=" " alt="" coords="151,109,350,151"/>
+<area shape="rect" id="node4" href="$union_e_u_t_r_a___special_subframe___info___ext_i_es_1_1_e_u_t_r_a___special_subframe___info___eb06234775f97860395b716073e35e9d2.html" title=" " alt="" coords="155,5,367,47"/>
+</map>

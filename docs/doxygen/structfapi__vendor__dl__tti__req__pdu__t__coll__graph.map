@@ -1,0 +1,7 @@
+<map id="fapi_vendor_dl_tti_req_pdu_t" name="fapi_vendor_dl_tti_req_pdu_t">
+<area shape="rect" id="node1" title=" " alt="" coords="187,199,308,240"/>
+<area shape="rect" id="node2" href="$structfapi__vendor__dl__pdcch__pdu__t.html" title=" " alt="" coords="5,95,151,136"/>
+<area shape="rect" id="node3" href="$structfapi__vendor__dl__dci__t.html" title=" " alt="" coords="9,5,147,32"/>
+<area shape="rect" id="node4" href="$structfapi__vendor__dl__pdsch__pdu__t.html" title=" " alt="" coords="175,95,320,136"/>
+<area shape="rect" id="node5" href="$structfapi__vendor__csi__rs__pdu__t.html" title=" " alt="" coords="345,95,473,136"/>
+</map>

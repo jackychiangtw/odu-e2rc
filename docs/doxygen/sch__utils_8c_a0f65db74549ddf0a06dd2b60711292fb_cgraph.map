@@ -1,0 +1,5 @@
+<map id="schInitDlSlot" name="schInitDlSlot">
+<area shape="rect" id="node1" title="initialize DL slot info" alt="" coords="5,31,100,57"/>
+<area shape="rect" id="node2" href="$sch__utils_8c.html#ac8608ff3295ee09445888b5cb85d03ec" title="Function to add a node to a linked list." alt="" coords="163,5,278,32"/>
+<area shape="rect" id="node3" href="$sch__utils_8c.html#aebc3f1ec367addd53a2e5837e8d55919" title="Function to delete a node from linked list." alt="" coords="148,56,293,83"/>
+</map>

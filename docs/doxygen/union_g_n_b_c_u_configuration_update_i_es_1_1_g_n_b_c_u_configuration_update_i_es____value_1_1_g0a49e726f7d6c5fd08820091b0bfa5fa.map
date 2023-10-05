@@ -1,0 +1,11 @@
+<map id="GNBCUConfigurationUpdateIEs::GNBCUConfigurationUpdateIEs__value::GNBCUConfigurationUpdateIEs__value_u" name="GNBCUConfigurationUpdateIEs::GNBCUConfigurationUpdateIEs__value::GNBCUConfigurationUpdateIEs__value_u">
+<area shape="rect" id="node1" title=" " alt="" coords="715,174,969,245"/>
+<area shape="rect" id="node2" href="$struct_cells__to__be___deactivated___list.html" title=" " alt="" coords="250,13,442,40"/>
+<area shape="rect" id="node3" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="5,196,128,223"/>
+<area shape="rect" id="node4" href="$struct_g_n_b___c_u___t_n_l___association___to___update___list.html" title=" " alt="" coords="256,65,436,106"/>
+<area shape="rect" id="node5" href="$struct_g_n_b___c_u___t_n_l___association___to___remove___list.html" title=" " alt="" coords="256,130,436,171"/>
+<area shape="rect" id="node6" href="$struct_protected___e_u_t_r_a___resources___list.html" title=" " alt="" coords="233,196,459,223"/>
+<area shape="rect" id="node7" href="$struct_cells__to__be___barred___list.html" title=" " alt="" coords="265,247,427,273"/>
+<area shape="rect" id="node8" href="$struct_cells__to__be___activated___list.html" title=" " alt="" coords="257,297,435,324"/>
+<area shape="rect" id="node9" href="$struct_g_n_b___c_u___t_n_l___association___to___add___list.html" title=" " alt="" coords="256,349,436,390"/>
+</map>

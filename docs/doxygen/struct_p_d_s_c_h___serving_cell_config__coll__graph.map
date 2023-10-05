@@ -1,0 +1,8 @@
+<map id="PDSCH_ServingCellConfig" name="PDSCH_ServingCellConfig">
+<area shape="rect" id="node1" title=" " alt="" coords="1453,68,1628,95"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="5,93,128,120"/>
+<area shape="rect" id="node3" href="$struct_p_d_s_c_h___serving_cell_config_1_1_p_d_s_c_h___serving_cell_config____ext1.html" title=" " alt="" coords="507,61,681,102"/>
+<area shape="rect" id="node4" href="$struct_p_d_s_c_h___serving_cell_config_1_1_p_d_s_c_h___serving_cell_config____code_block_group_transmission.html" title=" " alt="" coords="1019,119,1228,161"/>
+<area shape="rect" id="node6" href="$struct_p_d_s_c_h___code_block_group_transmission.html" title=" " alt="" coords="233,171,483,197"/>
+<area shape="rect" id="node5" href="$union_p_d_s_c_h___serving_cell_config_1_1_p_d_s_c_h___serving_cell_config____code_block_group_tr221ddd274bca41e397c6202d478ab19d.html" title=" " alt="" coords="705,170,928,211"/>
+</map>

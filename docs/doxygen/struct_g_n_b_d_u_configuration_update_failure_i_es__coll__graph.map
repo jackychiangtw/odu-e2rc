@@ -1,0 +1,10 @@
+<map id="GNBDUConfigurationUpdateFailureIEs" name="GNBDUConfigurationUpdateFailureIEs">
+<area shape="rect" id="node1" title=" " alt="" coords="394,496,578,537"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="285,5,407,32"/>
+<area shape="rect" id="node3" href="$struct_g_n_b_d_u_configuration_update_failure_i_es_1_1_g_n_b_d_u_configuration_update_failure_i_es____value.html" title=" " alt="" coords="329,392,513,433"/>
+<area shape="rect" id="node5" href="$struct_cause.html" title=" " alt="" coords="86,102,145,129"/>
+<area shape="rect" id="node7" href="$struct_criticality_diagnostics.html" title=" " alt="" coords="195,199,339,225"/>
+<area shape="rect" id="node8" href="$struct_criticality_diagnostics___i_e___list.html" title=" " alt="" coords="274,95,418,136"/>
+<area shape="rect" id="node4" href="$union_g_n_b_d_u_configuration_update_failure_i_es_1_1_g_n_b_d_u_configuration_update_failure_i_e538e8618b62d8d11402819adea83aafe.html" title=" " alt="" coords="175,288,359,329"/>
+<area shape="rect" id="node6" href="$union_cause_1_1_cause__u.html" title=" " alt="" coords="5,5,79,32"/>
+</map>

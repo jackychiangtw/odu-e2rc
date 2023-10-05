@@ -1,0 +1,6 @@
+<map id="CellStateChangeStdDef" name="CellStateChangeStdDef">
+<area shape="rect" id="node1" title=" " alt="" coords="5,305,164,332"/>
+<area shape="rect" id="node2" href="$class_notification.html" title=" " alt="" coords="41,229,128,256"/>
+<area shape="rect" id="node3" href="$class_ves_event.html" title=" " alt="" coords="46,153,123,180"/>
+<area shape="rect" id="node4" title=" " alt="" coords="57,5,112,32"/>
+</map>

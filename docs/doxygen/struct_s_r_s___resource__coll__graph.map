@@ -1,0 +1,21 @@
+<map id="SRS_Resource" name="SRS_Resource">
+<area shape="rect" id="node1" title=" " alt="" coords="1968,239,2079,266"/>
+<area shape="rect" id="node2" href="$struct_s_r_s___resource_1_1_s_r_s___resource____freq_hopping.html" title=" " alt="" coords="526,15,719,42"/>
+<area shape="rect" id="node3" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="38,383,161,410"/>
+<area shape="rect" id="node4" href="$struct_s_r_s___spatial_relation_info.html" title=" " alt="" coords="1628,195,1791,222"/>
+<area shape="rect" id="node5" href="$struct_s_r_s___spatial_relation_info_1_1_s_r_s___spatial_relation_info____reference_signal.html" title=" " alt="" coords="1258,188,1421,229"/>
+<area shape="rect" id="node7" href="$struct_s_r_s___spatial_relation_info_1_1_s_r_s___spatial_relation_info____reference_signal_1_1_s96213daafb3fa5a6e5f2f3fc737b0500.html" title=" " alt="" coords="317,237,479,278"/>
+<area shape="rect" id="node8" href="$struct_s_r_s___resource_1_1_s_r_s___resource____resource_mapping.html" title=" " alt="" coords="975,298,1199,324"/>
+<area shape="rect" id="node9" href="$struct_s_r_s___resource_1_1_s_r_s___resource____transmission_comb.html" title=" " alt="" coords="1223,366,1456,392"/>
+<area shape="rect" id="node11" href="$struct_s_r_s___resource_1_1_s_r_s___resource____transmission_comb_1_1_s_r_s___resource____transm11533bac104c85ed815affe700b5755e.html" title=" " alt="" coords="299,417,497,458"/>
+<area shape="rect" id="node12" href="$struct_s_r_s___resource_1_1_s_r_s___resource____transmission_comb_1_1_s_r_s___resource____transm60bfbeab019ac6abe88165cc937c5813.html" title=" " alt="" coords="299,482,497,524"/>
+<area shape="rect" id="node13" href="$struct_s_r_s___resource_1_1_s_r_s___resource____resource_type.html" title=" " alt="" coords="1608,548,1811,575"/>
+<area shape="rect" id="node15" href="$struct_s_r_s___resource_1_1_s_r_s___resource____resource_type_1_1_s_r_s___resource____resource_t345b3bb6c44c9e25854bf9770365e0d2.html" title=" " alt="" coords="748,738,951,780"/>
+<area shape="rect" id="node16" href="$struct_s_r_s___periodicity_and_offset.html" title=" " alt="" coords="311,718,485,744"/>
+<area shape="rect" id="node18" href="$struct_s_r_s___resource_1_1_s_r_s___resource____resource_type_1_1_s_r_s___resource____resource_t51df5fd0ef7cde0c18437eec95477976.html" title=" " alt="" coords="521,597,724,638"/>
+<area shape="rect" id="node19" href="$struct_s_r_s___resource_1_1_s_r_s___resource____resource_type_1_1_s_r_s___resource____resource_t4aa8b0a5a2405339c99eb150ce1ef555.html" title=" " alt="" coords="748,673,951,714"/>
+<area shape="rect" id="node6" href="$union_s_r_s___spatial_relation_info_1_1_s_r_s___spatial_relation_info____reference_signal_1_1_s_2c725ba25b232c6e1f56fe7825c4f4e0.html" title=" " alt="" coords="768,238,931,280"/>
+<area shape="rect" id="node10" href="$union_s_r_s___resource_1_1_s_r_s___resource____transmission_comb_1_1_s_r_s___resource____transmission_comb__u.html" title=" " alt="" coords="750,417,949,458"/>
+<area shape="rect" id="node14" href="$union_s_r_s___resource_1_1_s_r_s___resource____resource_type_1_1_s_r_s___resource____resource_type__u.html" title=" " alt="" coords="1231,635,1448,662"/>
+<area shape="rect" id="node17" href="$union_s_r_s___periodicity_and_offset_1_1_s_r_s___periodicity_and_offset__u.html" title=" " alt="" coords="5,731,193,758"/>
+</map>

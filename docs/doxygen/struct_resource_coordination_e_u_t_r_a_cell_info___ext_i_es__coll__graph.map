@@ -1,0 +1,6 @@
+<map id="ResourceCoordinationEUTRACellInfo_ExtIEs" name="ResourceCoordinationEUTRACellInfo_ExtIEs">
+<area shape="rect" id="node1" title=" " alt="" coords="5,213,220,255"/>
+<area shape="rect" id="node2" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="30,13,153,39"/>
+<area shape="rect" id="node3" href="$struct_resource_coordination_e_u_t_r_a_cell_info___ext_i_es_1_1_resource_coordination_e_u_t_r_a_341e9c3000bb02b0bf847c6e2c6af7da.html" title=" " alt="" coords="173,109,388,151"/>
+<area shape="rect" id="node4" href="$union_resource_coordination_e_u_t_r_a_cell_info___ext_i_es_1_1_resource_coordination_e_u_t_r_a_c1ec78754972a92109d1981028a5379e9.html" title=" " alt="" coords="177,5,392,47"/>
+</map>

@@ -1,0 +1,8 @@
+<map id="UEContextReleaseRequestIEs" name="UEContextReleaseRequestIEs">
+<area shape="rect" id="node1" title=" " alt="" coords="5,392,204,419"/>
+<area shape="rect" id="node2" href="$struct_u_e_context_release_request_i_es_1_1_u_e_context_release_request_i_es____value.html" title=" " alt="" coords="97,288,296,329"/>
+<area shape="rect" id="node3" href="$structasn__struct__ctx__s.html" title=" " alt="" coords="93,5,215,32"/>
+<area shape="rect" id="node5" href="$struct_cause.html" title=" " alt="" coords="261,95,319,121"/>
+<area shape="rect" id="node4" href="$union_u_e_context_release_request_i_es_1_1_u_e_context_release_request_i_es____value_1_1_u_e_con230e436a44fa6eef63e6dee64b55aa93.html" title=" " alt="" coords="192,184,391,225"/>
+<area shape="rect" id="node6" href="$union_cause_1_1_cause__u.html" title=" " alt="" coords="253,5,327,32"/>
+</map>

@@ -1,0 +1,12 @@
+<map id="kpmSliceMeasNameIsSupport" name="kpmSliceMeasNameIsSupport">
+<area shape="rect" id="node1" title="Get the index of measurement name for slice metrics." alt="" coords="856,77,1053,104"/>
+<area shape="rect" id="node2" href="$du__e2sm__kpm__handler_8c.html#ac11d2f72c3276293ab3938fa17ffbe6b" title="Fill in the Indication Message format 2 for slice metrics." alt="" coords="625,41,797,82"/>
+<area shape="rect" id="node7" href="$du__e2sm__kpm__handler_8c.html#ab6c04ef24543f9f2de8ee9af163ac206" title="Process the action definition format 3 of KPM." alt="" coords="613,107,808,133"/>
+<area shape="rect" id="node3" href="$du__e2sm__kpm__handler_8c.html#a8ce02956c2f52647d795a9580dbb7d57" title="Fill in the Indication Message." alt="" coords="375,48,565,75"/>
+<area shape="rect" id="node4" href="$du__e2sm__kpm__handler_8c.html#a4cf81af92c604415b05581277b455d80" title="Send the cell metrics to RIC with RIC Indication." alt="" coords="188,5,323,32"/>
+<area shape="rect" id="node6" href="$du__e2sm__kpm__handler_8c.html#a54bfb427e9fb9c9eb22d09ced452b1e8" title="Send the slice metrics to RIC with RIC Indication." alt="" coords="184,56,327,83"/>
+<area shape="rect" id="node5" href="$du__e2sm__kpm__handler_8c.html#ac4ed88963daa15aa3a816a3f203eaad9" title="Send the metrics to RIC with RIC Indication." alt="" coords="11,31,131,57"/>
+<area shape="rect" id="node8" href="$du__e2sm__kpm__handler_8c.html#af4687dc124892623a6b66ac57192e119" title="Process the action definition." alt="" coords="388,107,552,133"/>
+<area shape="rect" id="node9" href="$du__e2sm__manager_8c.html#ae827dd8473e65c1ade55fe956c2eae53" title="Initialize the E2SM Manager." alt="" coords="227,107,284,133"/>
+<area shape="rect" id="node10" href="$du__e2sm__manager_8c.html#af1477f89f396e9fc364fd7d6557cd882" title="Fills the E2 Setup Request RAN Function infos." alt="" coords="5,107,136,133"/>
+</map>

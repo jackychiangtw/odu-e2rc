@@ -1,0 +1,6 @@
+<map id="rlcRetx" name="rlcRetx">
+<area shape="rect" id="node1" title="Structure to hold info about a PDU/segment to be re&#45;transmitted." alt="" coords="56,184,119,211"/>
+<area shape="rect" id="node2" href="$structrlc_am_hdr.html" title="Structure to hold an Acknowledged Mode header." alt="" coords="5,95,81,121"/>
+<area shape="rect" id="node3" href="$structrlc_sdu_map.html" title="Structure to hold information about which SDUs a PDU/segment carries." alt="" coords="105,95,189,121"/>
+<area shape="rect" id="node4" href="$structrlc_sdu.html" title="Structure to hold information regarding a SDU received from PDCP." alt="" coords="118,5,177,32"/>
+</map>

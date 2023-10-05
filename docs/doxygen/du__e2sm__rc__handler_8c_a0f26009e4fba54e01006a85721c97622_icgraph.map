@@ -1,0 +1,5 @@
+<map id="rcProcCtrlHeader" name="rcProcCtrlHeader">
+<area shape="rect" id="node1" title="Process the Control Header." alt="" coords="289,5,411,32"/>
+<area shape="rect" id="node2" href="$du__e2sm__manager_8c.html#ae827dd8473e65c1ade55fe956c2eae53" title="Initialize the E2SM Manager." alt="" coords="184,5,241,32"/>
+<area shape="rect" id="node3" href="$du__e2sm__manager_8c.html#af1477f89f396e9fc364fd7d6557cd882" title="Fills the E2 Setup Request RAN Function infos." alt="" coords="5,5,136,32"/>
+</map>

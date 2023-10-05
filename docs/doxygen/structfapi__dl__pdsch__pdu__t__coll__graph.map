@@ -1,0 +1,7 @@
+<map id="fapi_dl_pdsch_pdu_t" name="fapi_dl_pdsch_pdu_t">
+<area shape="rect" id="node1" title=" " alt="" coords="69,273,209,300"/>
+<area shape="rect" id="node2" href="$structfapi__codeword__pdu__t.html" title=" " alt="" coords="5,184,148,211"/>
+<area shape="rect" id="node3" href="$structfapi__precoding__bmform__t.html" title=" " alt="" coords="172,184,339,211"/>
+<area shape="rect" id="node4" href="$structfapi__pmi__bfi__t.html" title=" " alt="" coords="205,95,306,121"/>
+<area shape="rect" id="node5" href="$structfapi__bmi__t.html" title=" " alt="" coords="215,5,296,32"/>
+</map>

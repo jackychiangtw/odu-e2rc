@@ -1,0 +1,4 @@
+<map id="schBroadcastSib1Alloc" name="schBroadcastSib1Alloc">
+<area shape="rect" id="node1" title="common resource allocation for SIB1" alt="" coords="5,5,163,32"/>
+<area shape="rect" id="node2" href="$sch__utils_8c.html#a91244805b77dbbed25b84e351b25d442" title="Function to find first DMRS symbol in PDSCH." alt="" coords="211,5,356,32"/>
+</map>

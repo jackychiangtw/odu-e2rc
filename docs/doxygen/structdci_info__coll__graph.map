@@ -1,0 +1,22 @@
+<map id="dciInfo" name="dciInfo">
+<area shape="rect" id="node1" title=" " alt="" coords="963,205,1021,232"/>
+<area shape="rect" id="node2" href="$structdci_format.html" title=" " alt="" coords="750,112,830,139"/>
+<area shape="rect" id="node3" href="$structformat0__0.html" title=" " alt="" coords="508,44,587,71"/>
+<area shape="rect" id="node4" href="$structtime_domain_alloc.html" title=" " alt="" coords="215,65,335,92"/>
+<area shape="rect" id="node8" href="$structformat0__1.html" title=" " alt="" coords="508,112,587,139"/>
+<area shape="rect" id="node5" href="$structfreq_domain_alloc.html" title=" " alt="" coords="217,7,333,33"/>
+<area shape="rect" id="node6" href="$structres_alloc_type0.html" title=" " alt="" coords="5,7,109,33"/>
+<area shape="rect" id="node7" href="$structres_alloc_type1.html" title=" " alt="" coords="5,133,109,160"/>
+<area shape="rect" id="node9" href="$structbwp_cfg.html" title=" " alt="" coords="379,187,443,213"/>
+<area shape="rect" id="node10" href="$structcoreset_cfg.html" title=" " alt="" coords="748,231,832,257"/>
+<area shape="rect" id="node11" href="$structdl_d_c_i.html" title=" " alt="" coords="763,287,817,313"/>
+<area shape="rect" id="node12" href="$structbeamforming_info.html" title=" " alt="" coords="217,249,333,276"/>
+<area shape="rect" id="node15" href="$structpdsch_cfg.html" title=" " alt="" coords="509,357,585,384"/>
+<area shape="rect" id="node13" href="$structprg.html" title=" " alt="" coords="37,249,77,276"/>
+<area shape="rect" id="node14" href="$structtx_power_pdcch_info.html" title=" " alt="" coords="484,293,611,320"/>
+<area shape="rect" id="node16" href="$structtx_power_pdsch_info.html" title=" " alt="" coords="212,307,339,333"/>
+<area shape="rect" id="node17" href="$structpdsch_time_alloc.html" title=" " alt="" coords="218,357,333,384"/>
+<area shape="rect" id="node18" href="$structcodewordinfo.html" title=" " alt="" coords="227,408,324,435"/>
+<area shape="rect" id="node19" href="$structpdsch_freq_alloc.html" title=" " alt="" coords="219,459,331,485"/>
+<area shape="rect" id="node20" href="$structdmrs_info.html" title=" " alt="" coords="240,509,311,536"/>
+</map>

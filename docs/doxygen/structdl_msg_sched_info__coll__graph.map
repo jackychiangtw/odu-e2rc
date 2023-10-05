@@ -1,0 +1,25 @@
+<map id="dlMsgSchedInfo" name="dlMsgSchedInfo">
+<area shape="rect" id="node1" title=" " alt="" coords="416,452,531,479"/>
+<area shape="rect" id="node2" href="$structtransport_block.html" title=" " alt="" coords="61,363,168,389"/>
+<area shape="rect" id="node3" href="$structlc_sch_info.html" title=" " alt="" coords="5,273,80,300"/>
+<area shape="rect" id="node4" href="$structce_sch_info.html" title=" " alt="" coords="105,273,183,300"/>
+<area shape="rect" id="node5" href="$structtime_domain_alloc.html" title=" " alt="" coords="192,363,312,389"/>
+<area shape="rect" id="node6" href="$structpdcch_cfg.html" title=" " alt="" coords="337,363,413,389"/>
+<area shape="rect" id="node7" href="$structcoreset_cfg.html" title=" " alt="" coords="235,273,319,300"/>
+<area shape="rect" id="node8" href="$structdl_d_c_i.html" title=" " alt="" coords="347,273,400,300"/>
+<area shape="rect" id="node9" href="$structbeamforming_info.html" title=" " alt="" coords="46,95,162,121"/>
+<area shape="rect" id="node12" href="$structpdsch_cfg.html" title=" " alt="" coords="399,184,475,211"/>
+<area shape="rect" id="node10" href="$structprg.html" title=" " alt="" coords="84,5,124,32"/>
+<area shape="rect" id="node11" href="$structtx_power_pdcch_info.html" title=" " alt="" coords="211,184,338,211"/>
+<area shape="rect" id="node13" href="$structtx_power_pdsch_info.html" title=" " alt="" coords="191,95,318,121"/>
+<area shape="rect" id="node14" href="$structpdsch_time_alloc.html" title=" " alt="" coords="343,95,457,121"/>
+<area shape="rect" id="node15" href="$structcodewordinfo.html" title=" " alt="" coords="482,95,579,121"/>
+<area shape="rect" id="node16" href="$structpdsch_freq_alloc.html" title=" " alt="" coords="604,95,716,121"/>
+<area shape="rect" id="node17" href="$structdmrs_info.html" title=" " alt="" coords="745,95,815,121"/>
+<area shape="rect" id="node18" href="$structfreq_domain_alloc.html" title=" " alt="" coords="542,363,658,389"/>
+<area shape="rect" id="node19" href="$structres_alloc_type0.html" title=" " alt="" coords="548,273,652,300"/>
+<area shape="rect" id="node20" href="$structres_alloc_type1.html" title=" " alt="" coords="676,273,780,300"/>
+<area shape="rect" id="node23" href="$structbwp_cfg.html" title=" " alt="" coords="693,363,757,389"/>
+<area shape="rect" id="node21" href="$structprb_mertic.html" title=" " alt="" coords="807,363,883,389"/>
+<area shape="rect" id="node22" href="$structsch_slice_prb_pm_list.html" title=" " alt="" coords="804,273,937,300"/>
+</map>

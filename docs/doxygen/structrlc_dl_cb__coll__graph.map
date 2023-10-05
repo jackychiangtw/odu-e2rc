@@ -1,0 +1,7 @@
+<map id="rlcDlCb" name="rlcDlCb">
+<area shape="rect" id="node1" title="Structure to hold an information about DL RLC instance." alt="" coords="211,95,275,121"/>
+<area shape="rect" id="node2" href="$structrlc_rgu_sap_cb.html" title="Structure to hold an information about the RGU SAP." alt="" coords="5,5,104,32"/>
+<area shape="rect" id="node3" href="$structrlc_kwu_sap_cb.html" title="Structure to hold an information about the KWU SAP." alt="" coords="129,5,229,32"/>
+<area shape="rect" id="node4" href="$structrlc_udx_dl_sap_cb.html" title="Structure to hold an information about the UDX DL SAP." alt="" coords="253,5,363,32"/>
+<area shape="rect" id="node5" href="$structrlc_dl_data_to_be_freed.html" title="Structure to hold info about memory to be freed." alt="" coords="388,5,527,32"/>
+</map>

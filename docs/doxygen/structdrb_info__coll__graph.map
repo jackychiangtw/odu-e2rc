@@ -1,0 +1,17 @@
+<map id="drbInfo" name="drbInfo">
+<area shape="rect" id="node1" title=" " alt="" coords="231,288,291,315"/>
+<area shape="rect" id="node2" href="$structmac_lc_cfg.html" title=" " alt="" coords="5,184,85,211"/>
+<area shape="rect" id="node3" href="$struct_tnl_info.html" title=" " alt="" coords="109,184,168,211"/>
+<area shape="rect" id="node4" href="$structqos_info.html" title=" " alt="" coords="197,95,259,121"/>
+<area shape="rect" id="node5" href="$structflows_mapped.html" title=" " alt="" coords="277,184,374,211"/>
+<area shape="rect" id="node6" href="$structsnssai.html" title=" " alt="" coords="398,184,458,211"/>
+<area shape="rect" id="node7" href="$structrlc_lc_cfg.html" title=" " alt="" coords="483,184,552,211"/>
+<area shape="rect" id="node8" href="$structum_uni_dir_ul_bearer_cfg.html" title=" " alt="" coords="285,95,429,121"/>
+<area shape="rect" id="node9" href="$structul_um_cfg.html" title=" " alt="" coords="415,5,486,32"/>
+<area shape="rect" id="node13" href="$structum_bi_dir_bearer_cfg.html" title=" " alt="" coords="453,95,579,121"/>
+<area shape="rect" id="node10" href="$structam_bearer_cfg.html" title=" " alt="" coords="771,95,869,121"/>
+<area shape="rect" id="node11" href="$structdl_am_cfg.html" title=" " alt="" coords="707,5,778,32"/>
+<area shape="rect" id="node12" href="$structul_am_cfg.html" title=" " alt="" coords="802,5,873,32"/>
+<area shape="rect" id="node14" href="$structdl_um_cfg.html" title=" " alt="" coords="557,5,627,32"/>
+<area shape="rect" id="node15" href="$structum_uni_dir_dl_bearer_cfg.html" title=" " alt="" coords="603,95,747,121"/>
+</map>

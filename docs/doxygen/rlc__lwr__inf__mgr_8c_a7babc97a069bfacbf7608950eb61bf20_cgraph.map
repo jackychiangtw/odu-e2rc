@@ -1,0 +1,4 @@
+<map id="RlcLiRguFlowCntrlInd" name="RlcLiRguFlowCntrlInd">
+<area shape="rect" id="node1" title="Handler for handling the flow cntrl Ind from MAC to RLC" alt="" coords="5,5,151,32"/>
+<area shape="rect" id="node2" href="$rlc__utl__dl_8c.html#a73abc8fa9ead9f4df035cc6c4f83415d" title="evaluate and trigger PDB based flow control to PDCP" alt="" coords="199,5,349,32"/>
+</map>
